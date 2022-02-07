@@ -125,6 +125,8 @@ export const MonthlyCalendarDay = (props) => {
     for (let i = 0; i < height; i++) {
         nbrEvents.push(i);
     }
+    //! todo enlever
+    nbrEvents.push(nbrEvents.length);
 
     const eventList = props.eventList.map((x) => x);
     function screenDate(date) {
