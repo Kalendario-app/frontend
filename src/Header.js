@@ -6,6 +6,7 @@ import { api, decryptCode } from "./Main";
 import { useCookies } from "react-cookie";
 import AES from "crypto-js";
 import { sha256 } from "js-sha256";
+import { BrowserView, MobileView } from "react-device-detect";
 
 export const Header = (props) => {
     const [cookies] = useCookies();
@@ -180,7 +181,6 @@ export const Header = (props) => {
                                     {labels.map((x, y) => (
                                         <label className={selected === y ? "selected" : ""} key={y} onClick={(e) => setSelected(y)}>
                                             {x}
-                                            <strong>Test test</strong>
                                         </label>
                                     ))}
                                     <label
@@ -195,7 +195,6 @@ export const Header = (props) => {
                                         }}>
                                         <i className="fas fa-sign-out-alt" />
                                         Logout
-                                        <strong>Test test</strong>
                                     </label>
                                 </section>
                                 <section>
@@ -218,66 +217,77 @@ export const Header = (props) => {
                                             <h2>Settings</h2>
                                         </>
                                     ) : selected === 2 ? (
-                                        <div className="import-section">
-                                            <div>
-                                                <h2>Import</h2>
-                                                <p className="imp-cal-p">First select your .ics file</p>
-                                                {/*//todo help to export*/}
-                                                <div className="file-input">
-                                                    <input
-                                                        className="input-contained"
-                                                        type="file"
-                                                        accept=".ics"
-                                                        onChange={(e) => {
-                                                            e.target.files[0].text().then((f) => handleImport(f));
-                                                            setstep(1);
-                                                            setFile(e.target.files[0].name);
-                                                        }}
-                                                        multiple={false}
-                                                    />
-                                                    {file !== null ? file : "Select a file from your computer"}
+                                        <>
+                                            <BrowserView>
+                                                <div className="import-section">
+                                                    <div>
+                                                        <h2>Import</h2>
+                                                        <p className="imp-cal-p">First select your .ics file</p>
+                                                        {/*//todo help to export*/}
+                                                        <div className="file-input">
+                                                            <input
+                                                                className="input-contained"
+                                                                type="file"
+                                                                accept=".ics"
+                                                                onChange={(e) => {
+                                                                    e.target.files[0].text().then((f) => handleImport(f));
+                                                                    setstep(1);
+                                                                    setFile(e.target.files[0].name);
+                                                                }}
+                                                                multiple={false}
+                                                            />
+                                                            {file !== null ? file : "Select a file from your computer"}
+                                                        </div>
+                                                        {step > 0 ? (
+                                                            <>
+                                                                {" "}
+                                                                <p className="imp-cal-p">Then select the calendar in wich you want your event to be imported </p>
+                                                                <div className="import-select select-wrapper" style={{ borderColor: "#3581b8" }}>
+                                                                    <select
+                                                                        style={{ borderColor: "#3581b8" }}
+                                                                        value={calendarNbr}
+                                                                        onChange={(e) => setCalendarNbr(e.target.value)}>
+                                                                        {props.calendarList().map((x, y) => (
+                                                                            <option key={y} value={y}>
+                                                                                {x}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
+                                                            </>
+                                                        ) : null}
+                                                        {step > 0 ? (
+                                                            <>
+                                                                <p className="imp-cal-p">Then just click import</p>
+                                                                <div className="imp-buttons">
+                                                                    <button
+                                                                        id="import-button"
+                                                                        className={importEvt.length === 0 ? "disabled-input file-input" : "imp-button button-full cta-2"}
+                                                                        onClick={() => {
+                                                                            if (importEvt.length !== 0) {
+                                                                                submitImport();
+                                                                                document.getElementById("import-button").classList = "disabled-input file-input";
+                                                                            } else {
+                                                                                return;
+                                                                            }
+                                                                        }}>
+                                                                        Import
+                                                                    </button>
+                                                                </div>
+                                                            </>
+                                                        ) : null}
+                                                        {/*<h2>Export</h2>*/}
+                                                    </div>
                                                 </div>
-                                                {step > 0 ? (
-                                                    <>
-                                                        {" "}
-                                                        <p className="imp-cal-p">Then select the calendar in wich you want your event to be imported </p>
-                                                        <div className="import-select select-wrapper" style={{ borderColor: "#3581b8" }}>
-                                                            <select
-                                                                style={{ borderColor: "#3581b8" }}
-                                                                value={calendarNbr}
-                                                                onChange={(e) => setCalendarNbr(e.target.value)}>
-                                                                {props.calendarList().map((x, y) => (
-                                                                    <option key={y} value={y}>
-                                                                        {x}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                    </>
-                                                ) : null}
-                                                {step > 0 ? (
-                                                    <>
-                                                        <p className="imp-cal-p">Then just click import</p>
-                                                        <div className="imp-buttons">
-                                                            <button
-                                                                id="import-button"
-                                                                className={importEvt.length === 0 ? "disabled-input file-input" : "imp-button button-full cta-2"}
-                                                                onClick={() => {
-                                                                    if (importEvt.length !== 0) {
-                                                                        submitImport();
-                                                                        document.getElementById("import-button").classList = "disabled-input file-input";
-                                                                    } else {
-                                                                        return;
-                                                                    }
-                                                                }}>
-                                                                Import
-                                                            </button>
-                                                        </div>
-                                                    </>
-                                                ) : null}
-                                                {/*<h2>Export</h2>*/}
-                                            </div>
-                                        </div>
+                                            </BrowserView>
+                                            <MobileView>
+                                                <h2>Import/export</h2>
+                                                <p>
+                                                    Importing and exporting are not supported on mobile yet, please visite this page from a computer to import your
+                                                    calendar.
+                                                </p>
+                                            </MobileView>
+                                        </>
                                     ) : (
                                         <></>
                                     )}
