@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MonthlyCalendarDay } from "./MonthlyCalendarDay";
 import { MonthlyTopbar } from "./MonthlyTopbar";
 import { AddPopup } from "./AddPopup";
@@ -66,11 +66,13 @@ export const MonthlyCalendar = (props) => {
         for (let i = 0; i < props.eventList.length; i++) {
             let event = props.eventList[i];
             event["blank"] = false;
-            if (event["start_date"] >= start_date && event["start_date"] <= end_date) {
+            if (event["start_date"] >= start_date && event["start_date"] <= end_date && typeof event["display_start"] !== "number") {
                 tempStockage.push(event);
-            } else if (event["end_date"] >= start_date && event["end_date"] <= end_date) {
+            } else if (event["display_start"] >= start_date && event["display_start"] <= end_date) {
                 tempStockage.push(event);
-            } else if (event["start_date"] <= start_date && event["end_date"] >= end_date) {
+            } else if (event["end_date"] >= start_date && event["end_date"] <= end_date && false) {
+                tempStockage.push(event);
+            } else if (event["start_date"] <= start_date && event["end_date"] >= end_date && false) {
                 tempStockage.push(event);
             }
         }

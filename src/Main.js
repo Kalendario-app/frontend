@@ -37,7 +37,7 @@ export function decryptCode(code, user) {
 axios.defaults.withCredentials = true;
 
 export const api = axios.create({
-    baseURL: process.env.NODE_ENV === "development" ? "http://172.20.10.9:8000/api" : "https://api.kalendario.app/api/",
+    baseURL: process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000/api" : "https://api.kalendario.app/api/",
     //baseURL: "http://localhost:8000/api",
     //baseURL: "http://127.0.0.1:8000/api/",
     withCredentials: true,
@@ -213,6 +213,7 @@ export const Main = (props) => {
     function traiterEvent(list) {
         var tempList = list.sort((a, b) => a["start_date"] - b["start_date"]);
         let tempEvents = [];
+        let eventToAdd = [];
         let tempRecu = [];
         let tempSto = {};
         if (decryptCode(varCode, state.user) != null) {
@@ -245,6 +246,29 @@ export const Main = (props) => {
                     tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - TZoffset;
                     tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - TZoffset;
                     var recuNbr = tempEvents[i]["recurence"].toString();
+                    let start = new Date(tempEvents[i]["start_date"] * 1000).setHours(0, 0, 0, 0);
+                    let end = new Date(tempEvents[i]["end_date"] * 1000).setHours(0, 0, 0, 0);
+                    if (end !== start) {
+                        tempEvents[i]["nbr-day"] = (new Date(end).getTime() - new Date(start).getTime()) / 86400000 + 1;
+                        let tpm = new Date(start).getDay();
+                        if (tpm === 0) {
+                            tpm = 7;
+                        }
+                        if (tempEvents[i]["nbr-day"] > 8 - tpm) {
+                            tempEvents[i]["nbr-day"] = 8 - tpm;
+                            //push les events des autres semaines
+                        }
+                        /*for (let j = 1; end >= start + (8 - tpm) * j * 86400000; j++) {
+                            let nbr = (end - (start + (8 - tpm) * j * 86400000)) / 86400000 + 1;
+                            if (nbr <= 7) {
+                                let evt = JSON.parse(JSON.stringify(tempEvents[i]));
+                                evt["display_start"] = Math.floor((start + (8 - tpm) * j * 86400000) / 1000);
+                                console.log(new Date(evt["display_start"] * 1000));
+                                evt["nbr-day"] = nbr;
+                                eventToAdd.push(JSON.parse(JSON.stringify(evt)));
+                            }
+                        }*/
+                    }
                     if (tempEvents[i]["recurence"] !== -1) {
                         tempEvents[i]["recurence_nbr"] = parseInt(recuNbr.split("")[1]);
                         tempEvents[i]["recurence_type"] = parseInt(recuNbr.split("")[0]);
@@ -253,6 +277,9 @@ export const Main = (props) => {
                 }
                 if (tempSto.length < 1) {
                     tempSto["Default Calendar"] = [true];
+                }
+                for (let i = 0; i < eventToAdd.length; i++) {
+                    tempEvents.push(eventToAdd[i]);
                 }
                 changeState({
                     "checkedMonth": [],

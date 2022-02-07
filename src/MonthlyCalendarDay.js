@@ -187,6 +187,7 @@ export const MonthlyCalendarDay = (props) => {
                         backgroundColor: props.full ? props.color : null,
                         color: props.full ? "#F7FAFD" : "#1B2228",
                         borderRadius: props.full ? ".5em" : "0px",
+                        width: "calc(" + 100 * props.len + "% - 1.6em)",
                     }}>
                     <p>{props.name}</p>
                     <p>{props.date}</p>
@@ -234,6 +235,7 @@ export const MonthlyCalendarDay = (props) => {
                         color={eventList[x]["color"]}
                         full={eventList[x]["full"]}
                         cle={eventList[x]["key"]}
+                        len={eventList[x]["nbr-day"]}
                     />
                 ))}
             </div>
