@@ -1,5 +1,6 @@
 /build
 /node_modules
+push.sh
 
 
 ## Ignore Visual Studio temporary files, build results, and
