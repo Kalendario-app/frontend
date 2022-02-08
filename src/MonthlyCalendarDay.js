@@ -157,6 +157,25 @@ export const MonthlyCalendarDay = (props) => {
         props.open(nbr);
     }
 
+    // for all item in eventList, if key is the same and one is blank, the blank get pushed back
+    eventList.sort((a, b) => {
+        if (a["key"] === b["key"]) {
+            if (a["blank"] && !b["blank"]) {
+                return 1;
+            } else if (!a["blank"] && b["blank"]) {
+                return -1;
+            } else {
+                return 0;
+            }
+        } else {
+            if (a["blank"]) {
+                return 1;
+            } else {
+                return a["start_date"] - b["start_date"];
+            }
+        }
+    });
+
     const MonthlyCalendarItem = (props) => {
         // eslint-disable-next-line
         const [{ isDragging }, drag] = useDrag(() => ({
@@ -189,6 +208,7 @@ export const MonthlyCalendarDay = (props) => {
                         backgroundColor: props.full ? props.color : null,
                         color: props.full ? "#F7FAFD" : "#1B2228",
                         borderRadius: props.full ? ".5em" : "0px",
+                        width: "calc(" + 100 * props.len + "% - 1.6em)",
                     }}>
                     <p>{props.name}</p>
                     <p>{props.date}</p>
@@ -236,6 +256,7 @@ export const MonthlyCalendarDay = (props) => {
                         color={eventList[x]["color"]}
                         full={eventList[x]["full"]}
                         cle={eventList[x]["key"]}
+                        len={eventList[x]["nbr-day"]}
                     />
                 ))}
             </div>
