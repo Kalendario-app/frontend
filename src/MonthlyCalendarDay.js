@@ -166,10 +166,8 @@ export const MonthlyCalendarDay = (props) => {
                 return 0;
             }
         } else {
-            if (a["blank"] && !b["blank"]) {
+            if (a["blank"]) {
                 return 1;
-            } else if (!a["blank"] && b["blank"]) {
-                return -1;
             } else {
                 return a["start_date"] - b["start_date"];
             }
