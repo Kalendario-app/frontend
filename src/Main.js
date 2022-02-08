@@ -250,13 +250,32 @@ export const Main = (props) => {
                     let end = new Date(tempEvents[i]["end_date"] * 1000).setHours(0, 0, 0, 0);
                     if (end !== start) {
                         tempEvents[i]["nbr-day"] = (new Date(end).getTime() - new Date(start).getTime()) / 86400000 + 1;
+                        let nbr = (new Date(end).getTime() - new Date(start).getTime()) / 86400000 + 1;
                         let tpm = new Date(start).getDay();
                         if (tpm === 0) {
                             tpm = 7;
                         }
                         if (tempEvents[i]["nbr-day"] > 8 - tpm) {
                             tempEvents[i]["nbr-day"] = 8 - tpm;
-                            //push les events des autres semaines
+                            nbr = nbr - (8 - tpm);
+                            let k = 0;
+                            while (nbr > 0) {
+                                let tmpEvt = JSON.parse(JSON.stringify(tempEvents[i]));
+                                tmpEvt["display_start"] = Math.floor(new Date(new Date(start).setDate(new Date(start).getDate() + (8 - tpm) + 7 * k)).getTime() / 1000);
+                                if (nbr >= 7) {
+                                    tmpEvt["nbr-day"] = 7;
+                                    nbr = nbr - 7;
+                                } else {
+                                    tmpEvt["nbr-day"] = nbr;
+                                    nbr = 0;
+                                }
+                                eventToAdd.push(tmpEvt);
+                                k++;
+                            }
+                            /*for (let i = 0; 0 <= nbr - 7 * i; i++) {
+                                let tmpEvt = JSON.parse(JSON.stringify(tempEvents[i]));
+                                tmpEvt["display_start"] = new Date(start).getTime() + 86400000 * (tpm + 7 * i);
+                            }*/
                         }
                         /*for (let j = 1; end >= start + (8 - tpm) * j * 86400000; j++) {
                             let nbr = (end - (start + (8 - tpm) * j * 86400000)) / 86400000 + 1;
