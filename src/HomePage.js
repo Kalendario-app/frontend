@@ -235,7 +235,7 @@ export const HomePage = () => {
                         </div>
                         <p>We use sate of the art end-to-end encryption in order to make it impossible for anyone other than you to see what's you've planned.</p>
                         <div className="home-3-img">
-                            <img alt="padlock image" src={Lock} />
+                            <img alt="padlock" src={Lock} />
                             <div className="home-3-events">
                                 <div className="home-1-event">
                                     <label>Meeting with Sam</label>

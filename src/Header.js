@@ -23,7 +23,6 @@ export const Header = (props) => {
 
     const [isDrop, setisDrop] = useState(false);
     const [selected, setSelected] = useState(0);
-    const [userName, setUserName] = useState(props.user.username);
     const [file, setFile] = useState(null);
     const [calendarNbr, setCalendarNbr] = useState(0);
     const labels = ["Account", "Settings", "Import/Export"];
@@ -53,9 +52,9 @@ export const Header = (props) => {
     }
 
     function generateRecurenceEndNbr(recurenceEndType, recurenceEndNbr, start, recurence, recurenceNbr) {
-        if (recurenceEndType == 2) {
+        if (recurenceEndType === 2) {
             return new Date(recurenceEndNbr).getTime();
-        } else if (recurenceEndType == 1) {
+        } else if (recurenceEndType === 1) {
             let dateEnd = new Date(start);
             switch (recurence) {
                 case 1:
@@ -70,6 +69,8 @@ export const Header = (props) => {
                 case 4:
                     dateEnd.setFullYear(dateEnd.getFullYear() + recurenceNbr * (recurenceEndNbr - 1));
                     break;
+                default:
+                    dateEnd.setDate(dateEnd.getDate() + recurenceNbr * (recurenceEndNbr - 1));
             }
             return dateEnd.getTime();
         } else {
@@ -138,6 +139,7 @@ export const Header = (props) => {
         for (let i = 0; i < data.length; i++) {
             let event = data[i];
             api.post("/create", event)
+                //eslint-disable-next-line
                 .then((res) => {
                     if (res.status === 201) {
                         nbr++;

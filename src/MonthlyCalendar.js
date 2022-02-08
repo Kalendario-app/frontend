@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MonthlyCalendarDay } from "./MonthlyCalendarDay";
 import { MonthlyTopbar } from "./MonthlyTopbar";
 import { AddPopup } from "./AddPopup";

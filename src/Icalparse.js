@@ -1,6 +1,6 @@
 const iCalDateParser = require("ical-date-parser");
 const rrule = require("rrule");
-
+/*eslint-disable*/
 export function parseString(st, max) {
     let lines = getLines(st);
     let event_count = 0;

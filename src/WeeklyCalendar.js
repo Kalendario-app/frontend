@@ -500,12 +500,12 @@ export const WeeklyCalendar = (props) => {
         );
     };
 
+    /*eslint-disable-next-line*/
     var ajd = new Date();
 
-    //! remplacer innerHeight/100 par la valeur défini de hauteur de weekly
     useEffect(() => {
         document.getElementById("weekly-scroll-cont").scrollTop = hu * 6 * (ajd.getHours() + ajd.getMinutes() / 60 - 2);
-    }, []);
+    }, [hu, ajd]);
 
     return (
         <div className="weekly-calendar" style={{ height: 82 * hu + "px" }}>
