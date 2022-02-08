@@ -482,7 +482,7 @@ header img:hover {
 .monthly-item {
     display: flex;
     flex-wrap: wrap;
-    /*min-height: 30%;*/
+    min-height: 1.8em;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;

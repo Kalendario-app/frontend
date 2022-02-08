@@ -155,6 +155,27 @@ export const MonthlyCalendarDay = (props) => {
         props.open(nbr);
     }
 
+    // for all item in eventList, if key is the same and one is blank, the blank get pushed back
+    eventList.sort((a, b) => {
+        if (a["key"] === b["key"]) {
+            if (a["blank"] && !b["blank"]) {
+                return 1;
+            } else if (!a["blank"] && b["blank"]) {
+                return -1;
+            } else {
+                return 0;
+            }
+        } else {
+            if (a["blank"] && !b["blank"]) {
+                return 1;
+            } else if (!a["blank"] && b["blank"]) {
+                return -1;
+            } else {
+                return a["start_date"] - b["start_date"];
+            }
+        }
+    });
+
     const MonthlyCalendarItem = (props) => {
         // eslint-disable-next-line
         const [{ isDragging }, drag] = useDrag(() => ({

@@ -70,10 +70,14 @@ export const MonthlyCalendar = (props) => {
                 tempStockage.push(event);
             } else if (event["display_start"] >= start_date && event["display_start"] <= end_date) {
                 tempStockage.push(event);
-            } else if (event["end_date"] >= start_date && event["end_date"] <= end_date && false) {
-                tempStockage.push(event);
-            } else if (event["start_date"] <= start_date && event["end_date"] >= end_date && false) {
-                tempStockage.push(event);
+            } else if (event["end_date"] >= start_date && event["end_date"] <= end_date) {
+                let tmpEv = JSON.parse(JSON.stringify(event));
+                tmpEv["blank"] = true;
+                tempStockage.push(tmpEv);
+            } else if (event["start_date"] <= start_date && event["end_date"] >= end_date) {
+                let tmpEv = JSON.parse(JSON.stringify(event));
+                tmpEv["blank"] = true;
+                tempStockage.push(tmpEv);
             }
         }
         while (tempStockage.length < 4) {
