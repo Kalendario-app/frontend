@@ -208,7 +208,7 @@ export const AddPopup = (props) => {
             if (name === "") {
                 setNameError(true);
             }
-            if (start > end) {
+            if (new Date(end) <= new Date(start)) {
                 setStartEndError(true);
             }
             //todo treat date error
