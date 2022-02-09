@@ -59,7 +59,6 @@ export const CalendarSelect = (props) => {
 
     function calFilter(event) {
         if (event["start_date"] > 86400) {
-            console.log(event);
             return true;
         } else {
             return false;
