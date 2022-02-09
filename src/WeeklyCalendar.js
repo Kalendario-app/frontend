@@ -582,7 +582,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(1).getDate()}</h3>
+                                <h3>{rowToJour(1).getDate() + 1}</h3>
                                 <p>Tuesday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -612,7 +612,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(2).getDate()}</h3>
+                                <h3>{rowToJour(2).getDate() + 1}</h3>
                                 <p>Wednesday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -642,7 +642,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(3).getDate()}</h3>
+                                <h3>{rowToJour(3).getDate() + 1}</h3>
                                 <p>Thursday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -672,7 +672,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(4).getDate()}</h3>
+                                <h3>{rowToJour(4).getDate() + 1}</h3>
                                 <p>Friday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -702,7 +702,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(5).getDate()}</h3>
+                                <h3>{rowToJour(5).getDate() + 1}</h3>
                                 <p>Saturday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -732,7 +732,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(6).getDate()}</h3>
+                                <h3>{rowToJour(6).getDate() + 1}</h3>
                                 <p>Sunday</p>
                             </div>
                             <div className="entire-day-cell">
