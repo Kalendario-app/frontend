@@ -1,6 +1,7 @@
 /build
 /node_modules
 push.sh
+django.sh
 
 
 ## Ignore Visual Studio temporary files, build results, and
