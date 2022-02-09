@@ -224,7 +224,7 @@ export const MonthlyCalendarDay = (props) => {
             onDoubleClick={() => props.ajouterIci()}>
             <div className="monthly-number-container">
                 <p
-                    className="monthly-number"
+                    className={"monthly-number" + (isToday ? " today-num-bubble" : "")}
                     variant="h5"
                     style={{
                         textAlign: "right",
