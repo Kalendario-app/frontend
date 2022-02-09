@@ -45,7 +45,7 @@ function toHtmlDate(dte, fll) {
 }
 
 describe("adding event", () => {
-    /*it("user can add event via the button", () => {
+    it("user can add event via the button", () => {
         login();
         cy.get(".monthly-top-button button").click();
         cy.get("input[placeholder='Event name']").type("test event");
@@ -117,7 +117,7 @@ describe("adding event", () => {
         cy.get(".detail-drop-delete").click();
         cy.wait(500);
         cy.get("@dayCard").should("not.contain", "test event");
-    });*/
+    });
     it("user cant add incorrect events (empty, end after start, end and start at the same time)", () => {
         login();
         cy.get(".monthly-top-button button").click();
