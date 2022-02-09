@@ -743,6 +743,18 @@ header img:hover {
 .login-card h1 + input {
     margin-top: 2em;
 }
+.login-btn-container div div {
+    height: 2em;
+    width: 2em;
+    border: solid;
+    border-width: 0.2em;
+    border-color: #00000000;
+    border-top-color: var(--white-1);
+    border-right-color: var(--white-1);
+    border-radius: 50em;
+    animation: spinnerNoCol 7s infinite;
+    color: var(--white-1);
+}
 @keyframes leftAppear {
     0% {
         opacity: 0;
@@ -2044,6 +2056,17 @@ input[type="number"]::-webkit-outer-spin-button {
     }
     50% {
         border-top-color: var(--main-color);
+        transform: rotate(calc(360deg * 3));
+    }
+    100% {
+        transform: rotate(calc(360deg * 4));
+    }
+}
+@keyframes spinnerNoCol {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
         transform: rotate(calc(360deg * 3));
     }
     100% {
