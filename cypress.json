@@ -1,4 +1,5 @@
 {
+  "projectId": "qtobu5",
   "componentFolder": "src",
   "testFiles": "**/*.spec.{js,ts,jsx,tsx}"
 }
