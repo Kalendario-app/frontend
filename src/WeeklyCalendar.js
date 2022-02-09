@@ -133,6 +133,7 @@ export const WeeklyCalendar = (props) => {
         //events[i]['dayNbr'] = Math.floor(durationT / 86400)
         events[i]["dayNbr"] = Math.floor(events[i]["end_date"] / 86400) - Math.floor(events[i]["start_date"] / 86400);
         if (events[i]["dayNbr"] > 0) {
+            console.log("object");
             events[i]["height"] = 3 * hu + "px";
             events[i]["longueur"] = events[i]["dayNbr"] + "00%";
             let lmao = start_dateT.getDay() - 1;
@@ -401,8 +402,9 @@ export const WeeklyCalendar = (props) => {
                 isDragging: !!monitor.isDragging(),
             }), // collect is called whenever the drag starts or stops
         }));
+        console.log(props);
 
-        if (props.double === -1 || props.isDouble === true) {
+        if (props.double === -1 || props.isDouble === true || props.double === undefined) {
             return (
                 <div
                     onClick={() => openPopup()}
@@ -506,6 +508,8 @@ export const WeeklyCalendar = (props) => {
     useEffect(() => {
         document.getElementById("weekly-scroll-cont").scrollTop = hu * 6 * (ajd.getHours() + ajd.getMinutes() / 60 - 2);
     }, [hu, ajd]);
+
+    console.log(isTop, topWeeklyStockage);
 
     return (
         <div className="weekly-calendar" style={{ height: 82 * hu + "px" }}>
