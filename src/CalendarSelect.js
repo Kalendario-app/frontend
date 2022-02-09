@@ -58,7 +58,8 @@ export const CalendarSelect = (props) => {
     }
 
     function calFilter(event) {
-        if (event["start_date"] > 2) {
+        if (event["start_date"] > 86400) {
+            console.log(event);
             return true;
         } else {
             return false;
@@ -175,7 +176,7 @@ export const CalendarSelect = (props) => {
                             <h2>Delete Event</h2>
                             <p>
                                 Are you sure to delete {isDelete}? It will destroy every event inside of it! (It has{" "}
-                                {props.stockageCalendar[isDelete].filter(calFilter).length - 1} event
+                                {props.stockageCalendar[isDelete].filter((x) => calFilter(x)).length} event
                                 {props.stockageCalendar[isDelete].length < 2 ? null : "s"} !)
                             </p>
                             <div className="calendar-delete-btn">
