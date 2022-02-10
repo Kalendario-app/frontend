@@ -743,6 +743,18 @@ header img:hover {
 .login-card h1 + input {
     margin-top: 2em;
 }
+.login-btn-container div div {
+    height: 2em;
+    width: 2em;
+    border: solid;
+    border-width: 0.2em;
+    border-color: #00000000;
+    border-top-color: var(--white-1);
+    border-right-color: var(--white-1);
+    border-radius: 50em;
+    animation: spinnerNoCol 7s infinite;
+    color: var(--white-1);
+}
 @keyframes leftAppear {
     0% {
         opacity: 0;
@@ -1145,17 +1157,17 @@ header img:hover {
 .weekly-now-marker {
     position: absolute;
     width: 100%;
-    height: 2px;
-    background-color: var(--main-color);
+    height: 5px;
+    background-color: var(--secondary-color);
     z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 .weekly-now-marker-inner {
-    background-color: var(--main-color);
-    width: 1em;
-    height: 1em;
+    background-color: var(--secondary-color);
+    width: 1.2em;
+    height: 1.2em;
     border-radius: 50%;
     transform: translateX(-0.5em);
 }
@@ -1661,6 +1673,33 @@ input[type="number"]::-webkit-outer-spin-button {
     font-weight: 400;
     margin-bottom: 0.6em;
 }
+.code-popup a {
+    font-size: var(--16px);
+    font-weight: 400;
+    margin-bottom: 0.6em;
+    color: var(--secondary-color);
+    text-decoration: underline;
+    cursor: pointer;
+}
+.verif-cross {
+    font-size: var(--18px);
+    padding: 5px;
+    width: 1.7em;
+    height: 1.7em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    z-index: 100;
+}
+.verif-cross:hover {
+    cursor: pointer;
+    animation: navButton 0.2 1;
+    background-color: var(--white-4);
+    border-radius: 50px;
+}
 .code-popup input {
     font-size: var(--14px);
     padding: 0.5em;
@@ -2044,6 +2083,17 @@ input[type="number"]::-webkit-outer-spin-button {
     }
     50% {
         border-top-color: var(--main-color);
+        transform: rotate(calc(360deg * 3));
+    }
+    100% {
+        transform: rotate(calc(360deg * 4));
+    }
+}
+@keyframes spinnerNoCol {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
         transform: rotate(calc(360deg * 3));
     }
     100% {

@@ -10,10 +10,12 @@ export const Login = () => {
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
     const [isError, setIsError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     function submitData() {
         var mdp = login + "sel" + password;
         mdp = sha256(mdp);
+        setIsLoading(true);
         api.get("/login?mdp=" + mdp)
             .then((response) => {
                 if (response.status === 200) {
@@ -23,6 +25,7 @@ export const Login = () => {
             .catch((err) => {
                 console.log(err);
                 setIsError(true);
+                setIsLoading(false);
             });
     }
     function redirectHome() {
@@ -68,14 +71,23 @@ export const Login = () => {
                         />
                     </div>
                     <div className="login-submit">
-                        <Button
-                            className="login-submit-btn"
+                        <button
+                            className="button-full login-submit-btn"
                             full
                             txt="Login"
+                            style={{ color: isLoading ? "#00000000" : "" }}
                             onClick={() => {
                                 submitData();
-                            }}
-                        />
+                            }}>
+                            {isLoading ? (
+                                <>
+                                    T
+                                    <div className="login-loader" />T
+                                </>
+                            ) : (
+                                "Login"
+                            )}
+                        </button>
                     </div>
                 </div>
             </div>

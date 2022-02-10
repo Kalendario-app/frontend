@@ -133,6 +133,7 @@ export const WeeklyCalendar = (props) => {
         //events[i]['dayNbr'] = Math.floor(durationT / 86400)
         events[i]["dayNbr"] = Math.floor(events[i]["end_date"] / 86400) - Math.floor(events[i]["start_date"] / 86400);
         if (events[i]["dayNbr"] > 0) {
+            console.log("object");
             events[i]["height"] = 3 * hu + "px";
             events[i]["longueur"] = events[i]["dayNbr"] + "00%";
             let lmao = start_dateT.getDay() - 1;
@@ -401,8 +402,9 @@ export const WeeklyCalendar = (props) => {
                 isDragging: !!monitor.isDragging(),
             }), // collect is called whenever the drag starts or stops
         }));
+        console.log(props);
 
-        if (props.double === -1 || props.isDouble === true) {
+        if (props.double === -1 || props.isDouble === true || props.double === undefined) {
             return (
                 <div
                     onClick={() => openPopup()}
@@ -507,6 +509,8 @@ export const WeeklyCalendar = (props) => {
         document.getElementById("weekly-scroll-cont").scrollTop = hu * 6 * (ajd.getHours() + ajd.getMinutes() / 60 - 2);
     }, [hu, ajd]);
 
+    console.log(isTop, topWeeklyStockage);
+
     return (
         <div className="weekly-calendar" style={{ height: 82 * hu + "px" }}>
             <WeeklyTopbar
@@ -578,7 +582,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(1).getDate()}</h3>
+                                <h3>{rowToJour(1).getDate() + 1}</h3>
                                 <p>Tuesday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -608,7 +612,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(2).getDate()}</h3>
+                                <h3>{rowToJour(2).getDate() + 1}</h3>
                                 <p>Wednesday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -638,7 +642,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(3).getDate()}</h3>
+                                <h3>{rowToJour(3).getDate() + 1}</h3>
                                 <p>Thursday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -668,7 +672,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(4).getDate()}</h3>
+                                <h3>{rowToJour(4).getDate() + 1}</h3>
                                 <p>Friday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -698,7 +702,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(5).getDate()}</h3>
+                                <h3>{rowToJour(5).getDate() + 1}</h3>
                                 <p>Saturday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -728,7 +732,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(6).getDate()}</h3>
+                                <h3>{rowToJour(6).getDate() + 1}</h3>
                                 <p>Sunday</p>
                             </div>
                             <div className="entire-day-cell">
