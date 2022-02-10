@@ -134,7 +134,7 @@ export const WeeklyCalendar = (props) => {
         events[i]["dayNbr"] = Math.floor(events[i]["end_date"] / 86400) - Math.floor(events[i]["start_date"] / 86400);
         if (events[i]["dayNbr"] > 0) {
             console.log("object");
-            events[i]["height"] = 3 * hu + "px";
+            events[i]["height"] = 4 * hu + "px";
             events[i]["longueur"] = events[i]["dayNbr"] + "00%";
             let lmao = start_dateT.getDay() - 1;
             if (lmao < 0) {
@@ -417,7 +417,7 @@ export const WeeklyCalendar = (props) => {
                         bottom: props.absolute ? null : props.position,
                         left: props.isDouble && props.double !== -1 ? "2em" : null,
                         boxShadow: props.isDouble && props.double !== -1 ? "-17px -1px 41px 2px #3b3b3b27" : null,
-                        minHeight: props.duration,
+                        height: props.duration,
                         padding: props.padding ? "5px" : "0px",
                         backgroundColor: props.backColor,
                         borderColor: props.borderColor,
@@ -582,7 +582,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(1).getDate() + 1}</h3>
+                                <h3>{rowToJour(1).getDate()}</h3>
                                 <p>Tuesday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -612,7 +612,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(2).getDate() + 1}</h3>
+                                <h3>{rowToJour(2).getDate()}</h3>
                                 <p>Wednesday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -642,7 +642,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(3).getDate() + 1}</h3>
+                                <h3>{rowToJour(3).getDate()}</h3>
                                 <p>Thursday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -672,7 +672,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(4).getDate() + 1}</h3>
+                                <h3>{rowToJour(4).getDate()}</h3>
                                 <p>Friday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -702,7 +702,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(5).getDate() + 1}</h3>
+                                <h3>{rowToJour(5).getDate()}</h3>
                                 <p>Saturday</p>
                             </div>
                             <div className="entire-day-cell">
@@ -732,7 +732,7 @@ export const WeeklyCalendar = (props) => {
                                             : "inherit",
                                     minHeight: 6 * hu + "px",
                                 }}>
-                                <h3>{rowToJour(6).getDate() + 1}</h3>
+                                <h3>{rowToJour(6).getDate()}</h3>
                                 <p>Sunday</p>
                             </div>
                             <div className="entire-day-cell">
