@@ -4,7 +4,7 @@ import { Checkbox } from "./Checkbox";
 import { Button } from "./Button";
 import { api, decryptCode } from "./Main";
 import axios from "axios";
-import AES, { SHA256 } from "crypto-js";
+import AES from "crypto-js";
 import { useCookies } from "react-cookie";
 import { sha256 } from "js-sha256";
 
@@ -68,6 +68,7 @@ export const AddPopup = (props) => {
     const [recurenceEndType, setRecurenceEndType] = useState(0);
     const [recurenceEndNbr, setRecurenceEndNbr] = useState(0);
     const [canSub, setCanSub] = useState(true);
+    const [endChanged, setEndChanged] = useState(false);
 
     const [isAdvenced, setIsAdvenced] = useState(false);
     const [advencedChanged, setAdvencedChanged] = useState(false);
@@ -235,11 +236,15 @@ export const AddPopup = (props) => {
         if (tempH < 10) {
             tempH = "0" + tempH;
         }
+        let tempMn = date.getMinutes();
+        if (tempMn < 10) {
+            tempMn = "0" + tempMn;
+        }
         let temp;
         if (fullDay) {
             temp = date.getFullYear() + "-" + tempM + "-" + tempD;
         } else {
-            temp = date.getFullYear() + "-" + tempM + "-" + tempD + "T" + tempH + ":00:00";
+            temp = date.getFullYear() + "-" + tempM + "-" + tempD + "T" + tempH + ":" + tempMn + ":00";
         }
         return temp;
     }
@@ -298,6 +303,9 @@ export const AddPopup = (props) => {
                         <input
                             value={toHtmlDate(start)}
                             onChange={(e) => {
+                                if (!endChanged) {
+                                    setEnd(new Date(new Date(e.target.value).getTime() + 3600000));
+                                }
                                 setDateChanged(true);
                                 setStart(e.target.value);
                             }}
@@ -312,6 +320,7 @@ export const AddPopup = (props) => {
                                 value={toHtmlDate(end)}
                                 onChange={(e) => {
                                     setDateChanged(true);
+                                    setEndChanged(true);
                                     setEnd(e.target.value);
                                 }}
                                 style={{ borderColor: colorCodeConv[color] }}
@@ -332,6 +341,7 @@ export const AddPopup = (props) => {
                                     value={toHtmlDate(end)}
                                     onChange={(e) => {
                                         setDateChanged(true);
+                                        setEndChanged(true);
                                         setEnd(e.target.value);
                                     }}
                                     style={{

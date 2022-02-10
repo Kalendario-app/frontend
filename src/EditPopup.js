@@ -251,11 +251,15 @@ export const EditPopup = (props) => {
         if (tempH < 10) {
             tempH = "0" + tempH;
         }
+        let tempMin = date.getMinutes();
+        if (tempMin < 10) {
+            tempMin = "0" + tempMin;
+        }
         let temp;
         if (fullDay) {
             temp = date.getFullYear() + "-" + tempM + "-" + tempD;
         } else {
-            temp = date.getFullYear() + "-" + tempM + "-" + tempD + "T" + tempH + ":00:00";
+            temp = date.getFullYear() + "-" + tempM + "-" + tempD + "T" + tempH + ":" + tempMin + ":00";
         }
         return temp;
     }

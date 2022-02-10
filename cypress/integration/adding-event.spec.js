@@ -35,11 +35,15 @@ function toHtmlDate(dte, fll) {
     if (tempH < 10) {
         tempH = "0" + tempH;
     }
+    let tempMn = date.getMinutes();
+    if (tempMn < 10) {
+        tempMn = "0" + tempMn;
+    }
     let temp;
     if (flDay) {
         temp = date.getFullYear() + "-" + tempM + "-" + tempD;
     } else {
-        temp = date.getFullYear() + "-" + tempM + "-" + tempD + "T" + tempH + ":00";
+        temp = date.getFullYear() + "-" + tempM + "-" + tempD + "T" + tempH + ":" + tempMn;
     }
     return temp;
 }
