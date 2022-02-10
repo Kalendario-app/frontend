@@ -13,6 +13,10 @@ function login() {
             cy.get(".input-contained").type("test");
             cy.get(".code-in-line button").click();
         }
+        cy.wait(1000);
+        if (body.find(".verif-cross").length > 0) {
+            cy.get(".verif-cross").click();
+        }
     });
 }
 function toHtmlDate(dte, fll) {
