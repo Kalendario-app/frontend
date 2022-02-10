@@ -70,6 +70,8 @@ export const Main = (props) => {
         "displayList": [],
         "isEdit": null,
         "cantConnect": false,
+        "resendDisplay": true,
+        "bypassVerif": false,
     });
 
     var varCode = "";
@@ -97,7 +99,7 @@ export const Main = (props) => {
         if (i > 1) {
             setUpdate(new Date().getTime());
         }
-        if ("isCode" in changes || "isCodeSave" in changes || "isEdit" in changes || "cantConnect" in changes) {
+        if (("isCode" in changes || "isCodeSave" in changes || "isEdit" in changes || "cantConnect" in changes || "resendDisplay" in changes, "bypassVerif" in changes)) {
             setUpdate(new Date().getTime()); //force update sinon is code s'affiche pas
         }
     }
@@ -835,6 +837,37 @@ export const Main = (props) => {
                         />
                     ) : (
                         <></>
+                    )}
+                    {state.user.verified || state.bypassVerif ? null : (
+                        <>
+                            <div className="code-popup-container">
+                                <div className="code-popup">
+                                    <h1>Verify your account !</h1>
+                                    <p>We've sent you a mail containing a link to verify your account.</p>
+                                    <p>
+                                        If you don't receive it, check your spam folder. We can also{" "}
+                                        <a
+                                            style={{ color: state.resendDisplay ? "" : "var(--dark-color)", cursor: state.resendDisplay ? "pointer" : "not-allowed" }}
+                                            onClick={() => {
+                                                changeState({ "resendDisplay": false });
+                                                api.get("/re-verif")
+                                                    .then((res) => {})
+                                                    .catch((err) => {
+                                                        console.log(err);
+                                                    });
+                                            }}>
+                                            resend it
+                                        </a>
+                                    </p>
+                                    <i
+                                        className="fas fa-times verif-cross"
+                                        onClick={() => {
+                                            changeState({ "bypassVerif": true });
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </>
                     )}
                     {state.isCode ? (
                         <div className="code-popup-container">
