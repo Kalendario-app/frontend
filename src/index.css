@@ -1142,7 +1142,7 @@ header img:hover {
     border-left: solid;
     border-width: 3px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     flex-wrap: wrap;
     cursor: pointer;
     -webkit-border-top-right-radius: 20px;
@@ -1152,7 +1152,7 @@ header img:hover {
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
     z-index: 10;
-    /* animation: eventAppear 0.3s 1; */
+    overflow-y: scroll;
 }
 .weekly-now-marker {
     position: absolute;
