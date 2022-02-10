@@ -388,7 +388,7 @@ export const WeeklyCalendar = (props) => {
                 return props.absolute ? props.position : null;
             } else {
                 let num = parseInt(props.position) + props.double * parseInt(props.duration);
-                return num * hu + "px";
+                return num + "px";
             }
         }
 
@@ -402,7 +402,6 @@ export const WeeklyCalendar = (props) => {
                 isDragging: !!monitor.isDragging(),
             }), // collect is called whenever the drag starts or stops
         }));
-        console.log(props);
 
         if (props.double === -1 || props.isDouble === true || props.double === undefined) {
             return (
