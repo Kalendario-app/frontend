@@ -10,8 +10,9 @@ jobs:
               uses: cypress-io/github-action@v2
               with:
                   start: npm start
+                  record: true
               env:
                   email: ${{ secrets.TEST_EMAIL }}
                   password: ${{ secrets.TEST_PASS }}
                   code: ${{ secrets.TEST_PASS }}
-              record: true
+                  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_KEY }}
