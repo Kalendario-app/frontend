@@ -11,3 +11,7 @@ jobs:
               with:
                   build: npm run build
                   start: npm start
+              env:
+                  email: ${{ secrets.TEST_EMAIL }}
+                  password: ${{ secrets.TEST_PASS }}
+                  code: *{{ secrets.TEST_PASS }}
