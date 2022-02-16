@@ -14,3 +14,4 @@ jobs:
                   email: ${{ secrets.TEST_EMAIL }}
                   password: ${{ secrets.TEST_PASS }}
                   code: ${{ secrets.TEST_PASS }}
+              record: true
