@@ -12,7 +12,7 @@ jobs:
                   start: npm start
                   record: true
               env:
-                  email: ${{ secrets.TEST_EMAIL }}
-                  password: ${{ secrets.TEST_PASS }}
-                  code: ${{ secrets.TEST_PASS }}
+                  CYPRESS_email: ${{ secrets.TEST_EMAIL }}
+                  CYPRESS_password: ${{ secrets.TEST_PASS }}
+                  CYPRESS_code: ${{ secrets.TEST_PASS }}
                   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_KEY }}
