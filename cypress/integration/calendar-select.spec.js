@@ -2,10 +2,9 @@ describe("calendar select", () => {
     it("event appear and disapear when click on the select calendar", () => {
         cy.login();
         cy.addBlankEvent();
-        cy.wait(500);
-        cy.get(".today-num-bubble").as("bubble");
-        cy.get("@bubble").parent().parent().as("dayCard");
-        cy.wait(500);
+        cy.wait(10);
+        cy.get(".monthly-card-today").as("dayCard");
+        cy.wait(10);
         cy.get("@dayCard").should("contain", "test event");
         cy.get(".check-container").click();
         cy.get("@dayCard").should("not.contain", "test event");
@@ -14,8 +13,9 @@ describe("calendar select", () => {
     });
     it("adding, editing and deleting a calendar work", () => {
         cy.login();
+        cy.wait(10);
         cy.get("#calendar-add").click();
-        cy.wait(500);
+        cy.wait(10);
         cy.get(".input-open").type("test calendar");
         cy.get(".calendar-add-div > .button-full").click();
         cy.get(".calendar-select").should("contain", "test calendar");
@@ -39,9 +39,9 @@ describe("calendar select", () => {
         cy.get(".calendar-delete-popup > p").should("contain", "Are you sure to delete Default Calendar? It will destroy every event inside of it! (It has 2 events !)");
         cy.get(".last-button").click();
         cy.wait(10);
-        cy.get("#calendar-add").as("calendarAdd");
-        cy.wait(500);
-        cy.get("@calendarAdd").click();
+        cy.get("#calendar-add").click();
+        cy.get(".input-open").should("be.enabled");
+        cy.wait(10);
         cy.get(".input-open").type("test calendar");
         cy.get(".calendar-add-div > .button-full").click();
         cy.addBlankEvent();

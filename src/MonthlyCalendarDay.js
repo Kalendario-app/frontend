@@ -220,7 +220,7 @@ export const MonthlyCalendarDay = (props) => {
     return (
         <div
             ref={drop}
-            className={isOver ? "monthly-day-card monthly-drag-card " + props.annim : "monthly-day-card " + props.annim}
+            className={isOver ? "monthly-day-card monthly-drag-card " + props.annim : "monthly-day-card " + props.annim + (isToday ? " monthly-card-today" : "")}
             onDoubleClick={() => props.ajouterIci()}>
             <div className="monthly-number-container">
                 <p

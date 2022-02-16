@@ -22,7 +22,6 @@ it("mini-calendar", () => {
     cy.addBlankEvent();
     cy.get(".mini-selected > .mini-dot div").should("have.class", "mini-dot1");
     cy.addBlankEvent();
-    cy.wait(1000);
     cy.get(".mini-selected > .mini-dot div + div").should("have.class", "mini-dot2");
     cy.get(".fa-trash").click();
     cy.get(".last-button").click();
