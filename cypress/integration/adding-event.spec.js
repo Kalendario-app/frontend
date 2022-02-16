@@ -65,7 +65,7 @@ describe("adding event", () => {
     });
     it("user can add event via double click", () => {
         cy.login();
-        cy.wait(10);
+        cy.wait(1000);
         cy.get(".monthly-card-today").trigger("dblclick", "center");
         cy.get("input[placeholder='Event name']").type("test event");
         cy.intercept("https://api.kalendario.app/api/create").as("add");
