@@ -2,6 +2,9 @@
 /node_modules
 push.sh
 django.sh
+cypress.env.json
+/cypress/videos
+/cypress/screenshots
 
 
 ## Ignore Visual Studio temporary files, build results, and

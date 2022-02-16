@@ -1,24 +1,5 @@
-import { findByRole, findByPlaceholderText, getByAltText } from "@testing-library/react";
-
 const monthConv = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-function login() {
-    cy.visit("127.0.0.1:3000/login");
-    cy.get("input[type=email]").type("test@test.com");
-    cy.get("input[type=password]").type("test");
-    cy.get(".login-submit button").click();
-    cy.wait(10);
-    cy.get("body").then((body) => {
-        if (body.find(".code-in-line").length > 0) {
-            cy.get(".input-contained").type("test");
-            cy.get(".code-in-line button").click();
-        }
-        cy.wait(1000);
-        if (body.find(".verif-cross").length > 0) {
-            cy.get(".verif-cross").click();
-        }
-    });
-}
 function toHtmlDate(dte, fll) {
     var flDay;
     if (fll !== undefined) {
@@ -54,13 +35,17 @@ function toHtmlDate(dte, fll) {
 
 describe("adding event", () => {
     it("user can add event via the button", () => {
-        login();
+        cy.login();
         cy.get(".monthly-top-button button").click();
         cy.get("input[placeholder='Event name']").type("test event");
         cy.get(".add-button-line .button-full").click();
         cy.get(".today-num-bubble").as("bubble");
         cy.get("@bubble").parent().parent().as("dayCard");
+        cy.wait(500);
         cy.get("@bubble").should("contain", new Date().getDate());
+        cy.get(".today-num-bubble").as("bubble");
+        cy.get("@bubble").parent().parent().as("dayCard");
+        cy.wait(500);
         cy.get("@dayCard").should("contain", "test event");
         cy.get("@dayCard").find(".monthly-item").eq(0).as("event");
         cy.wait(500);
@@ -77,15 +62,18 @@ describe("adding event", () => {
         cy.get("@dayCard").should("not.contain", "test event");
     });
     it("user can add event via double click", () => {
-        login();
+        cy.login();
         cy.get(".today-num-bubble").as("bubble");
         cy.get("@bubble").parent().parent().as("dayCard");
+        cy.wait(500);
         cy.get("@dayCard").trigger("dblclick");
         cy.get("input[placeholder='Event name']").type("test event");
         cy.get(".add-button-line .button-full").click();
         cy.get(".today-num-bubble").as("bubble");
         cy.get("@bubble").parent().parent().as("dayCard");
+        cy.wait(500);
         cy.get("@bubble").should("contain", new Date().getDate());
+        cy.wait(500);
         cy.get("@dayCard").should("contain", "test event");
         cy.get("@dayCard").find(".monthly-item").eq(0).as("event");
         cy.wait(500);
@@ -98,19 +86,25 @@ describe("adding event", () => {
         cy.get("@eventCalendar").should("contain", "Default Calendar");
         cy.get(".fa-ellipsis-h").click();
         cy.get(".detail-drop-delete").click();
+        cy.wait(1000);
+        cy.get(".today-num-bubble").as("bubble");
+        cy.get("@bubble").parent().parent().as("dayCard");
         cy.wait(500);
         cy.get("@dayCard").should("not.contain", "test event");
     });
     it("user can add event via drag of the button", () => {
-        login();
+        cy.login();
         cy.get(".today-num-bubble").as("bubble");
         cy.get("@bubble").parent().parent().as("dayCard");
+        cy.wait(500);
         cy.get(".monthly-top-button button").drag("@dayCard");
         cy.get("input[placeholder='Event name']").type("test event");
         cy.get(".add-button-line .button-full").click();
+        cy.wait(500);
+        cy.get("@bubble").should("contain", new Date().getDate());
         cy.get(".today-num-bubble").as("bubble");
         cy.get("@bubble").parent().parent().as("dayCard");
-        cy.get("@bubble").should("contain", new Date().getDate());
+        cy.wait(500);
         cy.get("@dayCard").should("contain", "test event");
         cy.get("@dayCard").find(".monthly-item").eq(0).as("event");
         cy.wait(500);
@@ -123,11 +117,13 @@ describe("adding event", () => {
         cy.get("@eventCalendar").should("contain", "Default Calendar");
         cy.get(".fa-ellipsis-h").click();
         cy.get(".detail-drop-delete").click();
+        cy.get(".today-num-bubble").as("bubble");
+        cy.get("@bubble").parent().parent().as("dayCard");
         cy.wait(500);
         cy.get("@dayCard").should("not.contain", "test event");
     });
     it("user cant add incorrect events (empty, end after start, end and start at the same time)", () => {
-        login();
+        cy.login();
         cy.get(".monthly-top-button button").click();
         cy.get(".add-button-line .button-full").click();
         cy.get(".add-error-line").should("contain", "Please provide a name");
