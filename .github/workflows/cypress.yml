@@ -12,8 +12,10 @@ jobs:
               with:
                   start: npm start
                   record: true
+                  wait-on: "http://127.0.0.1:3000"
               env:
                   CYPRESS_email: ${{ secrets.TEST_EMAIL }}
                   CYPRESS_password: ${{ secrets.TEST_PASS }}
                   CYPRESS_code: ${{ secrets.TEST_PASS }}
                   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_KEY }}
+                  CYPRESS_key: ${{ secrets.TEST_KEY }}

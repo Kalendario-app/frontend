@@ -22,21 +22,21 @@ Cypress.Commands.add("deleteEvent", () => {
     cy.get("@dayCard").should("not.contain", "test event");
 });
 Cypress.Commands.add("login", () => {
+    cy.intercept("https://api.kalendario.app/api/").as("api");
     cy.visit("127.0.0.1:3000/calendar");
+    cy.wait("@api");
+    cy.wait(500);
     cy.get("body").then(($body) => {
         if ($body.find("header").length === 0) {
-            cy.visit("127.0.0.1:3000/login");
+            cy.visit("http://127.0.0.1:3000/login");
             cy.get("input[type=email]").type(Cypress.env("email"));
             cy.get("input[type=password]").type(Cypress.env("password"));
-            cy.intercept("https://api.kalendario.app/api/login?mdp=*").as("login");
             cy.intercept("https://api.kalendario.app/api/").as("api");
             cy.get(".login-submit button").click();
             cy.wait("@api");
         }
     });
-    cy.intercept("https://api.kalendario.app/api/").as("api");
-    cy.visit("127.0.0.1:3000/calendar");
-    cy.wait("@api");
+    cy.wait(500);
     cy.get("body").then(($body) => {
         if ($body.find(".code-popup").length !== 0) {
             cy.get(".input-contained").type(Cypress.env("code"));
@@ -46,10 +46,16 @@ Cypress.Commands.add("login", () => {
             cy.get(".verif-cross").click();
         }
     });
-    cy.addBlankEvent();
-    cy.get(".fa-trash").click();
-    cy.intercept("https://api.kalendario.app/api/").as("api");
-    cy.get(".last-button").click();
+    cy.get(".monthly-top-button button").click();
+    cy.get("input[placeholder='Event name']").type("test event");
+    cy.intercept("https://api.kalendario.app/api").as("api");
+    cy.get(".add-button-line .button-full").click();
     cy.wait("@api");
-    cy.wait("@api");
+    cy.get(".fa-trash").each((x, y) => {
+        cy.get(".fa-trash").eq(y).click();
+        cy.intercept("https://api.kalendario.app/api/").as("api");
+        cy.get(".last-button").click();
+        cy.wait("@api");
+    });
+    //use cy.each to click on every bin and then click on the delete button to delete every calendar
 });
