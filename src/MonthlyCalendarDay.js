@@ -158,7 +158,7 @@ export const MonthlyCalendarDay = (props) => {
     }
 
     // for all item in eventList, if key is the same and one is blank, the blank get pushed back
-    eventList.sort((a, b) => {
+    /*eventList.sort((a, b) => {
         if (a["key"] === b["key"]) {
             if (a["blank"] && !b["blank"]) {
                 return 1;
@@ -173,6 +173,14 @@ export const MonthlyCalendarDay = (props) => {
             } else {
                 return a["start_date"] - b["start_date"];
             }
+        }
+    });*/
+
+    eventList.sort((a, b) => {
+        if (a["blank"] && a["start_date"] === undefined) {
+            return 1;
+        } else {
+            return -1;
         }
     });
 
