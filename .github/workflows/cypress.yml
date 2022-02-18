@@ -1,0 +1,19 @@
+name: Github Actions Test
+on: [push, pull_request]
+
+jobs:
+    cypress-run:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: Cypress run
+              uses: cypress-io/github-action@v2
+              with:
+                  start: npm start
+                  record: true
+              env:
+                  CYPRESS_email: ${{ secrets.TEST_EMAIL }}
+                  CYPRESS_password: ${{ secrets.TEST_PASS }}
+                  CYPRESS_code: ${{ secrets.TEST_PASS }}
+                  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_KEY }}
