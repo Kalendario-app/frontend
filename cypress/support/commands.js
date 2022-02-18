@@ -22,18 +22,23 @@ Cypress.Commands.add("deleteEvent", () => {
     cy.get("@dayCard").should("not.contain", "test event");
 });
 Cypress.Commands.add("login", () => {
+    cy.intercept("https://api.kalendario.app/api/").as("api");
     cy.visit("127.0.0.1:3000/calendar");
+    cy.wait("@api");
+    cy.wait(500);
     cy.get("body").then(($body) => {
         if ($body.find("header").length === 0) {
-            /*cy.visit("127.0.0.1:3000/login");
+            cy.log("login");
+            cy.visit("http://127.0.0.1:3000/login");
             cy.get("input[type=email]").type(Cypress.env("email"));
             cy.get("input[type=password]").type(Cypress.env("password"));
             cy.intercept("https://api.kalendario.app/api/").as("api");
             cy.get(".login-submit button").click();
-            cy.wait("@api");*/
-            cy.visit("https://api.kalendario.app/api/login?mdp=" + Cypress.env("key"));
-            cy.visit("http://127.0.0.1:3000");
+            cy.wait("@api");
+        } else {
+            cy.log("not login");
         }
+        cy.log("test");
     });
     cy.wait(500);
     cy.get("body").then(($body) => {
