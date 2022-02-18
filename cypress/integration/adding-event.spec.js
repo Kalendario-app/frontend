@@ -38,9 +38,11 @@ describe("adding event", () => {
         cy.login();
         cy.get(".monthly-top-button button").click();
         cy.get("input[placeholder='Event name']").type("test event");
-        cy.intercept("https://api.kalendario.app/api/create").as("add");
+        cy.intercept("https://api.kalendario.app/api/create").as("create");
+        cy.intercept("https://api.kalendario.app/api/").as("api");
         cy.get(".add-button-line .button-full").click();
-        cy.wait("@add");
+        cy.wait("@create");
+        cy.wait("@api");
         cy.get(".today-num-bubble").as("bubble");
         cy.get(".monthly-card-today").as("dayCard");
         cy.wait(10);
@@ -70,9 +72,11 @@ describe("adding event", () => {
         cy.wait(1000);
         cy.get(".monthly-card-today").trigger("dblclick", "center");
         cy.get("input[placeholder='Event name']").type("test event");
-        cy.intercept("https://api.kalendario.app/api/create").as("add");
+        cy.intercept("https://api.kalendario.app/api/create").as("create");
+        cy.intercept("https://api.kalendario.app/api/").as("api");
         cy.get(".add-button-line .button-full").click();
-        cy.wait("@add");
+        cy.wait("@create");
+        cy.wait("@api");
         cy.get(".monthly-card-today").as("dayCard");
         cy.get(".today-num-bubble").as("bubble");
         cy.wait(10);
@@ -106,9 +110,11 @@ describe("adding event", () => {
         cy.wait(1000);
         cy.get(".monthly-top-button button").drag("@dayCard");
         cy.get("input[placeholder='Event name']").type("test event");
-        cy.intercept("https://api.kalendario.app/api/create").as("add");
+        cy.intercept("https://api.kalendario.app/api/create").as("create");
+        cy.intercept("https://api.kalendario.app/api/").as("api");
         cy.get(".add-button-line .button-full").click();
-        cy.wait("@add");
+        cy.wait("@create");
+        cy.wait("@api");
         cy.get(".today-num-bubble").as("bubble");
         cy.get(".monthly-card-today").as("dayCard");
         cy.get("@bubble").should("contain", new Date().getDate());
@@ -138,13 +144,10 @@ describe("adding event", () => {
         cy.get(".monthly-top-button button").click();
         cy.get(".add-button-line .button-full").click();
         cy.get(".add-error-line").should("contain", "Please provide a name");
-
         cy.get("input[placeholder='Event name']").type("test event");
-
         cy.get(":nth-child(2) > .input-open").type(toHtmlDate(new Date(new Date().getTime() - 86400000)));
         cy.get(".add-button-line .button-full").click();
         cy.get(".add-error-line").should("contain", "Event can't end before starting");
-
         let dte = toHtmlDate(new Date());
         cy.get(":nth-child(5) > :nth-child(1) > .input-open").type(dte);
         cy.get(":nth-child(2) > .input-open").type(dte);

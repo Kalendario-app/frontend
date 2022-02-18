@@ -7,8 +7,10 @@ Cypress.Commands.add("addBlankEvent", () => {
     });
     cy.get(".monthly-top-button button").click();
     cy.get("input[placeholder='Event name']").type("test event");
-    cy.intercept("https://api.kalendario.app/api").as("api");
+    cy.intercept("https://api.kalendario.app/api/create").as("create");
+    cy.intercept("https://api.kalendario.app/api/").as("api");
     cy.get(".add-button-line .button-full").click();
+    cy.wait("@create");
     cy.wait("@api");
 });
 Cypress.Commands.add("deleteEvent", () => {
@@ -48,14 +50,18 @@ Cypress.Commands.add("login", () => {
     });
     cy.get(".monthly-top-button button").click();
     cy.get("input[placeholder='Event name']").type("test event");
-    cy.intercept("https://api.kalendario.app/api").as("api");
+    cy.intercept("https://api.kalendario.app/api/create").as("create");
+    cy.intercept("https://api.kalendario.app/api/").as("api");
     cy.get(".add-button-line .button-full").click();
+    cy.wait("@create");
     cy.wait("@api");
     cy.get(".fa-trash").each((x, y) => {
         cy.get(".fa-trash").eq(y).click();
+        cy.intercept("https://api.kalendario.app/api/eventDelete?key=*").as("delete");
         cy.intercept("https://api.kalendario.app/api/").as("api");
         cy.get(".last-button").click();
+        cy.wait("@delete");
         cy.wait("@api");
     });
-    //use cy.each to click on every bin and then click on the delete button to delete every calendar
+    cy.wait(1000);
 });
