@@ -87,8 +87,10 @@ describe("adding event", () => {
         cy.get("@eventDuration").should("contain", "1h00");
         cy.get("@eventCalendar").should("contain", "Default Calendar");
         cy.get(".fa-ellipsis-h").click();
+        cy.intercept("https://api.kalendario.app/api/eventDelete").as("delete");
         cy.intercept("https://api.kalendario.app/api").as("api");
         cy.get(".detail-drop-delete").click();
+        cy.wait("@delete");
         cy.wait("@api");
         cy.get(".today-num-bubble").as("bubble");
         cy.wait(10);
