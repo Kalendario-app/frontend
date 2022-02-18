@@ -1,6 +1,10 @@
 import "@4tw/cypress-drag-drop";
-import { length } from "file-loader";
 Cypress.Commands.add("addBlankEvent", () => {
+    cy.get("body").then(($body) => {
+        if ($body.find(".monthly-top-button button").length === 0) {
+            cy.login();
+        }
+    });
     cy.get(".monthly-top-button button").click();
     cy.get("input[placeholder='Event name']").type("test event");
     cy.intercept("https://api.kalendario.app/api").as("api");

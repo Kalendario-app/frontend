@@ -35,6 +35,7 @@ function toHtmlDate(dte, fll) {
 
 describe("adding event", () => {
     it("user can add event via the button", () => {
+        cy.wait(1000);
         cy.login();
         cy.get(".monthly-top-button button").click();
         cy.get("input[placeholder='Event name']").type("test event");
