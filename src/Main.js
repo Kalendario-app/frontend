@@ -101,9 +101,7 @@ export const Main = (props) => {
         if (i > 1) {
             setUpdate(new Date().getTime());
         }
-        if (("isCode" in changes || "isCodeSave" in changes || "isEdit" in changes || "cantConnect" in changes || "resendDisplay" in changes, "bypassVerif" in changes)) {
-            setUpdate(new Date().getTime()); //force update sinon is code s'affiche pas
-        }
+        setUpdate(new Date().getTime());
     }
 
     const colorCodeConv = ["#3581B8", "#5BA94C", "#E4C111", "#FF6B35", "#A72A2A"];

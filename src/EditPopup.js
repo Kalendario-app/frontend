@@ -177,8 +177,8 @@ export const EditPopup = (props) => {
             encrypted = AES.AES.encrypt(name, code).toString();
             let data = {
                 "event_name": encrypted,
-                "start_date": new Date(start).getTime() / 1000 + TZoffset + keyGen(code) - 3600,
-                "end_date": new Date(end).getTime() / 1000 + TZoffset + keyGen(code) - 3600,
+                "start_date": new Date(start).getTime() / 1000 + TZoffset + keyGen(code),
+                "end_date": new Date(end).getTime() / 1000 + TZoffset + keyGen(code),
                 "color": color,
                 "key": props.event["key"],
                 "full": true,
@@ -208,8 +208,8 @@ export const EditPopup = (props) => {
             encrypted = AES.AES.encrypt(name, code).toString();
             let data = {
                 "event_name": encrypted,
-                "start_date": (new Date(start).getTime() / 1000 + 2 * TZoffset) * (parseInt(sha256(code)) + parseInt(sha256(code + "test")) + code.length),
-                "end_date": (new Date(tempCustEnd).getTime() / 1000 + 2 * TZoffset) * (parseInt(sha256(code)) + parseInt(sha256(code + "test")) + code.length),
+                "start_date": new Date(start).getTime() / 1000 + TZoffset + keyGen(code),
+                "end_date": new Date(tempCustEnd).getTime(),
                 "color": color,
                 "full": true,
                 "calendar": AES.AES.encrypt(tempCalendar, code).toString(),
