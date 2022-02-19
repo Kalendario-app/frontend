@@ -7,6 +7,7 @@ import { useCookies } from "react-cookie";
 import AES from "crypto-js";
 import { sha256 } from "js-sha256";
 import { BrowserView, MobileView } from "react-device-detect";
+import { Button } from "./Button";
 
 export const Header = (props) => {
     const [cookies] = useCookies();
@@ -30,6 +31,12 @@ export const Header = (props) => {
     const [fileStr, setFileStr] = useState("");
     const [importing, setImporting] = useState(false);
     const [step, setstep] = useState(0);
+    const [oldPass, setOldPass] = useState("");
+    const [newPass, setNewPass] = useState("");
+    const [confirmPass, setConfirmPass] = useState("");
+    const [passMatch, setPassMatch] = useState(false);
+    const [passRight, setPassRight] = useState(false);
+    const [isPassChPop, setIsPassChPop] = useState(false);
 
     var code = decryptCode(varCode, props.user) + " ceci est du sel";
 
@@ -49,6 +56,35 @@ export const Header = (props) => {
             tmp = tmp.slice(0, 7);
         }
         return parseInt(tmp);
+    }
+
+    function changePassword() {
+        if (newPass === confirmPass) {
+            setPassMatch(false);
+            var mdp = props.user["email"] + "sel" + oldPass;
+            mdp = sha256(mdp);
+            api.get("/login?mdp=" + mdp)
+                .then((res) => {
+                    if (res.status === 200) {
+                        setPassRight(false);
+                        var mdp = props.user["email"] + "sel" + newPass;
+                        mdp = sha256(mdp);
+                        api.get("/change-password?mdp=" + mdp).then((res) => {
+                            if (res.status === 200) {
+                                setisDrop(false);
+                                setIsPassChPop(false);
+                            }
+                        });
+                    }
+                })
+                .catch((err) => {
+                    if (err.response.status === 401) {
+                        setPassRight(true);
+                    }
+                });
+        } else {
+            setPassMatch(true);
+        }
     }
 
     function generateRecurenceEndNbr(recurenceEndType, recurenceEndNbr, start, recurence, recurenceNbr) {
@@ -202,6 +238,17 @@ export const Header = (props) => {
                                 <section>
                                     {selected === 0 ? (
                                         <>
+                                            {isPassChPop ? (
+                                                <div className="calendar-delete-container" onClick={() => setIsPassChPop(false)}>
+                                                    <div className="calendar-delete-popup" onClick={(e) => e.stopPropagation()}>
+                                                        <h2>Are you sure that you want to change your password</h2>
+                                                        <div className="calendar-delete-btn">
+                                                            <Button full txt="No take me back" first onClick={() => setIsPassChPop(false)} />
+                                                            <Button full txt="Yes Change it" last onClick={() => changePassword()} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : null}
                                             <h2>Account</h2>
                                             <h3>Name</h3>
                                             <p>{props.user.username}</p>
@@ -209,13 +256,26 @@ export const Header = (props) => {
                                             <p>{props.user.email}</p>
                                             <h3>Change your password</h3>
                                             <p style={{ marginBottom: "0.2em" }}>Your old password</p>
-                                            <input className="input-contained" type="password" placeholder="Old password" />
+                                            {passRight ? <p style={{ color: "var(--error-color)", fontWeight: 500, marginBottom: 0 }}>Wrong password</p> : null}
+                                            <input className="input-contained" type="password" placeholder="Old password" onChange={(e) => setOldPass(e.target.value)} />
                                             <p style={{ marginBottom: "0.2em" }}>Your new password</p>
-                                            <input className="input-contained" type="password" placeholder="New password" />
+                                            <input className="input-contained" type="password" placeholder="New password" onChange={(e) => setNewPass(e.target.value)} />
                                             <p style={{ marginBottom: "0.2em" }}>Your new password again</p>
-                                            <input className="input-contained" type="password" placeholder="Confirm new password" />
-                                            <div class="imp-buttons">
-                                                <button style={{ fontSize: "16px" }} id="import-button" class="imp-button button-full cta-2">
+                                            {passMatch ? (
+                                                <p style={{ color: "var(--error-color)", fontWeight: 500, marginBottom: 0 }}>Both passwords don't match</p>
+                                            ) : null}
+                                            <input
+                                                className="input-contained"
+                                                type="password"
+                                                placeholder="Confirm new password"
+                                                onChange={(e) => setConfirmPass(e.target.value)}
+                                            />
+                                            <div className="imp-buttons">
+                                                <button
+                                                    style={{ fontSize: "16px" }}
+                                                    id="import-button"
+                                                    className="imp-button button-full cta-2"
+                                                    onClick={() => setIsPassChPop(true)}>
                                                     Change password
                                                 </button>
                                             </div>
