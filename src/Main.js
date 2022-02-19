@@ -179,6 +179,7 @@ export const Main = (props) => {
     function submitCode() {
         if (state.code !== "") {
             if (state.codeHash == sha256(state.code)) {
+                console.log(console.log(encryptCode(state.code, state.user)));
                 if (state.isCodeSave) {
                     setCookie("code", encryptCode(state.code, state.user), {
                         path: "/",

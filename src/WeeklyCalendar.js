@@ -41,8 +41,6 @@ export const WeeklyCalendar = (props) => {
 
     const [isDetail, setisDetail] = useState(-1);
     const [isAdd, setisAdd] = useState(false);
-
-    //eslint-disable-next-line
     const [timeAdd, setTimeAdd] = useState(new Date().getTime() / 1000);
 
     const [oldEvent, setOldEvent] = useState();
@@ -335,7 +333,19 @@ export const WeeklyCalendar = (props) => {
                 }),
             }));
 
-            return <div className={isOver ? "weekly-cell monthly-drag-card" : "weekly-cell"} ref={drop} style={{ minHeight: 6 * hu + "px" }} />;
+            return (
+                <div
+                    onDoubleClick={() => {
+                        let tmpDt = new Date(props.date);
+                        tmpDt.setHours(props.hour);
+                        setTimeAdd(tmpDt.getTime() / 1000);
+                        setisAdd(true);
+                    }}
+                    className={isOver ? "weekly-cell monthly-drag-card" : "weekly-cell"}
+                    ref={drop}
+                    style={{ minHeight: 6 * hu + "px" }}
+                />
+            );
         };
 
         return (
