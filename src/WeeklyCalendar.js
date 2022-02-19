@@ -324,8 +324,6 @@ export const WeeklyCalendar = (props) => {
                         "recurenceEndType": evnt["recurenceEndType"],
                         "recurenceEndNbr": evnt["recurenceEndNbr"],
                     };
-                    console.log(newDateS.getTime() / 1000 + 2 * TZoffset);
-                    console.log(parseInt("0" + sha256(fullCode)));
                     api.post("/editEvent", data).then((res) => {
                         if (res.status === 202) {
                             reload();
