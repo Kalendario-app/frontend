@@ -207,6 +207,18 @@ export const Header = (props) => {
                                             <p>{props.user.username}</p>
                                             <h3>Email</h3>
                                             <p>{props.user.email}</p>
+                                            <h3>Change your password</h3>
+                                            <p style={{ marginBottom: "0.2em" }}>Your old password</p>
+                                            <input className="input-contained" type="password" placeholder="Old password" />
+                                            <p style={{ marginBottom: "0.2em" }}>Your new password</p>
+                                            <input className="input-contained" type="password" placeholder="New password" />
+                                            <p style={{ marginBottom: "0.2em" }}>Your new password again</p>
+                                            <input className="input-contained" type="password" placeholder="Confirm new password" />
+                                            <div class="imp-buttons">
+                                                <button style={{ fontSize: "16px" }} id="import-button" class="imp-button button-full cta-2">
+                                                    Change password
+                                                </button>
+                                            </div>
                                             {/*<div className="profil-pic">
                                                 <p>
                                                     {props.user.username[0]}
