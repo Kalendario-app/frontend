@@ -131,7 +131,6 @@ export const WeeklyCalendar = (props) => {
         //events[i]['dayNbr'] = Math.floor(durationT / 86400)
         events[i]["dayNbr"] = Math.floor(events[i]["end_date"] / 86400) - Math.floor(events[i]["start_date"] / 86400);
         if (events[i]["dayNbr"] > 0) {
-            console.log("object");
             events[i]["height"] = 4 * hu + "px";
             events[i]["longueur"] = events[i]["dayNbr"] + "00%";
             let lmao = start_dateT.getDay() - 1;

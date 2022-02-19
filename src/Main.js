@@ -179,7 +179,6 @@ export const Main = (props) => {
     function submitCode() {
         if (state.code !== "") {
             if (state.codeHash == sha256(state.code)) {
-                console.log(console.log(encryptCode(state.code, state.user)));
                 if (state.isCodeSave) {
                     setCookie("code", encryptCode(state.code, state.user), {
                         path: "/",
@@ -279,22 +278,8 @@ export const Main = (props) => {
                                     eventToAdd.push(tmpEvt);
                                     k++;
                                 }
-                                /*for (let i = 0; 0 <= nbr - 7 * i; i++) {
-                                let tmpEvt = JSON.parse(JSON.stringify(tempEvents[i]));
-                                tmpEvt["display_start"] = new Date(start).getTime() + 86400000 * (tpm + 7 * i);
-                            }*/
                             }
                         }
-                        /*for (let j = 1; end >= start + (8 - tpm) * j * 86400000; j++) {
-                            let nbr = (end - (start + (8 - tpm) * j * 86400000)) / 86400000 + 1;
-                            if (nbr <= 7) {
-                                let evt = JSON.parse(JSON.stringify(tempEvents[i]));
-                                evt["display_start"] = Math.floor((start + (8 - tpm) * j * 86400000) / 1000);
-                                console.log(new Date(evt["display_start"] * 1000));
-                                evt["nbr-day"] = nbr;
-                                eventToAdd.push(JSON.parse(JSON.stringify(evt)));
-                            }
-                        }*/
                     }
                     if (tempEvents[i]["recurence"] !== -1) {
                         tempEvents[i]["recurence_nbr"] = parseInt(recuNbr.split("")[1]);
