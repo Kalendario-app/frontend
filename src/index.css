@@ -246,6 +246,12 @@ header img:hover {
     border-radius: 0.6em;
     margin-bottom: 0.5em;
 }
+.profil-pic-drop .input-contained {
+    font-size: var(--14px);
+    padding: 10px;
+    width: 70%;
+    margin-bottom: 0.5em;
+}
 .profil-pic-drop label strong {
     opacity: 0;
 }
