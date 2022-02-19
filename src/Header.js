@@ -13,9 +13,9 @@ export const Header = (props) => {
 
     var varCode = "";
 
-    if (cookies.code !== undefined) {
+    /*if (cookies.code !== undefined) {
         varCode = cookies.code;
-    } else if (sessionStorage.getItem("code") !== null) {
+    } else*/ if (sessionStorage.getItem("code") !== null) {
         varCode = sessionStorage.getItem("code");
     } else {
         varCode = "";

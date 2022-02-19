@@ -77,9 +77,10 @@ export const Main = (props) => {
 
     var varCode = "";
 
-    if (cookies.code !== undefined) {
+    /*if (cookies.code !== undefined) {
         varCode = cookies.code;
-    } else if (sessionStorage.getItem("code") !== null) {
+    } else*/
+    if (sessionStorage.getItem("code") !== null) {
         varCode = sessionStorage.getItem("code");
     } else {
         varCode = "";
@@ -179,7 +180,7 @@ export const Main = (props) => {
 
     function submitCode() {
         if (state.code !== "") {
-            if (state.codeHash === sha256(state.code)) {
+            if (state.codeHash == sha256(state.code)) {
                 if (state.isCodeSave) {
                     setCookie("code", encryptCode(state.code, state.user), {
                         path: "/",
