@@ -81,11 +81,26 @@ export const Planning = (props) => {
         return a["start_date"] - b["start_date"];
     });
 
+    let stockage = [
+        ["January 2022", ["Monday 18", [props.eventList[0], props.eventList[1]]]],
+        ["February 2022", ["Monday 18", [props.eventList[0]]]],
+    ];
+
     return (
         <div style={{ height: height }} className="planning">
-            <h2>March 2022</h2>
-            <h3>Monday 18</h3>
-            <PlanningItem reload={() => props.reload()} event={props.eventList[0]} />
+            {stockage.map((x) => (
+                <>
+                    <h2>{x[0]}</h2>
+                    {x.slice(1).map((y) => (
+                        <>
+                            <h3>{y[0]}</h3>
+                            {y[1].map((z) => (
+                                <PlanningItem reload={() => props.reload()} event={z} />
+                            ))}
+                        </>
+                    ))}
+                </>
+            ))}
         </div>
     );
 };
