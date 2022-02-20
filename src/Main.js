@@ -164,7 +164,6 @@ export const Main = (props) => {
         //window.location.href = "./login"
     }
     const [reload, setReload] = useState(0);
-
     if (state["isCode"] && decryptCode(varCode, state.user) !== undefined) {
         if (state.codeHash === sha256(decryptCode(varCode, state.user))) {
             changeState({ "isCode": false });
@@ -714,11 +713,31 @@ export const Main = (props) => {
         );
     }
 
+    let calHeight = document.getElementsByClassName("monthly-calendar")[0];
+    if (calHeight === undefined) {
+        calHeight = "100%";
+    } else {
+        calHeight = calHeight.clientHeight;
+    }
+    let calSelHeight = document.getElementsByClassName("calendar-select")[0];
+    if (calSelHeight === undefined) {
+        calSelHeight = "100px";
+    } else {
+        calSelHeight = calSelHeight.clientHeight;
+    }
+    let miniCalHeight = document.getElementsByClassName("mini-calendar")[0];
+    if (miniCalHeight === undefined) {
+        miniCalHeight = "100px";
+    } else {
+        miniCalHeight = miniCalHeight.clientHeight;
+    }
+
     let nbrCal = Object.keys(state.stockageCalendar).length;
     if (nbrCal === 0) {
         nbrCal = 1;
     }
-    let heightNextEvent = "calc(100vh - 11em - 135px - (356px + (42px * " + nbrCal + ")))";
+    let heightNextEvent = calHeight - calSelHeight - miniCalHeight - 60;
+    console.log(heightNextEvent);
 
     window.onkeydown = function (e) {
         if (e.keyCode === 37) {
@@ -744,7 +763,7 @@ export const Main = (props) => {
                     className="main-section"
                     style={large ? { gridTemplateColumns: "300px 3fr 255px" } : mobile ? { gridTemplateColumns: "3fr" } : { gridTemplateColumns: "300px 3fr" }}>
                     {!mobile ? (
-                        <div className="left-section">
+                        <div className="left-section" style={{ height: calHeight + "px" }}>
                             <MiniCalendar
                                 annim={state.annim}
                                 eventList={state.displayList}
@@ -806,13 +825,14 @@ export const Main = (props) => {
                             />
                         )}
                     </div>
-                    {large ? <Today eventList={state.displayList} reload={() => forceReload()} /> : null}
-                    {mobile ? (
+                    {/*large ? <Today eventList={state.displayList} reload={() => forceReload()} /> : null*/}
+                    {large ? <Planning month={state.month} year={state.year} eventList={state.eventList} /> : null}
+                    {/*mobile ? (
                         <>
                             <Planning mobile eventList={state.eventList} reload={() => forceReload()} />
-                            {/* <CalendarSelect mobile reload={() => forceReload()} stockageCalendar={stockageCalendar} calendarSelecSwitch={(x) => calendarSelecSwitch(x)} calendarList={generateCalendarTable()} ajouterEvent={(x) => ajouterEvent(x)} /> */}
+                            { <CalendarSelect mobile reload={() => forceReload()} stockageCalendar={stockageCalendar} calendarSelecSwitch={(x) => calendarSelecSwitch(x)} calendarList={generateCalendarTable()} ajouterEvent={(x) => ajouterEvent(x)} /> }
                         </>
-                    ) : null}
+                    ) : null*/}
                     {state.isEdit !== null ? (
                         <EditPopup
                             user={state.user}

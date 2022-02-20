@@ -119,9 +119,9 @@ export const NextEvents = (props) => {
     //todo ajouter une image pour quand ya pas d'évent (peut être mascote ?)
 
     return (
-        <div className="next-event">
+        <div style={{ height: props.height + "px" }} className="next-event">
             <h2>Prochains évenements</h2>
-            <div style={{ maxHeight: props.height }} className="next-event-container">
+            <div className="next-event-container" style={{ height: props.height - 56 + "px" }}>
                 {filteredList.map((x, y) => (
                     <NextEventItem key={y} reload={() => props.reload()} event={x} />
                 ))}
