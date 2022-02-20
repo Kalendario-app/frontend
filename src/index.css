@@ -2060,6 +2060,25 @@ input[type="number"]::-webkit-outer-spin-button {
     border-radius: 15px;
     height: 60vh;
 }
+.planning h2 {
+    font-size: var(--18px);
+    font-weight: 500;
+    margin-bottom: 0.5em;
+}
+.planning h3 {
+    font-size: var(--14px);
+    font-weight: 500;
+    margin-bottom: 0.2em;
+}
+.planning-item {
+    border-radius: 0.5em;
+    margin-left: 0;
+}
+.planning-item p {
+    font-size: var(--12px);
+    font-weight: 500;
+    color: var(--white-1);
+}
 .cal-type-switch,
 .cal-type-switch-in {
     border-color: var(--secondary-color);

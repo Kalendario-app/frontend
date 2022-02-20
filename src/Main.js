@@ -826,7 +826,7 @@ export const Main = (props) => {
                         )}
                     </div>
                     {/*large ? <Today eventList={state.displayList} reload={() => forceReload()} /> : null*/}
-                    {large ? <Planning month={state.month} year={state.year} eventList={state.eventList} /> : null}
+                    {large ? <Planning month={state.month} year={state.year} eventList={state.eventList} reload={() => forceReload()} /> : null}
                     {/*mobile ? (
                         <>
                             <Planning mobile eventList={state.eventList} reload={() => forceReload()} />
