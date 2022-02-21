@@ -124,6 +124,7 @@ export const Planning = (props) => {
 
     return (
         <div style={{ height: height }} className="planning">
+            {stockage.length === 0 ? <h2>You don't have any event yet...</h2> : null}
             <div className="planning-container">
                 {stockage.map((x) => (
                     <>

@@ -121,17 +121,16 @@ export const NextEvents = (props) => {
     return (
         <div style={{ height: props.height + "px" }} className="next-event">
             <h2>Prochains évenements</h2>
-            <div className="next-event-container" style={{ height: props.height - 56 + "px" }}>
-                {filteredList.map((x, y) => (
-                    <NextEventItem key={y} reload={() => props.reload()} event={x} />
-                ))}
-            </div>
-
             {filteredList.length < 1 ? (
                 <div className="next-event-error">
                     <p>Il n'y a rien par ici...</p>
                 </div>
             ) : null}
+            <div className="next-event-container" style={{ height: props.height - 56 + "px" }}>
+                {filteredList.map((x, y) => (
+                    <NextEventItem key={y} reload={() => props.reload()} event={x} />
+                ))}
+            </div>
         </div>
     );
 };
