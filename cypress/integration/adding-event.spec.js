@@ -109,6 +109,7 @@ describe("adding event", () => {
         cy.get(".monthly-card-today").as("dayCard");
         cy.wait(1000);
         cy.get(".monthly-top-button button").drag("@dayCard");
+        cy.wait(1000);
         cy.get("input[placeholder='Event name']").type("test event");
         cy.intercept("https://api.kalendario.app/api/create").as("create");
         cy.intercept("https://api.kalendario.app/api/").as("api");
