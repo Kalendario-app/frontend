@@ -72,9 +72,12 @@ export const Planning = (props) => {
                         }}
                     />
                 ) : null}
-                <div className="planning-item monthly-item" ref={drag} onClick={(e) => setIsDetail(true)} style={{ backgroundColor: props.event["color"] }}>
-                    <p className="planning-name">{props.event["event_name"]}</p>
-                    <p className="planning-date">{dateToTxt(props.event["start_date"])}</p>
+                <div className="planning-item" ref={drag} onClick={(e) => setIsDetail(true)}>
+                    <div className="planning-bubble" style={{ borderColor: props.event["color"] }} />
+                    <div className="planning-item-text">
+                        <p className="planning-name">{props.event["event_name"]}</p>
+                        <p className="planning-date">{dateToTxt(props.event["start_date"])}</p>
+                    </div>
                 </div>
             </>
         );
@@ -121,19 +124,21 @@ export const Planning = (props) => {
 
     return (
         <div style={{ height: height }} className="planning">
-            {stockage.map((x) => (
-                <>
-                    <h2>{x[0]}</h2>
-                    {x.slice(1).map((y) => (
-                        <>
-                            <h3>{y[0]}</h3>
-                            {y[1].map((z) => (
-                                <PlanningItem reload={() => props.reload()} event={z} />
-                            ))}
-                        </>
-                    ))}
-                </>
-            ))}
+            <div className="planning-container">
+                {stockage.map((x) => (
+                    <>
+                        <h2>{x[0]}</h2>
+                        {x.slice(1).map((y) => (
+                            <>
+                                <h3>{y[0]}</h3>
+                                {y[1].map((z) => (
+                                    <PlanningItem reload={() => props.reload()} event={z} />
+                                ))}
+                            </>
+                        ))}
+                    </>
+                ))}
+            </div>
         </div>
     );
 };

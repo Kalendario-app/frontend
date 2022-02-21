@@ -2060,24 +2060,47 @@ input[type="number"]::-webkit-outer-spin-button {
     border-radius: 15px;
     height: 60vh;
 }
+.planning-container {
+    overflow-y: scroll;
+    height: 100%;
+}
 .planning h2 {
-    font-size: var(--18px);
+    font-size: var(--20px);
     font-weight: 500;
     margin-bottom: 0.5em;
 }
 .planning h3 {
-    font-size: var(--14px);
+    font-size: var(--18px);
     font-weight: 500;
-    margin-bottom: 0.2em;
+    margin-bottom: 0.3em;
 }
 .planning-item {
     border-radius: 0.5em;
     margin-left: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 0.5em;
+}
+.planning-item:hover {
+    background-color: var(--gris-trans);
 }
 .planning-item p {
-    font-size: var(--12px);
+    font-size: var(--16px);
     font-weight: 500;
-    color: var(--white-1);
+    color: var(--dark-color);
+}
+.planning-item p + p {
+    font-size: var(--14px);
+    font-weight: 400;
+    color: var(--dark-color);
+}
+.planning-bubble {
+    height: 4.5em;
+    border: solid;
+    border-width: 3px;
+    border-radius: 50px;
+    margin-right: 0.5em;
 }
 .cal-type-switch,
 .cal-type-switch-in {
