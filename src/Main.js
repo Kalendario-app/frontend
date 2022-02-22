@@ -73,6 +73,7 @@ export const Main = (props) => {
         "cantConnect": false,
         "resendDisplay": true,
         "bypassVerif": false,
+        "todoList": [],
     });
 
     var varCode = "";
@@ -145,7 +146,7 @@ export const Main = (props) => {
                     });
                     if (response.data.user[0]["verified"] === false) {
                     }
-                    traiterEvent(response.data.event);
+                    traiterEvent(response.data.event, response.data.todo);
                 }
             })
             .catch((err) => {
@@ -211,8 +212,9 @@ export const Main = (props) => {
         return parseInt(tmp);
     }
 
-    function traiterEvent(list) {
+    function traiterEvent(list, todos) {
         var tempList = list.sort((a, b) => a["start_date"] - b["start_date"]);
+        var todoTemp = todos.sort((a, b) => a["date"] - b["date"]);
         let tempEvents = [];
         let eventToAdd = [];
         let tempRecu = [];
@@ -286,6 +288,23 @@ export const Main = (props) => {
                         tempRecu.push(tempEvents[i]);
                     }
                 }
+                for (let i = 0; i < todoTemp.length; i++) {
+                    let code = parseInt(todoTemp[i]["color"]);
+                    todoTemp[i]["color"] = colorCodeConv[code];
+                    todoTemp[i]["nbr"] = i;
+                    let fullCode = decryptCode(varCode, state.user);
+                    fullCode = fullCode.concat(" ceci est du sel");
+                    todoTemp[i]["name"] = AES.AES.decrypt(todoTemp[i]["name"], fullCode).toString(AES.enc.Utf8);
+                    todoTemp[i]["calendar"] = AES.AES.decrypt(todoTemp[i]["calendar"], fullCode).toString(AES.enc.Utf8);
+                    if (todoTemp[i]["date"] > 10) {
+                        todoTemp[i]["date"] = todoTemp[i]["date"] - keyGen(fullCode);
+                    }
+                    var TZoffset = new Date().getTimezoneOffset() * 60;
+                    todoTemp[i]["date"] = todoTemp[i]["date"] - TZoffset;
+                    if (todoTemp[i]["date"] > 10) {
+                        todoTemp[i]["date"] = todoTemp[i]["date"] - keyGen(fullCode);
+                    }
+                }
                 if (tempSto.length < 1) {
                     tempSto["Default Calendar"] = [true];
                 }
@@ -299,6 +318,7 @@ export const Main = (props) => {
                     "recurentEvents": tempRecu,
                     "display": true,
                     "displayList": tempEvents,
+                    "todoList": todoTemp,
                 });
             }
         } else {
