@@ -14,6 +14,7 @@ import { Planning } from "./Planning";
 import { Checkbox } from "./Checkbox";
 import { EditPopup } from "./EditPopup";
 import { Header } from "./Header";
+import { Todo } from "./Todo";
 
 export function encryptCode(code, user) {
     var key = "";
@@ -183,10 +184,8 @@ export const Main = (props) => {
                     setCookie("code", encryptCode(state.code, state.user), {
                         path: "/",
                     });
-                } else {
-                    sessionStorage.setItem("code", encryptCode(state.code, state.user));
-                    //setCookie("code", encryptCode(state.code, state.user), { path: '/', maxAge: 15 })
                 }
+                sessionStorage.setItem("code", encryptCode(state.code, state.user));
                 changeState({ "isCode": false });
                 forceReload();
             }
@@ -757,7 +756,6 @@ export const Main = (props) => {
         nbrCal = 1;
     }
     let heightNextEvent = calHeight - calSelHeight - miniCalHeight - 60;
-    console.log(heightNextEvent);
 
     window.onkeydown = function (e) {
         if (e.keyCode === 37) {
@@ -802,7 +800,8 @@ export const Main = (props) => {
                                 ajouterEvent={(x) => ajouterEvent(x)}
                                 user={state.user}
                             />
-                            <NextEvents height={heightNextEvent} eventList={state.eventList} reload={() => forceReload()} />
+                            <Todo todoList={state.todoList} height={heightNextEvent} reload={() => forceReload()} />
+                            {/*<NextEvents height={heightNextEvent} eventList={state.eventList} reload={() => forceReload()} />*/}
                         </div>
                     ) : null}
                     <div className={mobile ? "right-section right-section-mobile" : "right-section"}>
