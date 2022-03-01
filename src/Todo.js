@@ -76,6 +76,12 @@ export function Todo(props) {
             });
     }
 
+    window.onkeydown = function (e) {
+        if (e.keyCode === 13) {
+            addTodo();
+        }
+    };
+
     function TodoItem(props) {
         const [checked, setChecked] = useState(false);
         function postClick() {}
@@ -162,10 +168,16 @@ export function Todo(props) {
                     </div>
                 </div>
             ) : null}
+
             <div className="todo-list">
                 {tmp.map((item, index) => (
                     <TodoItem txt={item.name} color={item.color} index={index} key={index} checked={item.done} date={item.date} item={item} id={"todo-" + index} />
                 ))}
+                {tmp.length < 1 && !isAdd ? (
+                    <div className="next-event-error">
+                        <p>Il n'y a rien par ici...</p>
+                    </div>
+                ) : null}
             </div>
         </div>
     );
