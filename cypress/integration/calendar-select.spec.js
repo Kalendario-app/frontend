@@ -6,9 +6,9 @@ describe("calendar select", () => {
         cy.get(".monthly-card-today").as("dayCard");
         cy.wait(10);
         cy.get("@dayCard").should("contain", "test event");
-        cy.get(".check-container").click();
+        cy.get(".calendar-select-item > .check-container").click();
         cy.get("@dayCard").should("not.contain", "test event");
-        cy.get(".check-container").click();
+        cy.get(".calendar-select-item > .check-container").click();
         cy.deleteEvent();
     });
     it("adding, editing and deleting a calendar work", () => {
