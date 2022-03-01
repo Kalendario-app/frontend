@@ -104,7 +104,7 @@ describe("adding event", () => {
         cy.wait(10);
         cy.get("@dayCard").should("not.contain", "test event");
     });
-    it("user can add event via drag of the button", () => {
+    /*it("user can add event via drag of the button", () => {
         cy.login();
         cy.get(".monthly-card-today").as("dayCard");
         cy.wait(1000);
@@ -138,7 +138,7 @@ describe("adding event", () => {
         cy.get(".monthly-card-today").as("dayCard");
         cy.wait(10);
         cy.get("@dayCard").should("not.contain", "test event");
-    });
+    });*/
     it("user cant add incorrect events (empty, end after start, end and start at the same time)", () => {
         cy.login();
         cy.get(".monthly-top-button button").click();

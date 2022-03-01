@@ -14,6 +14,7 @@ import { Planning } from "./Planning";
 import { Checkbox } from "./Checkbox";
 import { EditPopup } from "./EditPopup";
 import { Header } from "./Header";
+import { Todo } from "./Todo";
 
 export function encryptCode(code, user) {
     var key = "";
@@ -73,6 +74,7 @@ export const Main = (props) => {
         "cantConnect": false,
         "resendDisplay": true,
         "bypassVerif": false,
+        "todoList": [],
     });
 
     var varCode = "";
@@ -145,7 +147,7 @@ export const Main = (props) => {
                     });
                     if (response.data.user[0]["verified"] === false) {
                     }
-                    traiterEvent(response.data.event);
+                    traiterEvent(response.data.event, response.data.todo);
                 }
             })
             .catch((err) => {
@@ -164,7 +166,6 @@ export const Main = (props) => {
         //window.location.href = "./login"
     }
     const [reload, setReload] = useState(0);
-
     if (state["isCode"] && decryptCode(varCode, state.user) !== undefined) {
         if (state.codeHash === sha256(decryptCode(varCode, state.user))) {
             changeState({ "isCode": false });
@@ -183,10 +184,8 @@ export const Main = (props) => {
                     setCookie("code", encryptCode(state.code, state.user), {
                         path: "/",
                     });
-                } else {
-                    sessionStorage.setItem("code", encryptCode(state.code, state.user));
-                    //setCookie("code", encryptCode(state.code, state.user), { path: '/', maxAge: 15 })
                 }
+                sessionStorage.setItem("code", encryptCode(state.code, state.user));
                 changeState({ "isCode": false });
                 forceReload();
             }
@@ -212,8 +211,9 @@ export const Main = (props) => {
         return parseInt(tmp);
     }
 
-    function traiterEvent(list) {
+    function traiterEvent(list, todos) {
         var tempList = list.sort((a, b) => a["start_date"] - b["start_date"]);
+        var todoTemp = todos.sort((a, b) => a["date"] - b["date"]);
         let tempEvents = [];
         let eventToAdd = [];
         let tempRecu = [];
@@ -287,6 +287,20 @@ export const Main = (props) => {
                         tempRecu.push(tempEvents[i]);
                     }
                 }
+                for (let i = 0; i < todoTemp.length; i++) {
+                    let code = parseInt(todoTemp[i]["color"]);
+                    todoTemp[i]["color"] = colorCodeConv[code];
+                    todoTemp[i]["nbr"] = i;
+                    let fullCode = decryptCode(varCode, state.user);
+                    fullCode = fullCode.concat(" ceci est du sel");
+                    todoTemp[i]["name"] = AES.AES.decrypt(todoTemp[i]["name"], fullCode).toString(AES.enc.Utf8);
+                    todoTemp[i]["calendar"] = AES.AES.decrypt(todoTemp[i]["calendar"], fullCode).toString(AES.enc.Utf8);
+                    if (todoTemp[i]["date"] > 10) {
+                        todoTemp[i]["date"] = todoTemp[i]["date"] - keyGen(fullCode);
+                        var TZoffset = new Date().getTimezoneOffset() * 60;
+                        todoTemp[i]["date"] = todoTemp[i]["date"] - TZoffset;
+                    }
+                }
                 if (tempSto.length < 1) {
                     tempSto["Default Calendar"] = [true];
                 }
@@ -300,6 +314,7 @@ export const Main = (props) => {
                     "recurentEvents": tempRecu,
                     "display": true,
                     "displayList": tempEvents,
+                    "todoList": todoTemp,
                 });
             }
         } else {
@@ -714,11 +729,34 @@ export const Main = (props) => {
         );
     }
 
+    let calHeight = document.getElementsByClassName("monthly-calendar")[0];
+    if (calHeight === undefined) {
+        calHeight = "100%";
+    } else {
+        calHeight = calHeight.clientHeight;
+    }
+    let calSelHeight = document.getElementsByClassName("calendar-select")[0];
+    if (calSelHeight === undefined) {
+        calSelHeight = "100px";
+    } else {
+        calSelHeight = calSelHeight.clientHeight;
+    }
+    let miniCalHeight = document.getElementsByClassName("mini-calendar")[0];
+    if (miniCalHeight === undefined) {
+        miniCalHeight = "100px";
+    } else {
+        miniCalHeight = miniCalHeight.clientHeight;
+    }
+
     let nbrCal = Object.keys(state.stockageCalendar).length;
     if (nbrCal === 0) {
         nbrCal = 1;
     }
-    let heightNextEvent = "calc(100vh - 11em - 135px - (356px + (42px * " + nbrCal + ")))";
+    let heightNextEvent = calHeight - calSelHeight - miniCalHeight - 60;
+
+    if (isNaN(heightNextEvent)) {
+        heightNextEvent = "100%";
+    }
 
     window.onkeydown = function (e) {
         if (e.keyCode === 37) {
@@ -744,7 +782,7 @@ export const Main = (props) => {
                     className="main-section"
                     style={large ? { gridTemplateColumns: "300px 3fr 255px" } : mobile ? { gridTemplateColumns: "3fr" } : { gridTemplateColumns: "300px 3fr" }}>
                     {!mobile ? (
-                        <div className="left-section">
+                        <div className="left-section" style={{ height: calHeight + "px" }}>
                             <MiniCalendar
                                 annim={state.annim}
                                 eventList={state.displayList}
@@ -763,7 +801,14 @@ export const Main = (props) => {
                                 ajouterEvent={(x) => ajouterEvent(x)}
                                 user={state.user}
                             />
-                            <NextEvents height={heightNextEvent} eventList={state.eventList} reload={() => forceReload()} />
+                            <Todo
+                                user={state.user}
+                                calendarList={generateCalendarTable()}
+                                todoList={state.todoList}
+                                height={heightNextEvent}
+                                reload={() => forceReload()}
+                            />
+                            {/*<NextEvents height={heightNextEvent} eventList={state.eventList} reload={() => forceReload()} />*/}
                         </div>
                     ) : null}
                     <div className={mobile ? "right-section right-section-mobile" : "right-section"}>
@@ -806,13 +851,14 @@ export const Main = (props) => {
                             />
                         )}
                     </div>
-                    {large ? <Today eventList={state.displayList} reload={() => forceReload()} /> : null}
-                    {mobile ? (
+                    {/*large ? <Today eventList={state.displayList} reload={() => forceReload()} /> : null*/}
+                    {large ? <Planning month={state.month} year={state.year} eventList={state.eventList} reload={() => forceReload()} /> : null}
+                    {/*mobile ? (
                         <>
                             <Planning mobile eventList={state.eventList} reload={() => forceReload()} />
-                            {/* <CalendarSelect mobile reload={() => forceReload()} stockageCalendar={stockageCalendar} calendarSelecSwitch={(x) => calendarSelecSwitch(x)} calendarList={generateCalendarTable()} ajouterEvent={(x) => ajouterEvent(x)} /> */}
+                            { <CalendarSelect mobile reload={() => forceReload()} stockageCalendar={stockageCalendar} calendarSelecSwitch={(x) => calendarSelecSwitch(x)} calendarList={generateCalendarTable()} ajouterEvent={(x) => ajouterEvent(x)} /> }
                         </>
-                    ) : null}
+                    ) : null*/}
                     {state.isEdit !== null ? (
                         <EditPopup
                             user={state.user}

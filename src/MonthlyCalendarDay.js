@@ -27,6 +27,24 @@ export const MonthlyCalendarDay = (props) => {
         return weeksNum;
     }
 
+    function stringFilter(str) {
+        let tmp = "";
+        let nbrs = "1234567890";
+        for (let i = 0; i < str.length; i++) {
+            if (nbrs.includes(str[i])) {
+                tmp = tmp.concat(str[i]);
+            }
+        }
+        return tmp;
+    }
+    function keyGen(code) {
+        let tmp = stringFilter(sha256(code)) + stringFilter(sha256(code + "test")) + code.length;
+        if (toString(tmp).length > 8) {
+            tmp = tmp.slice(0, 7);
+        }
+        return parseInt(tmp);
+    }
+
     const [{ isOver }, drop] = useDrop(() => ({
         accept: "monthly-event",
         drop: (item) => {
@@ -60,10 +78,11 @@ export const MonthlyCalendarDay = (props) => {
             var color = colorCodeConv.findIndex((arg) => {
                 return arg === evnt["color"];
             });
+            var TZoffset = new Date().getTimezoneOffset() * 60;
             var data = {
                 "event_name": encrypted,
-                "start_date": (newDateS.getTime() / 1000) * (parseInt(sha256(fullCode)) + parseInt(sha256(fullCode + "test")) + fullCode.length),
-                "end_date": (newDateE.getTime() / 1000) * (parseInt(sha256(fullCode)) + parseInt(sha256(fullCode + "test")) + fullCode.length),
+                "start_date": newDateS.getTime() / 1000 + keyGen(fullCode),
+                "end_date": newDateE.getTime() / 1000 + keyGen(fullCode),
                 "color": color,
                 "full": evnt["full"],
                 "key": evnt["key"],

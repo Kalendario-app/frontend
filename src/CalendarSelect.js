@@ -33,9 +33,8 @@ export const CalendarSelect = (props) => {
 
     var keyList = [];
 
-    var code = decryptCode(varCode, props.user) + " ceci est du sel";
-
     function addCalendar() {
+        var code = decryptCode(varCode, props.user) + " ceci est du sel";
         if (txt === "") {
             return;
         }
@@ -118,6 +117,7 @@ export const CalendarSelect = (props) => {
     }
 
     function submitEdit() {
+        var code = decryptCode(varCode, props.user) + " ceci est du sel";
         if (editTxt === oldName || editTxt === "") {
             setIsEdit(-1);
             setEditTxt("");
