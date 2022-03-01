@@ -2138,6 +2138,7 @@ input[type="number"]::-webkit-outer-spin-button {
     max-height: calc(100% - 3em);
     overflow-y: scroll;
 }
+
 @keyframes todoListChecked {
     0% {
         opacity: 1;
@@ -2151,6 +2152,9 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 .todo-item-checked {
     animation: todoListChecked 50s;
+}
+.todo-item-checked span {
+    background-color: var(--secondary-color);
 }
 .cal-type-switch,
 .cal-type-switch-in {

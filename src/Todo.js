@@ -69,7 +69,8 @@ export function Todo(props) {
                 data["date"] = data["date"] - keyGen(code);
                 data["done"] = false;
                 setList([...list, data]);
-                setIsAdd(false);
+                //setIsAdd(false);
+                setTxt("");
             })
             .catch((err) => {
                 console.log(err);
@@ -134,7 +135,7 @@ export function Todo(props) {
                 id={props.id}
                 className="check-container todo-item">
                 <input type="checkbox" checked={checked} onChange={() => null}></input>
-                <span className="checkmark" style={{ borderColor: props.color, backgroundColor: checked ? props.color : "#EEF2F6" }}></span>
+                <span className="checkmark" style={{ borderColor: props.color }}></span>
                 <div className="todo-txt">
                     <h3>{props.txt}</h3>
                     {props.date > 100000 ? <p>{dateStr}</p> : null}
@@ -158,18 +159,18 @@ export function Todo(props) {
                     +
                 </h2>
             </div>
-            {isAdd ? (
-                <div className="cal-edit">
-                    <input autoFocus onChange={(e) => setTxt(e.target.value)} className="input-open cal-edit-input" placeholder={"Task name"} />
-                    <div className="cal-edit-btns">
-                        {/*//todo ajouter un selecteur de date qui ouvre un popup pour la date */}
-                        <Button txt="Cancel" onClick={() => setIsAdd(false)} />
-                        <Button onClick={() => addTodo()} full txt={"Add"} />
-                    </div>
-                </div>
-            ) : null}
 
             <div className="todo-list">
+                {isAdd ? (
+                    <div className="cal-edit">
+                        <input value={txt} autoFocus onChange={(e) => setTxt(e.target.value)} className="input-open cal-edit-input" placeholder={"Task name"} />
+                        <div className="cal-edit-btns">
+                            {/*//todo ajouter un selecteur de date qui ouvre un popup pour la date */}
+                            <Button txt="Cancel" onClick={() => setIsAdd(false)} />
+                            <Button onClick={() => addTodo()} full txt={"Add"} />
+                        </div>
+                    </div>
+                ) : null}
                 {tmp.map((item, index) => (
                     <TodoItem txt={item.name} color={item.color} index={index} key={index} checked={item.done} date={item.date} item={item} id={"todo-" + index} />
                 ))}
