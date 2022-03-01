@@ -297,11 +297,8 @@ export const Main = (props) => {
                     todoTemp[i]["calendar"] = AES.AES.decrypt(todoTemp[i]["calendar"], fullCode).toString(AES.enc.Utf8);
                     if (todoTemp[i]["date"] > 10) {
                         todoTemp[i]["date"] = todoTemp[i]["date"] - keyGen(fullCode);
-                    }
-                    var TZoffset = new Date().getTimezoneOffset() * 60;
-                    todoTemp[i]["date"] = todoTemp[i]["date"] - TZoffset;
-                    if (todoTemp[i]["date"] > 10) {
-                        todoTemp[i]["date"] = todoTemp[i]["date"] - keyGen(fullCode);
+                        var TZoffset = new Date().getTimezoneOffset() * 60;
+                        todoTemp[i]["date"] = todoTemp[i]["date"] - TZoffset;
                     }
                 }
                 if (tempSto.length < 1) {
@@ -757,6 +754,10 @@ export const Main = (props) => {
     }
     let heightNextEvent = calHeight - calSelHeight - miniCalHeight - 60;
 
+    if (isNaN(heightNextEvent)) {
+        heightNextEvent = "100%";
+    }
+
     window.onkeydown = function (e) {
         if (e.keyCode === 37) {
             if (state.isWeekly) {
@@ -800,7 +801,13 @@ export const Main = (props) => {
                                 ajouterEvent={(x) => ajouterEvent(x)}
                                 user={state.user}
                             />
-                            <Todo todoList={state.todoList} height={heightNextEvent} reload={() => forceReload()} />
+                            <Todo
+                                user={state.user}
+                                calendarList={generateCalendarTable()}
+                                todoList={state.todoList}
+                                height={heightNextEvent}
+                                reload={() => forceReload()}
+                            />
                             {/*<NextEvents height={heightNextEvent} eventList={state.eventList} reload={() => forceReload()} />*/}
                         </div>
                     ) : null}

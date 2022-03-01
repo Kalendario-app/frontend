@@ -820,7 +820,7 @@ header img:hover {
 }
 .mini-calendar {
     background-color: var(--white-1);
-    padding: 5%;
+    padding: 1.5em;
     box-shadow: 5px 10px 32px 15px var(--shadow-color);
     -webkit-box-shadow: 5px 10px 32px 15px var(--shadow-color);
     -moz-box-shadow: 5px 10px 32px 15px var(--shadow-color);
@@ -1217,10 +1217,25 @@ header img:hover {
     -ms-user-select: none;
     user-select: none;
     display: flex;
-    flex-wrap: nowrap;
-    align-items: baseline;
+    align-items: center;
     border-radius: 10px;
     height: 35px;
+    font-size: var(--16px);
+    font-weight: 400;
+}
+.todo-txt {
+    display: flex;
+    flex-direction: column;
+}
+.todo-container .check-container {
+    height: unset;
+    padding-left: 5px;
+}
+.check-container h3 {
+    font-size: var(--18px);
+    font-weight: 500;
+}
+.check-container p {
     font-size: var(--16px);
     font-weight: 400;
 }
@@ -1246,6 +1261,11 @@ header img:hover {
     border-color: var(--secondary-color);
     border-width: 3px;
 }
+.todo-container .checkmark {
+    position: static;
+    margin-right: 1em;
+}
+
 .check-container:hover input ~ .checkmark {
     background-color: var(--white-3);
 }
@@ -1256,6 +1276,9 @@ header img:hover {
     content: "";
     position: absolute;
     display: none;
+}
+.todo-container .checkmark::after {
+    position: relative;
 }
 .check-container input:checked ~ .checkmark:after {
     display: block;
@@ -1273,7 +1296,7 @@ header img:hover {
 }
 .calendar-select {
     background-color: var(--white-1);
-    padding: 5%;
+    padding: 1.5em;
     border-radius: 15px;
     box-shadow: 5px 10px 32px 15px var(--shadow-color);
     -webkit-box-shadow: 5px 10px 32px 15px var(--shadow-color);
@@ -2101,6 +2124,33 @@ input[type="number"]::-webkit-outer-spin-button {
     border-width: 3px;
     border-radius: 50px;
     margin-right: 0.5em;
+}
+.todo-container {
+    background-color: var(--white-1);
+    padding: 1.5em;
+    box-shadow: 5px 10px 32px 15px var(--shadow-color);
+    -webkit-box-shadow: 5px 10px 32px 15px var(--shadow-color);
+    -moz-box-shadow: 5px 10px 32px 15px var(--shadow-color);
+    border-radius: 15px;
+    width: 100%;
+}
+.todo-list {
+    max-height: calc(100% - 3em);
+    overflow-y: scroll;
+}
+@keyframes todoListChecked {
+    0% {
+        opacity: 1;
+    }
+    1% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+.todo-item-checked {
+    animation: todoListChecked 50s;
 }
 .cal-type-switch,
 .cal-type-switch-in {
