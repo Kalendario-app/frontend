@@ -1977,6 +1977,7 @@ input[type="number"]::-webkit-outer-spin-button {
     width: fit-content;
     font-size: var(--12px);
     font-weight: 500;
+    margin-left: 0.5em;
 }
 .cal-edit-btns {
     display: flex;
@@ -2138,7 +2139,20 @@ input[type="number"]::-webkit-outer-spin-button {
     max-height: calc(100% - 3em);
     overflow-y: scroll;
 }
-
+.todo-list .time-input,
+.todo-list select {
+    margin-top: 0.8em;
+}
+.todo-list select {
+    border-width: 2px;
+    background-color: var(--white-1);
+}
+.todo-list select:hover {
+    background-color: var(--white-3);
+}
+.todo-list input {
+    border-width: 2px;
+}
 @keyframes todoListChecked {
     0% {
         opacity: 1;
@@ -2155,6 +2169,73 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 .todo-item-checked span {
     background-color: var(--secondary-color);
+}
+.time-input {
+    border: solid;
+    border-color: var(--secondary-color);
+    border-width: 2px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em;
+    font-size: var(--16px);
+    width: 100%;
+}
+.time-input:hover {
+    background-color: var(--white-3);
+}
+.time-input-pop {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+.time-input-pop input[type="number"] {
+    background-color: var(--white-1);
+    border: solid;
+    border-width: 2px;
+    border-color: var(--secondary-color);
+    border-radius: 10px;
+    font-size: var(--30px);
+    -moz-appearance: textfield;
+    text-align: center;
+}
+.time-input-pop input::-webkit-outer-spin-button,
+.time-input-pop input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.time-in-cont {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.time-in-cont button {
+    border: solid;
+    border-color: var(--secondary-color);
+    border-width: 2px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em;
+    font-size: var(--16px);
+    width: 2em;
+    margin-bottom: 0.5em;
+}
+.time-in-cont button:hover {
+    background-color: var(--white-3);
+}
+.time-in-cont input + button {
+    margin-bottom: 0;
+    margin-top: 0.5em;
+}
+.time-input-pop p {
+    font-size: var(--30px);
+    margin-left: 0.4em;
+    margin-right: 0.4em;
 }
 .cal-type-switch,
 .cal-type-switch-in {

@@ -3,6 +3,7 @@ import { sha256 } from "js-sha256";
 import React, { useState } from "react";
 import { Button } from "./Button";
 import { api, decryptCode } from "./Main";
+import { TimeInput } from "./TimeInput";
 
 const monthConv = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const dayConv = {
@@ -19,6 +20,13 @@ export function Todo(props) {
     const [list, setList] = useState(props.todoList);
     const [isAdd, setIsAdd] = useState(false);
     const [txt, setTxt] = useState("");
+    const [date, setDate] = useState(new Date(new Date().setHours(new Date().getHours() + 1, 0, 0, 0)).getTime());
+    const [isMore, setIsMore] = useState(false);
+    const [color, setColor] = useState(0);
+    const [full, setFull] = useState(false);
+
+    const colorConv = ["Blue", "Green", "Yellow", "Orange", "Red"];
+    const colorCodeConv = ["#3581B8", "#5BA94C", "#E4C111", "#FF6B35", "#A72A2A"];
 
     let varCode = "";
     if (sessionStorage.getItem("code") !== null) {
@@ -53,8 +61,8 @@ export function Todo(props) {
         }
         let data = {
             "name": AES.encrypt(txt, code).toString(),
-            "date": 0,
-            "color": 0,
+            "date": Math.floor(date / 1000) + TZOffset + (date > 10000 ? keyGen(code) : 0),
+            "color": color,
             "calendar": AES.encrypt(props.calendarList[0], code).toString(),
             "repeat_type": 0,
             "repeat_nbr": 0,
@@ -78,8 +86,14 @@ export function Todo(props) {
     }
 
     window.onkeydown = function (e) {
+        if (!isAdd) {
+            return;
+        }
         if (e.keyCode === 13) {
             addTodo();
+        }
+        if (e.keyCode === 27) {
+            setIsAdd(false);
         }
     };
 
@@ -89,6 +103,7 @@ export function Todo(props) {
         function handleClick() {
             setChecked(true);
             document.getElementById(props.id).className += " todo-item-checked";
+            document.getElementById("check-" + props.id).style.backgroundColor = colorCodeConv[props.color];
             api.get("/checkTodo?key=" + props.item["key"]).then((res) => {
                 if (res.status === 200) {
                     let tmpArr = tmp;
@@ -135,7 +150,7 @@ export function Todo(props) {
                 id={props.id}
                 className="check-container todo-item">
                 <input type="checkbox" checked={checked} onChange={() => null}></input>
-                <span className="checkmark" style={{ borderColor: props.color }}></span>
+                <span className="checkmark" id={"check-" + props.id} style={{ borderColor: colorCodeConv[props.color] }}></span>
                 <div className="todo-txt">
                     <h3>{props.txt}</h3>
                     {props.date > 100000 ? <p>{dateStr}</p> : null}
@@ -163,11 +178,39 @@ export function Todo(props) {
             <div className="todo-list">
                 {isAdd ? (
                     <div className="cal-edit">
-                        <input value={txt} autoFocus onChange={(e) => setTxt(e.target.value)} className="input-open cal-edit-input" placeholder={"Task name"} />
+                        <div className="input-wrapper" style={{ borderColor: colorCodeConv[color] }}>
+                            <input
+                                value={txt}
+                                style={{ borderColor: colorCodeConv[color] }}
+                                autoFocus
+                                onChange={(e) => setTxt(e.target.value)}
+                                className="input-open cal-edit-input"
+                                placeholder={"Task name"}
+                            />
+                        </div>
+                        {isMore ? (
+                            <div>
+                                <TimeInput full={full} date={date} color={colorCodeConv[color]} />
+                                <select style={{ borderColor: colorCodeConv[color] }} value={color} onChange={(e) => setColor(e.target.value)}>
+                                    {colorConv.map((x, y) => (
+                                        <option key={y} style={{ color: colorCodeConv[y] }} value={y}>
+                                            {x}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        ) : null}
                         <div className="cal-edit-btns">
-                            {/*//todo ajouter un selecteur de date qui ouvre un popup pour la date */}
+                            <Button txt="Option" onClick={() => setIsMore(!isMore)} />
                             <Button txt="Cancel" onClick={() => setIsAdd(false)} />
-                            <Button onClick={() => addTodo()} full txt={"Add"} />
+                            <Button
+                                onClick={() => {
+                                    addTodo();
+                                    setIsAdd(false);
+                                }}
+                                full
+                                txt={"Add"}
+                            />
                         </div>
                     </div>
                 ) : null}
