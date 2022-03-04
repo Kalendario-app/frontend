@@ -2187,8 +2187,53 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 .time-input-pop {
     display: flex;
-    flex-wrap: nowrap;
+    flex-direction: column;
+}
+.time-input-nbr {
+    display: flex;
     align-items: center;
+    flex-wrap: nowrap;
+}
+.time-input-cal {
+    border: solid;
+    border-color: var(--secondary-color);
+    border-width: 2px;
+    border-radius: 10px;
+    margin-top: 1em;
+    padding: 1em;
+}
+.time-cal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: nowrap;
+    margin-bottom: 1em;
+}
+.time-cal-head h2 {
+    padding: 2px;
+    border-radius: 50px;
+}
+.time-cal-nav:hover {
+    background-color: var(--white-4);
+}
+.time-cal-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+.time-cal-body h2 {
+    padding: 5px;
+    border-radius: 50px;
+    margin-bottom: 0.5em;
+}
+.time-cal-body h2:hover {
+    background-color: var(--white-3);
+}
+.time-cal-foot {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    flex-wrap: nowrap;
+    margin-top: 1em;
 }
 .time-input-pop input[type="number"] {
     background-color: var(--white-1);
@@ -2224,6 +2269,7 @@ input[type="number"]::-webkit-outer-spin-button {
     font-size: var(--16px);
     width: 2em;
     margin-bottom: 0.5em;
+    background-color: var(--white-1);
 }
 .time-in-cont button:hover {
     background-color: var(--white-3);
