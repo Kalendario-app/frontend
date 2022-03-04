@@ -190,7 +190,7 @@ export function Todo(props) {
                         </div>
                         {isMore ? (
                             <div>
-                                <TimeInput full={full} date={date} color={colorCodeConv[color]} />
+                                <TimeInput full={full} date={date} color={colorCodeConv[color]} changement={(d) => setDate(d)} />
                                 <select style={{ borderColor: colorCodeConv[color] }} value={color} onChange={(e) => setColor(e.target.value)}>
                                     {colorConv.map((x, y) => (
                                         <option key={y} style={{ color: colorCodeConv[y] }} value={y}>

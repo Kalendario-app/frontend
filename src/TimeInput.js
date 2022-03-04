@@ -5,7 +5,12 @@ import { Button } from "./Button";
 export const TimeInput = (props) => {
     const [isPop, setIsPop] = useState(false);
     const [fullDay, setFullDay] = useState(props.full ? true : false);
-    const [date, setDate] = useState(props.date !== undefined ? new Date(props.date) : new Date());
+    //const [date, setDate] = useState(props.date !== undefined ? new Date(props.date) : new Date());
+
+    var date = props.date !== undefined ? new Date(props.date) : new Date();
+    function setDate(newDate) {
+        props.changement(newDate);
+    }
 
     const monthConv = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
