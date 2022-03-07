@@ -1437,7 +1437,8 @@ header img:hover {
     font-size: var(--16px);
     padding: 5px;
 }
-.add-popup h2 {
+.add-popup h2,
+.time-input-pop h2 {
     font-size: var(--18px);
     text-align: center;
 }
@@ -1482,6 +1483,10 @@ header img:hover {
 .add-line p {
     padding-top: 0.2em;
     font-size: var(--16px);
+}
+.add-popup .time-input {
+    width: 18em;
+    margin-right: 0.5em;
 }
 .input-wrapper-number {
     width: 4em;
@@ -1535,6 +1540,7 @@ input[type="number"]::-webkit-outer-spin-button {
     font-weight: 500;
     border-color: var(--secondary-color);
     border-radius: 0;
+    z-index: 1000;
 }
 .add-calendar-select .check-container {
     margin-top: 1%;
@@ -1977,6 +1983,7 @@ input[type="number"]::-webkit-outer-spin-button {
     width: fit-content;
     font-size: var(--12px);
     font-weight: 500;
+    margin-left: 0.5em;
 }
 .cal-edit-btns {
     display: flex;
@@ -2138,7 +2145,20 @@ input[type="number"]::-webkit-outer-spin-button {
     max-height: calc(100% - 3em);
     overflow-y: scroll;
 }
-
+.todo-list .time-input,
+.todo-list select {
+    margin-top: 0.8em;
+}
+.todo-list select {
+    border-width: 2px;
+    background-color: var(--white-1);
+}
+.todo-list select:hover {
+    background-color: var(--white-3);
+}
+.todo-list input {
+    border-width: 2px;
+}
 @keyframes todoListChecked {
     0% {
         opacity: 1;
@@ -2155,6 +2175,146 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 .todo-item-checked span {
     background-color: var(--secondary-color);
+}
+.time-input {
+    border: solid;
+    border-color: var(--secondary-color);
+    border-width: 2px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em;
+    font-size: var(--16px);
+    width: 100%;
+}
+.time-input:hover {
+    background-color: var(--white-3);
+}
+.time-input-pop {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--white-2);
+    color: var(--dark-color);
+    border-radius: 2.6em;
+    padding: 2em;
+    max-width: 95vw;
+    z-index: 10000;
+    opacity: 100%;
+}
+.time-input-nbr {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.time-input-cont {
+    z-index: 1000;
+    background-color: #00000071;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.time-in-cont button i {
+    margin: 0;
+}
+.time-input-cal {
+    border: solid;
+    border-color: var(--secondary-color);
+    border-width: 2px;
+    border-radius: 10px;
+    margin-top: 1em;
+    padding: 1em;
+}
+.time-cal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: nowrap;
+    margin-bottom: 1em;
+}
+.time-cal-day {
+    /*display: flex;
+    justify-content: center;
+    align-items: center;*/
+}
+.time-cal-head h2 {
+    padding: 2px;
+    border-radius: 50px;
+}
+.time-cal-nav:hover {
+    background-color: var(--white-4);
+}
+.time-cal-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+.time-cal-body h2 {
+    padding: 5px;
+    border-radius: 50px;
+    margin-bottom: 0.5em;
+}
+.time-cal-body h2:hover {
+    background-color: var(--white-3);
+}
+.time-cal-foot {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    flex-wrap: nowrap;
+    margin-top: 1em;
+}
+.time-input-pop input[type="number"] {
+    background-color: var(--white-1);
+    border: solid;
+    border-width: 2px;
+    border-color: var(--secondary-color);
+    border-radius: 10px;
+    font-size: var(--30px);
+    -moz-appearance: textfield;
+    text-align: center;
+}
+.time-input-pop input::-webkit-outer-spin-button,
+.time-input-pop input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.time-in-cont {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.time-in-cont button {
+    border: solid;
+    border-color: var(--secondary-color);
+    border-width: 2px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em;
+    font-size: var(--16px);
+    width: 2em;
+    margin-bottom: 0.5em;
+    background-color: var(--white-1);
+}
+.time-in-cont button:hover {
+    background-color: var(--white-3);
+}
+.time-in-cont input + button {
+    margin-bottom: 0;
+    margin-top: 0.5em;
+}
+.time-input-pop p {
+    font-size: var(--30px);
+    margin-left: 0.4em;
+    margin-right: 0.4em;
 }
 .cal-type-switch,
 .cal-type-switch-in {

@@ -7,6 +7,7 @@ import axios from "axios";
 import AES from "crypto-js";
 import { useCookies } from "react-cookie";
 import { sha256 } from "js-sha256";
+import { TimeInput } from "./TimeInput";
 
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -55,8 +56,8 @@ export const AddPopup = (props) => {
     // }
 
     const [name, setName] = useState("");
-    const [start, setStart] = useState(new Date().getTime());
-    const [end, setEnd] = useState(new Date().getTime() + 3600);
+    const [start, setStart] = useState(new Date());
+    const [end, setEnd] = useState(new Date(new Date().getTime() + 3600));
     const [fullDay, setFullDay] = useState(false);
     const [dateChanged, setDateChanged] = useState(false);
     const [nameError, setNameError] = useState(false);
@@ -69,6 +70,8 @@ export const AddPopup = (props) => {
     const [recurenceEndNbr, setRecurenceEndNbr] = useState(0);
     const [canSub, setCanSub] = useState(true);
     const [endChanged, setEndChanged] = useState(false);
+
+    const [isDisplayPop, setIsDisplayPop] = useState(false);
 
     const [isAdvenced, setIsAdvenced] = useState(false);
     const [advencedChanged, setAdvencedChanged] = useState(false);
@@ -277,58 +280,66 @@ export const AddPopup = (props) => {
 
     return (
         <div className="add-container" onClick={() => props.setisAdd(false)}>
-            <div className="add-popup" onClick={(e) => e.stopPropagation()}>
-                <div className="add-first-line">
-                    <h2>New Event</h2>
-                </div>
-                {nameError ? <p className="add-error-line">Please provide a name</p> : null}
+            <div className="add-popup" id="add-popup" onClick={(e) => e.stopPropagation()} style={{ backgroundColor: isDisplayPop ? "#0000" : "" }}>
+                {!isDisplayPop ? (
+                    <>
+                        <div className="add-first-line">
+                            <h2>New Event</h2>
+                        </div>
+                        {nameError ? <p className="add-error-line">Please provide a name</p> : null}
+                        <div className="add-line">
+                            <div className="input-wrapper" style={{ borderColor: colorCodeConv[color] }}>
+                                <input
+                                    type="text"
+                                    autoFocus
+                                    onChange={(e) => setName(e.target.value)}
+                                    style={{ borderColor: colorCodeConv[color] }}
+                                    placeholder="Event name"
+                                    className="input-open"></input>
+                            </div>
+                        </div>
+                        <div className="add-half-line">
+                            <p className="add-p-half">Start Date</p>
+                            {window.matchMedia("(max-width: 450px)").matches ? null : <p className="add-p-half">End Date</p>}
+                        </div>
+                        {dateError ? (
+                            <p style={{ bottom: 0 }} className="add-error-line">
+                                Incorrect date
+                            </p>
+                        ) : startEndError ? (
+                            <p style={{ bottom: 0 }} className="add-error-line">
+                                Event can't end before starting
+                            </p>
+                        ) : null}
+                    </>
+                ) : null}
                 <div className="add-line">
-                    <div className="input-wrapper" style={{ borderColor: colorCodeConv[color] }}>
-                        <input
-                            type="text"
-                            autoFocus
-                            onChange={(e) => setName(e.target.value)}
-                            style={{ borderColor: colorCodeConv[color] }}
-                            placeholder="Event name"
-                            className="input-open"></input>
-                    </div>
-                </div>
-                <div className="add-half-line">
-                    <p className="add-p-half">Start Date</p>
-                    {window.matchMedia("(max-width: 450px)").matches ? null : <p className="add-p-half">End Date</p>}
-                </div>
-                {dateError ? <p className="add-error-line">Incorrect date</p> : startEndError ? <p className="add-error-line">Event can't end before starting</p> : null}
-                <div className="add-line">
-                    <div className="input-wrapper" style={{ borderColor: colorCodeConv[color] }}>
-                        <input
-                            value={toHtmlDate(start)}
-                            onChange={(e) => {
-                                if (!endChanged) {
-                                    setEnd(new Date(new Date(e.target.value).getTime() + 3600000));
-                                }
-                                setDateChanged(true);
-                                setStart(e.target.value);
+                    <TimeInput
+                        ondisplay={(bool) => {
+                            setIsDisplayPop(bool);
+                        }}
+                        full={fullDay}
+                        date={start}
+                        changement={(d) => {
+                            setStart(d);
+                            setDateChanged(true);
+                        }}
+                        isOtherPop={isDisplayPop}
+                    />
+                    {window.matchMedia("(max-width: 450px)").matches ? null : (
+                        <TimeInput
+                            ondisplay={(bool) => {
+                                setIsDisplayPop(bool);
                             }}
-                            style={{ borderColor: colorCodeConv[color] }}
-                            type={fullDay ? "date" : "datetime-local"}
-                            placeholder="Start date"
-                            className="input-open input-add-half input-add-half-first"></input>
-                    </div>
-                    <div className="input-wrapper" style={{ borderColor: colorCodeConv[color] }}>
-                        {window.matchMedia("(max-width: 450px)").matches ? null : (
-                            <input
-                                value={toHtmlDate(end)}
-                                onChange={(e) => {
-                                    setDateChanged(true);
-                                    setEndChanged(true);
-                                    setEnd(e.target.value);
-                                }}
-                                style={{ borderColor: colorCodeConv[color] }}
-                                type={fullDay ? "date" : "datetime-local"}
-                                placeholder="End date"
-                                className="input-open input-add-half input-add-half-second"></input>
-                        )}
-                    </div>
+                            full={fullDay}
+                            date={end}
+                            changement={(d) => {
+                                setEnd(d);
+                                setDateChanged(true);
+                            }}
+                            isOtherPop={isDisplayPop}
+                        />
+                    )}
                 </div>
                 {window.matchMedia("(max-width: 450px)").matches ? (
                     <>
@@ -336,218 +347,219 @@ export const AddPopup = (props) => {
                             <p className="add-p-half">End Date</p>
                         </div>
                         <div className="add-line">
-                            <div className="input-wrapper" style={{ borderColor: colorCodeConv[color] }}>
-                                <input
-                                    value={toHtmlDate(end)}
-                                    onChange={(e) => {
-                                        setDateChanged(true);
-                                        setEndChanged(true);
-                                        setEnd(e.target.value);
-                                    }}
-                                    style={{
-                                        borderColor: colorCodeConv[color],
-                                    }}
-                                    type={fullDay ? "date" : "datetime-local"}
-                                    placeholder="End date"
-                                    className="input-open input-add-half input-add-half-second"></input>
-                            </div>
+                            <TimeInput
+                                ondisplay={(bool) => {
+                                    setIsDisplayPop(bool);
+                                }}
+                                full={fullDay}
+                                date={end}
+                                changement={(d) => {
+                                    setEnd(d);
+                                    setDateChanged(true);
+                                }}
+                                isOtherPop={isDisplayPop}
+                            />
                         </div>
                     </>
                 ) : null}
-                <div className="add-under-line">
-                    <Checkbox checked={fullDay} changement={(bo) => setFullDay((bo) => !bo)} color={colorCodeConv[color]} txt="All day" />
-                </div>
-                <div className="add-half-line">
-                    <p className="add-p-half">Calendar</p>
-                    {window.matchMedia("(max-width: 450px)").matches ? null : <p className="add-p-half">Color</p>}
-                </div>
-                <div className="color-add-line add-line">
-                    <div className="select-wrapper" style={{ borderColor: colorCodeConv[color] }}>
-                        <select style={{ borderColor: colorCodeConv[color] }} value={calendarNbr} onChange={(e) => setCalendarNbr(e.target.value)}>
-                            {props.calendarList().map((x, y) => (
-                                <option key={y} value={y}>
-                                    {x}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="select-wrapper" style={{ borderColor: colorCodeConv[color] }}>
-                        {window.matchMedia("(max-width: 450px)").matches ? null : (
-                            <select style={{ borderColor: colorCodeConv[color] }} value={color} onChange={(e) => setcolor(e.target.value)}>
-                                {colorConv.map((x, y) => (
-                                    <option key={y} style={{ color: colorCodeConv[y] }} value={y}>
-                                        {x}
-                                    </option>
-                                ))}
-                            </select>
-                        )}
-                    </div>
-                </div>
-                {window.matchMedia("(max-width: 450px)").matches ? (
+                {!isDisplayPop ? (
                     <>
+                        <div className="add-under-line">
+                            <Checkbox checked={fullDay} changement={(bo) => setFullDay((bo) => !bo)} color={colorCodeConv[color]} txt="All day" />
+                        </div>
                         <div className="add-half-line">
-                            <p className="add-p-half">Color</p>
+                            <p className="add-p-half">Calendar</p>
+                            {window.matchMedia("(max-width: 450px)").matches ? null : <p className="add-p-half">Color</p>}
                         </div>
                         <div className="color-add-line add-line">
                             <div className="select-wrapper" style={{ borderColor: colorCodeConv[color] }}>
-                                <select
-                                    style={{
-                                        borderColor: colorCodeConv[color],
-                                    }}
-                                    value={color}
-                                    onChange={(e) => setcolor(e.target.value)}>
-                                    {colorConv.map((x, y) => (
-                                        <option key={y} style={{ color: colorCodeConv[y] }} value={y}>
+                                <select style={{ borderColor: colorCodeConv[color] }} value={calendarNbr} onChange={(e) => setCalendarNbr(e.target.value)}>
+                                    {props.calendarList().map((x, y) => (
+                                        <option key={y} value={y}>
                                             {x}
                                         </option>
                                     ))}
                                 </select>
                             </div>
+                            <div className="select-wrapper" style={{ borderColor: colorCodeConv[color] }}>
+                                {window.matchMedia("(max-width: 450px)").matches ? null : (
+                                    <select style={{ borderColor: colorCodeConv[color] }} value={color} onChange={(e) => setcolor(e.target.value)}>
+                                        {colorConv.map((x, y) => (
+                                            <option key={y} style={{ color: colorCodeConv[y] }} value={y}>
+                                                {x}
+                                            </option>
+                                        ))}
+                                    </select>
+                                )}
+                            </div>
                         </div>
-                    </>
-                ) : null}
-                <div
-                    className="add-more"
-                    onClick={() => {
-                        setIsAdvenced(!isAdvenced);
-                        setAdvencedChanged(true);
-                    }}>
-                    <p>Advanced options</p>
-                    {isAdvenced ? (
-                        <i className={advencedChanged ? "fas fa-chevron-up add-chevron-annim" : "fas fa-chevron-up"}></i>
-                    ) : (
-                        <i className={advencedChanged ? "fas fa-chevron-down add-chevron-annim" : "fas fa-chevron-down"}></i>
-                    )}
-                </div>
-                {isAdvenced ? (
-                    <>
-                        <div className="add-half-line">
-                            <p className="add-p-half">Repetition</p>
-                        </div>
-                        <div className="add-line add-line-repeat" style={{ alignItems: "baseline" }}>
-                            <Checkbox txt="Repeat" checked={isRepeat} changement={(bo) => setIsRepeat((bo) => !bo)} color={colorCodeConv[color]} />
-                            {isRepeat ? (
-                                <>
-                                    <p> every </p>
-                                    <div className="input-wrapper input-wrapper-number">
-                                        <input
-                                            style={{ minWidth: 0 }}
-                                            className="input-open"
-                                            type="number"
-                                            min={1}
-                                            max={9}
-                                            step={1}
-                                            value={recurenceNbr}
-                                            onChange={(e) => setRecurenceNbr(e.target.value)}
-                                        />
-                                    </div>
-                                    <div
-                                        className="select-wrapper select-wrapper-not-full"
-                                        style={{
-                                            borderColor: colorCodeConv[color],
-                                        }}>
+                        {window.matchMedia("(max-width: 450px)").matches ? (
+                            <>
+                                <div className="add-half-line">
+                                    <p className="add-p-half">Color</p>
+                                </div>
+                                <div className="color-add-line add-line">
+                                    <div className="select-wrapper" style={{ borderColor: colorCodeConv[color] }}>
                                         <select
                                             style={{
                                                 borderColor: colorCodeConv[color],
                                             }}
-                                            value={recurence}
-                                            onChange={(e) => setRecurence(e.target.value)}>
-                                            <option value={1} key={1}>
-                                                Day
-                                            </option>
-                                            <option value={2} key={2}>
-                                                Week
-                                            </option>
-                                            <option value={3} key={3}>
-                                                Month
-                                            </option>
-                                            <option value={4} key={4}>
-                                                Year
-                                            </option>
+                                            value={color}
+                                            onChange={(e) => setcolor(e.target.value)}>
+                                            {colorConv.map((x, y) => (
+                                                <option key={y} style={{ color: colorCodeConv[y] }} value={y}>
+                                                    {x}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
-                                </>
-                            ) : null}
-                        </div>
-                        {isRepeat ? (
-                            <div className="add-second-line">
-                                <div
-                                    className="select-wrapper select-wrapper-not-full"
-                                    style={{
-                                        borderColor: colorCodeConv[color],
-                                    }}>
-                                    <select
-                                        style={{
-                                            borderColor: colorCodeConv[color],
-                                        }}
-                                        value={recurenceEndType}
-                                        onChange={(e) => setRecurenceEndType(e.target.value)}>
-                                        <option key={0} value={0}>
-                                            Forever
-                                        </option>
-                                        <option key={1} value={1}>
-                                            For a number of occurences
-                                        </option>
-                                        <option key={2} value={2}>
-                                            Until a certain date
-                                        </option>
-                                    </select>
                                 </div>
-                                {recurenceEndType == 0 ? null : recurenceEndType == 1 ? (
-                                    <div
-                                        className="input-wrapper input-wrapper-number"
-                                        style={{
-                                            borderColor: colorCodeConv[color],
-                                        }}>
-                                        <input
-                                            style={{
-                                                minWidth: 0,
-                                                borderColor: colorCodeConv[color],
-                                            }}
-                                            className="input-open"
-                                            type="number"
-                                            min={2}
-                                            step={1}
-                                            value={recurenceEndNbr}
-                                            onChange={(e) => {
-                                                setRecurenceEndNbr(e.target.value);
-                                            }}
-                                        />
-                                    </div>
-                                ) : (
-                                    <div
-                                        className="input-wrapper"
-                                        style={{
-                                            borderColor: colorCodeConv[color],
-                                        }}>
-                                        <input
-                                            value={recurenceEndNbr}
-                                            onChange={(e) => {
-                                                setRecurenceEndNbr(e.target.value);
-                                            }}
-                                            style={{
-                                                borderColor: colorCodeConv[color],
-                                            }}
-                                            type="date"
-                                            className="input-open input-add-half input-add-half-first"></input>
-                                    </div>
-                                )}
-                            </div>
+                            </>
                         ) : null}
+                        <div
+                            className="add-more"
+                            onClick={() => {
+                                setIsAdvenced(!isAdvenced);
+                                setAdvencedChanged(true);
+                            }}>
+                            <p>Advanced options</p>
+                            {isAdvenced ? (
+                                <i className={advencedChanged ? "fas fa-chevron-up add-chevron-annim" : "fas fa-chevron-up"}></i>
+                            ) : (
+                                <i className={advencedChanged ? "fas fa-chevron-down add-chevron-annim" : "fas fa-chevron-down"}></i>
+                            )}
+                        </div>
+                        {isAdvenced ? (
+                            <>
+                                <div className="add-half-line">
+                                    <p className="add-p-half">Repetition</p>
+                                </div>
+                                <div className="add-line add-line-repeat" style={{ alignItems: "baseline" }}>
+                                    <Checkbox txt="Repeat" checked={isRepeat} changement={(bo) => setIsRepeat((bo) => !bo)} color={colorCodeConv[color]} />
+                                    {isRepeat ? (
+                                        <>
+                                            <p> every </p>
+                                            <div className="input-wrapper input-wrapper-number">
+                                                <input
+                                                    style={{ minWidth: 0 }}
+                                                    className="input-open"
+                                                    type="number"
+                                                    min={1}
+                                                    max={9}
+                                                    step={1}
+                                                    value={recurenceNbr}
+                                                    onChange={(e) => setRecurenceNbr(e.target.value)}
+                                                />
+                                            </div>
+                                            <div
+                                                className="select-wrapper select-wrapper-not-full"
+                                                style={{
+                                                    borderColor: colorCodeConv[color],
+                                                }}>
+                                                <select
+                                                    style={{
+                                                        borderColor: colorCodeConv[color],
+                                                    }}
+                                                    value={recurence}
+                                                    onChange={(e) => setRecurence(e.target.value)}>
+                                                    <option value={1} key={1}>
+                                                        Day
+                                                    </option>
+                                                    <option value={2} key={2}>
+                                                        Week
+                                                    </option>
+                                                    <option value={3} key={3}>
+                                                        Month
+                                                    </option>
+                                                    <option value={4} key={4}>
+                                                        Year
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </>
+                                    ) : null}
+                                </div>
+                                {isRepeat ? (
+                                    <div className="add-second-line">
+                                        <div
+                                            className="select-wrapper select-wrapper-not-full"
+                                            style={{
+                                                borderColor: colorCodeConv[color],
+                                            }}>
+                                            <select
+                                                style={{
+                                                    borderColor: colorCodeConv[color],
+                                                }}
+                                                value={recurenceEndType}
+                                                onChange={(e) => setRecurenceEndType(e.target.value)}>
+                                                <option key={0} value={0}>
+                                                    Forever
+                                                </option>
+                                                <option key={1} value={1}>
+                                                    For a number of occurences
+                                                </option>
+                                                <option key={2} value={2}>
+                                                    Until a certain date
+                                                </option>
+                                            </select>
+                                        </div>
+                                        {recurenceEndType == 0 ? null : recurenceEndType == 1 ? (
+                                            <div
+                                                className="input-wrapper input-wrapper-number"
+                                                style={{
+                                                    borderColor: colorCodeConv[color],
+                                                }}>
+                                                <input
+                                                    style={{
+                                                        minWidth: 0,
+                                                        borderColor: colorCodeConv[color],
+                                                    }}
+                                                    className="input-open"
+                                                    type="number"
+                                                    min={2}
+                                                    step={1}
+                                                    value={recurenceEndNbr}
+                                                    onChange={(e) => {
+                                                        setRecurenceEndNbr(e.target.value);
+                                                    }}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div
+                                                className="input-wrapper"
+                                                style={{
+                                                    borderColor: colorCodeConv[color],
+                                                }}>
+                                                <input
+                                                    value={recurenceEndNbr}
+                                                    onChange={(e) => {
+                                                        setRecurenceEndNbr(e.target.value);
+                                                    }}
+                                                    style={{
+                                                        borderColor: colorCodeConv[color],
+                                                    }}
+                                                    type="date"
+                                                    className="input-open input-add-half input-add-half-first"></input>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : null}
+                            </>
+                        ) : null}
+                        <div className="add-button-line add-line">
+                            {window.matchMedia("(min-width: 450px)").matches ? (
+                                <Button onClick={() => props.setisAdd(false)} txt="Cancel" first />
+                            ) : (
+                                <Button onClick={() => submitData()} full txt="Create Event" last />
+                            )}
+                            {window.matchMedia("(min-width: 450px)").matches ? (
+                                <Button onClick={() => submitData()} full txt="Create Event" last />
+                            ) : (
+                                <Button onClick={() => props.setisAdd(false)} txt="Cancel" first />
+                            )}
+                        </div>
                     </>
                 ) : null}
-                <div className="add-button-line add-line">
-                    {window.matchMedia("(min-width: 450px)").matches ? (
-                        <Button onClick={() => props.setisAdd(false)} txt="Cancel" first />
-                    ) : (
-                        <Button onClick={() => submitData()} full txt="Create Event" last />
-                    )}
-                    {window.matchMedia("(min-width: 450px)").matches ? (
-                        <Button onClick={() => submitData()} full txt="Create Event" last />
-                    ) : (
-                        <Button onClick={() => props.setisAdd(false)} txt="Cancel" first />
-                    )}
-                </div>
             </div>
         </div>
     );

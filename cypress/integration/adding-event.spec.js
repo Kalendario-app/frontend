@@ -145,12 +145,14 @@ describe("adding event", () => {
         cy.get(".add-button-line .button-full").click();
         cy.get(".add-error-line").should("contain", "Please provide a name");
         cy.get("input[placeholder='Event name']").type("test event");
-        cy.get(":nth-child(2) > .input-open").type(toHtmlDate(new Date(new Date().getTime() - 86400000)));
+        cy.get(".time-input").eq(0).click();
+        cy.get(".time-input-nbr > :nth-child(6) > :nth-child(1)").click();
+        cy.get(".button-empty").click();
         cy.get(".add-button-line .button-full").click();
         cy.get(".add-error-line").should("contain", "Event can't end before starting");
-        let dte = toHtmlDate(new Date());
-        cy.get(":nth-child(5) > :nth-child(1) > .input-open").type(dte);
-        cy.get(":nth-child(2) > .input-open").type(dte);
+        cy.get(".time-input").eq(0).click();
+        cy.get(".time-input-nbr > :nth-child(6) > :nth-child(1)").click();
+        cy.get(".button-empty").click();
         cy.get(".add-button-line .button-full").click();
         cy.get(".add-error-line").should("contain", "Event can't end before starting");
     });
