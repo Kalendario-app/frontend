@@ -129,6 +129,7 @@ export function Todo(props) {
             dateStr = dateStr.concat(" ");
             dateStr = dateStr.concat(date.getFullYear());
         }
+        console.log(date);
         if (date.getHours() !== 0 && date.getMinutes() !== 0) {
             dateStr = dateStr.concat(" at ");
             if (date.getHours() < 10) {
