@@ -1437,7 +1437,8 @@ header img:hover {
     font-size: var(--16px);
     padding: 5px;
 }
-.add-popup h2 {
+.add-popup h2,
+.time-input-pop h2 {
     font-size: var(--18px);
     text-align: center;
 }
@@ -1482,6 +1483,10 @@ header img:hover {
 .add-line p {
     padding-top: 0.2em;
     font-size: var(--16px);
+}
+.add-popup .time-input {
+    width: 18em;
+    margin-right: 0.5em;
 }
 .input-wrapper-number {
     width: 4em;
@@ -1535,6 +1540,7 @@ input[type="number"]::-webkit-outer-spin-button {
     font-weight: 500;
     border-color: var(--secondary-color);
     border-radius: 0;
+    z-index: 1000;
 }
 .add-calendar-select .check-container {
     margin-top: 1%;
@@ -2188,11 +2194,33 @@ input[type="number"]::-webkit-outer-spin-button {
 .time-input-pop {
     display: flex;
     flex-direction: column;
+    background-color: var(--white-2);
+    color: var(--dark-color);
+    border-radius: 2.6em;
+    padding: 2em;
+    max-width: 95vw;
+    z-index: 10000;
+    opacity: 100%;
 }
 .time-input-nbr {
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
+}
+.time-input-cont {
+    z-index: 1000;
+    background-color: #00000071;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.time-in-cont button i {
+    margin: 0;
 }
 .time-input-cal {
     border: solid;
@@ -2208,6 +2236,11 @@ input[type="number"]::-webkit-outer-spin-button {
     justify-content: space-evenly;
     flex-wrap: nowrap;
     margin-bottom: 1em;
+}
+.time-cal-day {
+    /*display: flex;
+    justify-content: center;
+    align-items: center;*/
 }
 .time-cal-head h2 {
     padding: 2px;

@@ -31,13 +31,31 @@ export const TimeInput = (props) => {
 
     return (
         <>
-            <div className="time-input" style={{ borderColor: props.color }} onClick={() => setIsPop(true)}>
-                {date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()}
-                {!fullDay ? " " + date.getHours() + ":" + (date.getMinutes() < 10 ? "0" : "") + date.getMinutes() : ""}
-            </div>
+            {!isPop && !props.isOtherPop ? (
+                <div
+                    className="time-input"
+                    style={{ borderColor: props.color }}
+                    onClick={() => {
+                        if (props.ondisplay !== undefined) {
+                            props.ondisplay(true);
+                        }
+                        setIsPop(true);
+                    }}
+                    on>
+                    {date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()}
+                    {!props.full ? " " + date.getHours() + ":" + (date.getMinutes() < 10 ? "0" : "") + date.getMinutes() : ""}
+                </div>
+            ) : null}
             {isPop ? (
-                <div className="add-container time-input-cont" onClick={() => setIsPop(false)}>
-                    <div className="add-popup time-input-pop" onClick={(e) => e.stopPropagation()}>
+                <div
+                    className="time-input-cont"
+                    onClick={() => {
+                        if (props.ondisplay !== undefined) {
+                            props.ondisplay(false);
+                        }
+                        setIsPop(false);
+                    }}>
+                    <div className="time-input-pop" onClick={(e) => e.stopPropagation()}>
                         <div className="time-input-nbr">
                             <div className="time-in-cont">
                                 <button
@@ -47,7 +65,7 @@ export const TimeInput = (props) => {
                                     <i className="fas fa-chevron-up"></i>
                                 </button>
                                 <input
-                                    style={{ width: "2em" }}
+                                    style={{ width: "2em", minWidth: 0 }}
                                     type="number"
                                     value={date.getDate()}
                                     onChange={(e) => {
@@ -72,7 +90,7 @@ export const TimeInput = (props) => {
                                     <i className="fas fa-chevron-up"></i>
                                 </button>
                                 <input
-                                    style={{ width: "2em" }}
+                                    style={{ width: "2em", minWidth: 0 }}
                                     type="number"
                                     value={date.getMonth() + 1}
                                     onChange={(e) => {
@@ -97,7 +115,7 @@ export const TimeInput = (props) => {
                                     <i className="fas fa-chevron-up"></i>
                                 </button>
                                 <input
-                                    style={{ width: "4em", marginRight: ".8em" }}
+                                    style={{ width: "4em", marginRight: ".8em", minWidth: 0 }}
                                     type="number"
                                     value={date.getFullYear()}
                                     onChange={(e) => {
@@ -119,7 +137,7 @@ export const TimeInput = (props) => {
                                     <i className="fas fa-chevron-up"></i>
                                 </button>
                                 <input
-                                    style={{ width: "2em" }}
+                                    style={{ width: "2em", minWidth: 0 }}
                                     type="number"
                                     value={date.getHours()}
                                     onChange={(e) => {
@@ -144,7 +162,7 @@ export const TimeInput = (props) => {
                                     <i className="fas fa-chevron-up"></i>
                                 </button>
                                 <input
-                                    style={{ width: "2em" }}
+                                    style={{ width: "2em", minWidth: 0 }}
                                     type="number"
                                     value={date.getMinutes() > 10 ? date.getMinutes() : "0" + date.getMinutes()}
                                     onChange={(e) => {
@@ -199,7 +217,15 @@ export const TimeInput = (props) => {
                             </div>
                         </div>
                         <div className="time-cal-foot">
-                            <Button onClick={() => setIsPop(false)} txt="Ok" />
+                            <Button
+                                onClick={() => {
+                                    if (props.ondisplay !== undefined) {
+                                        props.ondisplay(false);
+                                    }
+                                    setIsPop(false);
+                                }}
+                                txt="Ok"
+                            />
                         </div>
                     </div>
                 </div>
