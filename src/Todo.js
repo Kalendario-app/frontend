@@ -61,7 +61,7 @@ export function Todo(props) {
         }
         let data = {
             "name": AES.encrypt(txt, code).toString(),
-            "date": Math.floor(date / 1000) + TZOffset + (date > 10000 ? keyGen(code) : 0),
+            "date": isMore ? Math.floor(date / 1000) + TZOffset + (date > 10000 ? keyGen(code) : 0) : 0,
             "color": color,
             "calendar": AES.encrypt(props.calendarList[0], code).toString(),
             "repeat_type": 0,
@@ -129,7 +129,6 @@ export function Todo(props) {
             dateStr = dateStr.concat(" ");
             dateStr = dateStr.concat(date.getFullYear());
         }
-        console.log(date);
         if (date.getHours() !== 0 && date.getMinutes() !== 0) {
             dateStr = dateStr.concat(" at ");
             if (date.getHours() < 10) {
@@ -154,7 +153,7 @@ export function Todo(props) {
                 <span className="checkmark" id={"check-" + props.id} style={{ borderColor: colorCodeConv[props.color] }}></span>
                 <div className="todo-txt">
                     <h3>{props.txt}</h3>
-                    {props.date > 100000 ? <p>{dateStr}</p> : null}
+                    {false ? props.date > 100000 ? <p>{dateStr}</p> : null : null}
                 </div>
             </div>
         );
@@ -166,6 +165,35 @@ export function Todo(props) {
     tmp.sort((a, b) => {
         return a["date"] - b["date"];
     });
+
+    let stockage = [];
+
+    let oldM = null;
+    let oldD = null;
+    for (let i = 0; i < tmp.length; i++) {
+        let m = new Date(tmp[i]["date"] * 1000).getMonth();
+        let d = new Date(tmp[i]["date"] * 1000).getDate();
+        if (tmp[i]["date"] < 100) {
+            if (oldM !== m || oldD !== d) {
+                stockage.push(["No date", ["", [tmp[i]]]]);
+            } else {
+                stockage[stockage.length - 1][1][1].push(tmp[i]);
+            }
+        } else {
+            if (oldM === m && oldD === d) {
+                stockage[stockage.length - 1][stockage[stockage.length - 1].length - 1][1].push(tmp[i]);
+            } else if (oldM === m) {
+                stockage[stockage.length - 1].push([dayConv[new Date(tmp[i]["date"] * 1000).getDay()] + " " + new Date(tmp[i]["date"] * 1000).getDate(), [tmp[i]]]);
+            } else {
+                stockage.push([
+                    monthConv[m] + " " + new Date(tmp[i]["date"] * 1000).getFullYear(),
+                    [dayConv[new Date(tmp[i]["date"] * 1000).getDay()] + " " + new Date(tmp[i]["date"] * 1000).getDate(), [tmp[i]]],
+                ]);
+            }
+        }
+        oldM = m;
+        oldD = d;
+    }
 
     return (
         <div className="todo-container" style={{ height: props.height }}>
@@ -215,8 +243,27 @@ export function Todo(props) {
                         </div>
                     </div>
                 ) : null}
-                {tmp.map((item, index) => (
-                    <TodoItem txt={item.name} color={item.color} index={index} key={index} checked={item.done} date={item.date} item={item} id={"todo-" + index} />
+                {stockage.map((x) => (
+                    <>
+                        <h4>{x[0]}</h4>
+                        {x.slice(1).map((y) => (
+                            <>
+                                <h5>{y[0]}</h5>
+                                {y[1].map((item, index) => (
+                                    <TodoItem
+                                        txt={item.name}
+                                        color={item.color}
+                                        index={index}
+                                        key={index}
+                                        checked={item.done}
+                                        date={item.date}
+                                        item={item}
+                                        id={"todo-" + index}
+                                    />
+                                ))}
+                            </>
+                        ))}
+                    </>
                 ))}
                 {tmp.length < 1 && !isAdd ? (
                     <div className="next-event-error">
