@@ -129,55 +129,59 @@ export const TimeInput = (props) => {
                                     <i className="fas fa-chevron-down"></i>
                                 </button>
                             </div>
-                            <div className="time-in-cont">
-                                <button
-                                    onClick={() => {
-                                        setDate(new Date(new Date(date).setHours(date.getHours() + 1)));
-                                    }}>
-                                    <i className="fas fa-chevron-up"></i>
-                                </button>
-                                <input
-                                    style={{ width: "2em", minWidth: 0 }}
-                                    type="number"
-                                    value={date.getHours()}
-                                    onChange={(e) => {
-                                        setDate(new Date(date.setHours(e.target.value)));
-                                    }}
-                                    min={0}
-                                    max={23}
-                                />
-                                <button
-                                    onClick={() => {
-                                        setDate(new Date(new Date(date).setHours(date.getHours() - 1)));
-                                    }}>
-                                    <i className="fas fa-chevron-down"></i>
-                                </button>
-                            </div>
-                            <p>:</p>
-                            <div className="time-in-cont">
-                                <button
-                                    onClick={() => {
-                                        setDate(new Date(new Date(date).setMinutes(date.getMinutes() + 1)));
-                                    }}>
-                                    <i className="fas fa-chevron-up"></i>
-                                </button>
-                                <input
-                                    style={{ width: "2em", minWidth: 0 }}
-                                    type="number"
-                                    value={date.getMinutes() > 10 ? date.getMinutes() : "0" + date.getMinutes()}
-                                    onChange={(e) => {
-                                        setDate(new Date(date.setMinutes(e.target.value)));
-                                    }}
-                                    min={0}
-                                    max={59}
-                                />
-                                <button
-                                    onClick={() => {
-                                        setDate(new Date(new Date(date).setMinutes(date.getMinutes() - 1)));
-                                    }}>
-                                    <i className="fas fa-chevron-down"></i>
-                                </button>
-                            </div>
+                            {!props.full ? (
+                                <>
+                                    <div className="time-in-cont">
+                                        <button
+                                            onClick={() => {
+                                                setDate(new Date(new Date(date).setHours(date.getHours() + 1)));
+                                            }}>
+                                            <i className="fas fa-chevron-up"></i>
+                                        </button>
+                                        <input
+                                            style={{ width: "2em", minWidth: 0 }}
+                                            type="number"
+                                            value={date.getHours()}
+                                            onChange={(e) => {
+                                                setDate(new Date(date.setHours(e.target.value)));
+                                            }}
+                                            min={0}
+                                            max={23}
+                                        />
+                                        <button
+                                            onClick={() => {
+                                                setDate(new Date(new Date(date).setHours(date.getHours() - 1)));
+                                            }}>
+                                            <i className="fas fa-chevron-down"></i>
+                                        </button>
+                                    </div>
+                                    <p>:</p>
+                                    <div className="time-in-cont">
+                                        <button
+                                            onClick={() => {
+                                                setDate(new Date(new Date(date).setMinutes(date.getMinutes() + 1)));
+                                            }}>
+                                            <i className="fas fa-chevron-up"></i>
+                                        </button>
+                                        <input
+                                            style={{ width: "2em", minWidth: 0 }}
+                                            type="number"
+                                            value={date.getMinutes() > 10 ? date.getMinutes() : "0" + date.getMinutes()}
+                                            onChange={(e) => {
+                                                setDate(new Date(date.setMinutes(e.target.value)));
+                                            }}
+                                            min={0}
+                                            max={59}
+                                        />
+                                        <button
+                                            onClick={() => {
+                                                setDate(new Date(new Date(date).setMinutes(date.getMinutes() - 1)));
+                                            }}>
+                                            <i className="fas fa-chevron-down"></i>
+                                        </button>
+                                    </div>
+                                </>
+                            ) : null}
                         </div>
                         <div className="time-input-cal">
                             <div className="time-cal-head">
