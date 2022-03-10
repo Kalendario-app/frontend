@@ -267,7 +267,7 @@ export function Todo(props) {
                 ))}
                 {tmp.length < 1 && !isAdd ? (
                     <div className="next-event-error">
-                        <p>Il n'y a rien par ici...</p>
+                        <p>It's quite empty here...</p>
                     </div>
                 ) : null}
             </div>

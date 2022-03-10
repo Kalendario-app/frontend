@@ -186,7 +186,7 @@ export const CalendarSelect = (props) => {
                     </div>
                 ) : null}
                 <div className="calendar-select-top">
-                    <h2>Selection des calendriers</h2>
+                    <h2>My Calendars</h2>
                     <h2 onClick={() => setIsAdd(!isAdd)} id="calendar-add">
                         +
                     </h2>
@@ -248,7 +248,7 @@ export const CalendarSelect = (props) => {
         return (
             <div className="calendar-select">
                 <div className="calendar-select-top">
-                    <h2>Selection des calendriers</h2>
+                    <h2>My calendars</h2>
                     <h2 onClick={() => setIsAdd(!isAdd)} id="calendar-add">
                         +
                     </h2>
