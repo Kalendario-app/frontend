@@ -442,6 +442,11 @@ header img:hover {
         max-width: calc(100vw - 4em);
     }
 }
+@media screen and (max-width: 450px) {
+    .monthly-calendar {
+        max-width: calc(100vw);
+    }
+}
 .monthly-actual {
     display: grid;
     grid-template-columns: repeat(7, 14.2857143%);

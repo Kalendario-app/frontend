@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Checkbox } from "./Checkbox";
 import { Button } from "./Button";
 import { api, decryptCode } from "./Main";
@@ -271,12 +271,21 @@ export const AddPopup = (props) => {
         }
     }
 
-    window.onkeydown = function (e) {
-        if (e.keyCode === 13 && canSub) {
-            setCanSub(false);
-            submitData();
-        }
-    };
+    useEffect(() => {
+        window.onkeydown = function (e) {
+            if (e.keyCode === 13 && canSub) {
+                setCanSub(false);
+                submitData();
+            }
+            if (e.keyCode === 27) {
+                props.setisAdd(false);
+            }
+            console.log(e.keyCode);
+        };
+        return () => {
+            window.onkeydown = null;
+        };
+    }, []);
 
     return (
         <div className="add-container" onClick={() => props.setisAdd(false)}>
@@ -314,18 +323,36 @@ export const AddPopup = (props) => {
                     </>
                 ) : null}
                 <div className="add-line">
-                    <TimeInput
-                        ondisplay={(bool) => {
-                            setIsDisplayPop(bool);
-                        }}
-                        full={fullDay}
-                        date={start}
-                        changement={(d) => {
-                            setStart(d);
-                            setDateChanged(true);
-                        }}
-                        isOtherPop={isDisplayPop}
-                    />
+                    {window.matchMedia("(max-width: 450px)").matches ? (
+                        <div className="input-wrapper" style={{ borderColor: colorCodeConv[color] }}>
+                            <input
+                                value={toHtmlDate(start)}
+                                onChange={(e) => {
+                                    if (!endChanged) {
+                                        setEnd(new Date(new Date(e.target.value).getTime() + 3600000));
+                                    }
+                                    setDateChanged(true);
+                                    setStart(e.target.value);
+                                }}
+                                style={{ borderColor: colorCodeConv[color] }}
+                                type={fullDay ? "date" : "datetime-local"}
+                                placeholder="Start date"
+                                className="input-open input-add-half input-add-half-first"></input>
+                        </div>
+                    ) : (
+                        <TimeInput
+                            ondisplay={(bool) => {
+                                setIsDisplayPop(bool);
+                            }}
+                            full={fullDay}
+                            date={start}
+                            changement={(d) => {
+                                setStart(d);
+                                setDateChanged(true);
+                            }}
+                            isOtherPop={isDisplayPop}
+                        />
+                    )}
                     {window.matchMedia("(max-width: 450px)").matches ? null : (
                         <TimeInput
                             ondisplay={(bool) => {
@@ -347,18 +374,21 @@ export const AddPopup = (props) => {
                             <p className="add-p-half">End Date</p>
                         </div>
                         <div className="add-line">
-                            <TimeInput
-                                ondisplay={(bool) => {
-                                    setIsDisplayPop(bool);
-                                }}
-                                full={fullDay}
-                                date={end}
-                                changement={(d) => {
-                                    setEnd(d);
-                                    setDateChanged(true);
-                                }}
-                                isOtherPop={isDisplayPop}
-                            />
+                            <div className="input-wrapper" style={{ borderColor: colorCodeConv[color] }}>
+                                <input
+                                    value={toHtmlDate(end)}
+                                    onChange={(e) => {
+                                        setDateChanged(true);
+                                        setEndChanged(true);
+                                        setEnd(e.target.value);
+                                    }}
+                                    style={{
+                                        borderColor: colorCodeConv[color],
+                                    }}
+                                    type={fullDay ? "date" : "datetime-local"}
+                                    placeholder="End date"
+                                    className="input-open input-add-half input-add-half-second"></input>
+                            </div>
                         </div>
                     </>
                 ) : null}
