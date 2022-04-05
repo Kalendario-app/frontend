@@ -413,8 +413,9 @@ header img:hover {
     border-radius: 15px;
 }
 .monthly-nav h2 {
-    margin-right: 0.8em;
+    /* margin-right: 0.8em; */
     font-weight: 500;
+    width: 9em;
 }
 .monthly-nav * {
     font-size: var(--28px);
