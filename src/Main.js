@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { NextEvents } from "./NextEvents";
 import { MonthlyCalendar } from "./MonthlyCalendar";
 import { CalendarSelect } from "./CalendarSelect";
 import { MiniCalendar } from "./MiniCalendar";
@@ -15,6 +14,7 @@ import { Checkbox } from "./Checkbox";
 import { EditPopup } from "./EditPopup";
 import { Header } from "./Header";
 import { Todo } from "./Todo";
+import { JSEncrypt } from "jsencrypt";
 
 export function encryptCode(code, user) {
     var key = "";
@@ -39,9 +39,9 @@ axios.defaults.withCredentials = true;
 
 export const api = axios.create({
     //baseURL: process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000/api" : "https://api.kalendario.app/api/",
-    baseURL: "https://api.kalendario.app/api/",
+    //baseURL: "https://api.kalendario.app/api/",
     //baseURL: "http://localhost:8000/api",
-    //baseURL: "http://127.0.0.1:8000/api/",
+    baseURL: "http://127.0.0.1:8000/api/",
     withCredentials: true,
     xsrfCookieName: "csrftoken",
     xsrfHeaderName: "X-CSRFToken",
@@ -145,8 +145,6 @@ export const Main = (props) => {
                         "codeHash": response.data.code[0]["key"],
                         "user": response.data.user[0],
                     });
-                    if (response.data.user[0]["verified"] === false) {
-                    }
                     traiterEvent(response.data.event, response.data.todo);
                 }
             })
@@ -224,6 +222,19 @@ export const Main = (props) => {
                 temp["Default Calendar"] = [true];
                 changeState({ "isCode": true, "stockageCalendar": temp });
             } else {
+                if (state.user.pub_key === "") {
+                    let encrypt = new JSEncrypt({ default_key_size: 2048 });
+                    console.log(encrypt.getPrivateKey());
+                    let enc_private_key = AES.AES.encrypt(encrypt.getPrivateKey(), decryptCode(varCode, state.user)).toString();
+                    let pub_key = encrypt.getPublicKey();
+                    let data = {
+                        "pub_key": pub_key,
+                        "priv_key": enc_private_key,
+                    };
+                    api.post("/addRSAKey", data)
+                        .then((res) => console.log(res))
+                        .catch((err) => console.log(err));
+                }
                 for (let i = 0; i < tempList.length; i++) {
                     let code = parseInt(tempList[i]["color"]);
                     tempEvents.push(tempList[i]);

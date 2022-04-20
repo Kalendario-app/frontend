@@ -280,7 +280,6 @@ export const AddPopup = (props) => {
             if (e.keyCode === 27) {
                 props.setisAdd(false);
             }
-            console.log(e.keyCode);
         };
         return () => {
             window.onkeydown = null;
