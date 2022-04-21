@@ -39,9 +39,9 @@ axios.defaults.withCredentials = true;
 
 export const api = axios.create({
     //baseURL: process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000/api" : "https://api.kalendario.app/api/",
-    //baseURL: "https://api.kalendario.app/api/",
+    baseURL: "https://api.kalendario.app/api/",
     //baseURL: "http://localhost:8000/api",
-    baseURL: "http://127.0.0.1:8000/api/",
+    //baseURL: "http://127.0.0.1:8000/api/",
     withCredentials: true,
     xsrfCookieName: "csrftoken",
     xsrfHeaderName: "X-CSRFToken",
@@ -224,7 +224,6 @@ export const Main = (props) => {
             } else {
                 if (state.user.pub_key === "") {
                     let encrypt = new JSEncrypt({ default_key_size: 2048 });
-                    console.log(encrypt.getPrivateKey());
                     let enc_private_key = AES.AES.encrypt(encrypt.getPrivateKey(), decryptCode(varCode, state.user)).toString();
                     let pub_key = encrypt.getPublicKey();
                     let data = {
@@ -232,7 +231,7 @@ export const Main = (props) => {
                         "priv_key": enc_private_key,
                     };
                     api.post("/addRSAKey", data)
-                        .then((res) => console.log(res))
+                        .then((res) => {})
                         .catch((err) => console.log(err));
                 }
                 for (let i = 0; i < tempList.length; i++) {
