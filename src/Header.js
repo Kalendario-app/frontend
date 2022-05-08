@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import LogoL from "./logoL.png";
 import { useState } from "react";
 import { parseString } from "./Icalparse";
@@ -43,6 +43,48 @@ export const Header = (props) => {
 
     const [isSocialDrop, setIsSocialDrop] = useState(false);
     const [searchResults, setSearchResults] = useState(null);
+    const [friendsRequests, setFriendsRequests] = useState(null);
+    const [friendList, setFriendList] = useState(null);
+    const [, reload] = useState(0);
+
+    useEffect(() => {
+        if (friendsRequests === null && props.user.friend_requests !== undefined) {
+            let str = props.user.friend_requests;
+            let arr = str.split(",");
+            arr.pop();
+            let arr2 = [];
+            for (let i = 0; i < arr.length; i++) {
+                api.get("getUserByEmail?email=" + arr[i]).then((res) => {
+                    let tmp = { email: arr[i], name: res.data.username };
+                    arr2.push(tmp);
+                    if (arr2.length === arr.length) {
+                        setFriendsRequests(arr2);
+                    }
+                });
+            }
+            if (arr.length === 0) {
+                setFriendsRequests([]);
+            }
+        }
+        if (friendList === null && props.user.friend_list !== undefined) {
+            let str = props.user.friend_list;
+            let arr = str.split(",");
+            arr.pop();
+            let arr2 = [];
+            for (let i = 0; i < arr.length; i++) {
+                api.get("getUserByEmail?email=" + arr[i]).then((res) => {
+                    let tmp = { email: arr[i], name: res.data.username };
+                    arr2.push(tmp);
+                    if (arr2.length === arr.length) {
+                        setFriendList(arr2);
+                    }
+                });
+            }
+            if (arr.length === 0) {
+                setFriendList([]);
+            }
+        }
+    }, [props.user]);
 
     var code = decryptCode(varCode, props.user) + " ceci est du sel";
 
@@ -254,16 +296,58 @@ export const Header = (props) => {
     function FriendItem(props) {
         return (
             <div className="friend-item">
-                <div className="friend-pp" style={{ backgroundColor: colorCodeConv[letterNum[props.friend.name[0]] % 6] }}>
-                    {props.friend.name[0] + props.friend.name[1]}
-                </div>
-                <div className="friend-txt">
-                    <div className="friend-name">{props.friend.name}</div>
-                    <div className="friend-email">{props.friend.email}</div>
+                <div className="friend-left">
+                    <div className="friend-pp" style={{ backgroundColor: colorCodeConv[letterNum[props.friend.name[0]] % 6] }}>
+                        {props.friend.name[0] + props.friend.name[1]}
+                    </div>
+                    <div className="friend-txt">
+                        <div className="friend-name">{props.friend.name}</div>
+                        <div className="friend-email">{props.friend.email}</div>
+                    </div>
                 </div>
                 <div className="friend-icon">
-                    {props.request ? <i class="fa-solid fa-check friend-cross" /> : null}
-                    <i className="fas fa-times friend-cross" />
+                    {props.request ? (
+                        <i
+                            className="fa-solid fa-check friend-cross"
+                            onClick={() =>
+                                api.get("addFriend?user=" + props.friend.email).then((res) => {
+                                    if (res.status === 200) {
+                                        let tmpArr = friendsRequests;
+                                        let tmpFriend = friendList;
+                                        tmpArr.splice(props.index, 1);
+                                        tmpFriend.push(props.friend);
+                                        setFriendsRequests(tmpArr);
+                                        setFriendList(tmpFriend);
+                                        reload(new Date().getTime());
+                                    }
+                                })
+                            }
+                        />
+                    ) : null}
+                    <i
+                        className="fas fa-times friend-cross"
+                        onClick={() => {
+                            if (props.request) {
+                                api.get("removeFriendRequest?user=" + props.friend.email).then((res) => {
+                                    if (res.status === 200) {
+                                        let tmpArr = friendsRequests;
+                                        tmpArr.splice(props.index, 1);
+                                        setFriendsRequests(tmpArr);
+                                        reload(new Date().getTime());
+                                    }
+                                });
+                            } else {
+                                api.get("removeFriend?user=" + props.friend.email).then((res) => {
+                                    if (res.status === 200) {
+                                        let tmpArr = friendList;
+                                        tmpArr.splice(props.index, 1);
+                                        setFriendList(tmpArr);
+                                        reload(new Date().getTime());
+                                    }
+                                });
+                            }
+                        }}
+                    />
                 </div>
             </div>
         );
@@ -308,7 +392,17 @@ export const Header = (props) => {
                                         <i className="fa-solid fa-magnifying-glass" />
                                         {searchResults !== null ? (
                                             <div className="search-res">
-                                                <div className="search-res-item" onClick={() => {}}>
+                                                <div
+                                                    className="search-res-item"
+                                                    onClick={() => {
+                                                        api.get("friendRequest?user=" + searchResults.email)
+                                                            .then((res) => {
+                                                                setSearchResults(null);
+                                                            })
+                                                            .catch((err) => {
+                                                                setSearchResults(null);
+                                                            });
+                                                    }}>
                                                     <div className="friend-pp" style={{ backgroundColor: colorCodeConv[letterNum[searchResults.name[0]] % 6] }}>
                                                         {searchResults.name[0] + searchResults.name[1]}
                                                     </div>
@@ -323,11 +417,17 @@ export const Header = (props) => {
                                     <div className="social-drop-content">
                                         <div className="social-left">
                                             <h2>Your friends</h2>
+                                            {friendList.map((friend, y) => (
+                                                <FriendItem key={y} friend={friend} index={y} />
+                                            ))}
                                             {/*<FriendItem friend={{ name: "John Doe", email: "john.doe@kalendario.app" }} />*/}
                                         </div>
                                         <div className="social-right">
                                             <h2>Friends Request</h2>
                                             {/*//todo afficher un msg si y'a pas d'amis */}
+                                            {friendsRequests.map((friend, y) => (
+                                                <FriendItem friend={friend} request={true} key={y} index={y} />
+                                            ))}
                                             {/* <FriendItem request friend={{ name: "Sohn Doe", email: "john.doe@kalendario.app" }} /> */}
                                         </div>
                                     </div>

@@ -278,12 +278,23 @@ header img:hover {
 .friend-item {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 1em;
     background-color: var(--white-2);
     width: 300px;
     border-radius: 5em;
     box-shadow: 0px 2px 7px 2px var(--shadow-color);
     overflow: hidden;
+}
+.friend-item + .friend-item {
+    margin-top: 1.5em;
+}
+.friend-left {
+    display: flex;
+    align-items: center;
+}
+.friend-icon {
+    margin-right: .5em;
 }
 .friend-item:hover {
     box-shadow: 0px 5px 10px 5px var(--shadow-color);
