@@ -31,6 +31,61 @@ export const AddPopup = (props) => {
 
     const colorConv = ["Blue", "Green", "Yellow", "Orange", "Red"];
     const colorCodeConv = ["#3581B8", "#5BA94C", "#E4C111", "#FF6B35", "#A72A2A"];
+    const txtColCode = ["var(--white-2)", "", "", "var(--white-2)", "var(--white-2)"];
+    const letterNum = {
+        "A": 1,
+        "B": 2,
+        "C": 3,
+        "D": 4,
+        "E": 5,
+        "F": 6,
+        "G": 7,
+        "H": 8,
+        "I": 9,
+        "J": 10,
+        "K": 11,
+        "L": 12,
+        "M": 13,
+        "N": 14,
+        "O": 15,
+        "P": 16,
+        "Q": 17,
+        "R": 18,
+        "S": 19,
+        "T": 20,
+        "U": 21,
+        "V": 22,
+        "W": 23,
+        "X": 24,
+        "Y": 25,
+        "Z": 26,
+        "a": 27,
+        "b": 28,
+        "c": 29,
+        "d": 30,
+        "e": 31,
+        "f": 32,
+        "g": 33,
+        "h": 34,
+        "i": 35,
+        "j": 36,
+        "k": 37,
+        "l": 38,
+        "m": 39,
+        "n": 40,
+        "o": 41,
+        "p": 42,
+        "q": 43,
+        "r": 44,
+        "s": 45,
+        "t": 46,
+        "u": 47,
+        "v": 48,
+        "w": 49,
+        "x": 50,
+        "y": 51,
+        "z": 52,
+    };
     // const dayConv = [
     //     'Sunday',
     //     'Monday',
@@ -75,6 +130,33 @@ export const AddPopup = (props) => {
 
     const [isAdvenced, setIsAdvenced] = useState(false);
     const [advencedChanged, setAdvencedChanged] = useState(false);
+
+    const [guestList, setGuestList] = useState([
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test",
+        "test-looooooooooooooooooooong",
+    ]);
+    const [guestSearchList, setGuestSearchList] = useState([]);
+
+    const [guestSearIn, setGuestSearIn] = useState("");
+
+    const [, reload] = useState(0);
 
     if (recurenceEndType == 2) {
         if (new Date(recurenceEndNbr).getTime() < new Date(end).getTime()) {
@@ -138,6 +220,16 @@ export const AddPopup = (props) => {
             tmp = tmp.slice(0, 7);
         }
         return parseInt(tmp);
+    }
+
+    function searchStringInArray(str, strArray, already) {
+        let listVal = [];
+        for (var j = 0; j < strArray.length; j++) {
+            if (strArray[j].match(str) && !already.includes(strArray[j])) {
+                listVal.push(strArray[j]);
+            }
+        }
+        return listVal;
     }
 
     function submitData() {
@@ -445,6 +537,54 @@ export const AddPopup = (props) => {
                                 </div>
                             </>
                         ) : null}
+                        <div className="add-half-line">
+                            <p className="add-p-half">Guests</p>
+                        </div>
+                        <div className="add-line">
+                            <div className="guest-field-wrapper">
+                                <div className="guest-field">
+                                    {guestList.map((x, y) => (
+                                        <div
+                                            className="guest-item"
+                                            onDoubleClick={() => setGuestList(guestList.splice(y, 1))}
+                                            style={{ backgroundColor: colorCodeConv[letterNum[x[0]] % 6], color: txtColCode[letterNum[x[0]] % 6] }}>
+                                            <p className="guest-name">{x}</p>
+                                        </div>
+                                    ))}
+                                    <input
+                                        className="guest-input"
+                                        value={guestSearIn}
+                                        onChange={(e) => {
+                                            setGuestSearIn(e.target.value);
+                                            if (e.target.value !== "") {
+                                                setGuestSearchList(searchStringInArray(e.target.value, props.user.friend_list.split(","), guestList));
+                                            }
+                                        }}
+                                    />
+
+                                    {/*<div className="guest-add">+</div>*/}
+                                </div>
+                                {guestSearchList.length > 0 ? (
+                                    <div className="guest-search-list">
+                                        {guestSearchList.map((searchResults, y) => (
+                                            <div
+                                                onClick={(e) => {
+                                                    if (!guestList.includes(searchResults)) {
+                                                        let tmp = guestList;
+                                                        tmp.push(searchResults);
+                                                        setGuestList(tmp);
+                                                        setGuestSearchList([]);
+                                                        setGuestSearIn("");
+                                                    }
+                                                }}
+                                                className="guest-search-list-item">
+                                                {searchResults}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : null}
+                            </div>
+                        </div>
                         <div
                             className="add-more"
                             onClick={() => {

@@ -417,17 +417,30 @@ export const Header = (props) => {
                                     <div className="social-drop-content">
                                         <div className="social-left">
                                             <h2>Your friends</h2>
-                                            {friendList.map((friend, y) => (
-                                                <FriendItem key={y} friend={friend} index={y} />
-                                            ))}
+                                            {friendList !== null ? (
+                                                <>
+                                                    {friendList.map((friend, y) => (
+                                                        <FriendItem key={y} friend={friend} index={y} />
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <p className="social-nofriend-txt">Sadly you don't have any friend yet</p>
+                                            )}
+
                                             {/*<FriendItem friend={{ name: "John Doe", email: "john.doe@kalendario.app" }} />*/}
                                         </div>
                                         <div className="social-right">
                                             <h2>Friends Request</h2>
                                             {/*//todo afficher un msg si y'a pas d'amis */}
-                                            {friendsRequests.map((friend, y) => (
-                                                <FriendItem friend={friend} request={true} key={y} index={y} />
-                                            ))}
+                                            {friendsRequests !== null ? (
+                                                <>
+                                                    {friendsRequests.map((friend, y) => (
+                                                        <FriendItem friend={friend} request={true} key={y} index={y} />
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <p className="social-nofriend-txt">You don't have any friend requests</p>
+                                            )}
                                             {/* <FriendItem request friend={{ name: "Sohn Doe", email: "john.doe@kalendario.app" }} /> */}
                                         </div>
                                     </div>
