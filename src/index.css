@@ -1927,12 +1927,16 @@ input[type="number"]::-webkit-outer-spin-button {
     padding-top: .5em;
     padding-bottom: .5em;
     padding-left: 1em;
-    padding-right: 1em;
     border-radius: 50em;
-    
+    display: flex;
+    align-items: baseline;
+}
+.guest-item i:hover {
+    cursor: pointer;
 }
 .guest-item p {
     white-space:nowrap;
+    margin-right: .5em;
 }
 .guest-item:hover {
     box-shadow: 2px 3px 15px 4px var(--shadow-color);

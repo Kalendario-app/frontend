@@ -131,27 +131,7 @@ export const AddPopup = (props) => {
     const [isAdvenced, setIsAdvenced] = useState(false);
     const [advencedChanged, setAdvencedChanged] = useState(false);
 
-    const [guestList, setGuestList] = useState([
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test",
-        "test-looooooooooooooooooooong",
-    ]);
+    const [guestList, setGuestList] = useState([]);
     const [guestSearchList, setGuestSearchList] = useState([]);
 
     const [guestSearIn, setGuestSearIn] = useState("");
@@ -546,14 +526,27 @@ export const AddPopup = (props) => {
                                     {guestList.map((x, y) => (
                                         <div
                                             className="guest-item"
-                                            onDoubleClick={() => setGuestList(guestList.splice(y, 1))}
+                                            onDoubleClick={() => {
+                                                let tmparr = guestList.map((x) => x);
+                                                tmparr.splice(y, 1);
+                                                setGuestList(tmparr);
+                                            }}
                                             style={{ backgroundColor: colorCodeConv[letterNum[x[0]] % 6], color: txtColCode[letterNum[x[0]] % 6] }}>
                                             <p className="guest-name">{x}</p>
+                                            <i
+                                                className="fas fa-times"
+                                                onClick={() => {
+                                                    let tmparr = guestList.map((x) => x);
+                                                    tmparr.splice(y, 1);
+                                                    setGuestList(tmparr);
+                                                }}
+                                            />
                                         </div>
                                     ))}
                                     <input
                                         className="guest-input"
                                         value={guestSearIn}
+                                        placeholder="Add people..."
                                         onChange={(e) => {
                                             setGuestSearIn(e.target.value);
                                             if (e.target.value !== "") {
