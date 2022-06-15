@@ -241,8 +241,14 @@ export const Main = (props) => {
                     tempEvents[i]["nbr"] = i;
                     let fullCode = decryptCode(varCode, state.user);
                     fullCode = fullCode.concat(" ceci est du sel");
-                    var bytes = AES.AES.decrypt(tempEvents[i]["event_name"], fullCode);
-                    tempEvents[i]["event_name"] = bytes.toString(AES.enc.Utf8);
+                    if (tempEvents[i]["version"] === 0) {
+                        var bytes = AES.AES.decrypt(tempEvents[i]["event_name"], fullCode);
+                        tempEvents[i]["event_name"] = bytes.toString(AES.enc.Utf8);
+                    } else {
+                        var encrpyt = new JSEncrypt({ default_key_size: 2048 });
+                        encrpyt.setPrivateKey(AES.AES.decrypt(state.user.priv_key, decryptCode(varCode, state.user)).toString(AES.enc.Utf8));
+                        tempEvents[i]["event_name"] = encrpyt.decrypt(tempEvents[i]["event_name"]);
+                    }
                     tempEvents[i]["calendar"] = AES.AES.decrypt(tempEvents[i]["calendar"], fullCode).toString(AES.enc.Utf8);
                     if (tempEvents[i]["start_date"] > 10) {
                         tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - keyGen(fullCode);

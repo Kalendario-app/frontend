@@ -138,6 +138,8 @@ export const AddPopup = (props) => {
 
     const [, reload] = useState(0);
 
+    const [friendInfo, setFriendInfo] = useState([]);
+
     if (recurenceEndType == 2) {
         if (new Date(recurenceEndNbr).getTime() < new Date(end).getTime()) {
             setRecurenceEndNbr(
@@ -356,6 +358,11 @@ export const AddPopup = (props) => {
         return () => {
             window.onkeydown = null;
         };
+    }, []);
+    useEffect(() => {
+        api.get("/getFriendInfo").then((res) => {
+            setFriendInfo(res.data);
+        });
     }, []);
 
     return (
