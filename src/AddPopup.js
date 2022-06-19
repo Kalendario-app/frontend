@@ -246,20 +246,31 @@ export const AddPopup = (props) => {
             }
             let cypher = new JSEncrypt({ default_key_size: 2048 });
             cypher.setPublicKey(props.user["pub_key"]);
-            console.log(guestList);
+            let listInvite = friendInfo.filter((x) => guestList.includes(x.email));
+            let keyList = listInvite.map(({ pub }) => pub);
+            let proprioList = listInvite.map(({ code }) => code);
+            let nameList = "";
+            let calendarList = "";
+            for (let i = 0; i < keyList.length; i++) {
+                let cipher = new JSEncrypt({ default_key_size: 2048 });
+                cipher.setPublicKey(keyList[i]);
+                nameList = nameList.concat("," + cipher.encrypt(name));
+                calendarList = calendarList.concat("," + cipher.encrypt(tempCalendar));
+            }
             let data = {
-                "event_name": cypher.encrypt(name),
+                "event_name": cypher.encrypt(name) + nameList,
                 "start_date": new Date(start).getTime() / 1000 + 2 * TZoffset + keyGen(name),
                 "end_date": new Date(tempCustEnd).getTime() / 1000 + 2 * TZoffset + keyGen(name),
                 "color": color,
                 "full": true,
-                "calendar": cypher.encrypt(tempCalendar),
+                "calendar": cypher.encrypt(tempCalendar) + calendarList,
                 "recurence": generateRepeat(),
                 "recurenceEndType": parseInt(recurenceEndType),
                 "recurenceEndNbr": generateRecurenceEndNbr(),
-                "other_users": "",
+                "other_users": JSON.stringify(proprioList),
                 "version": 1,
             };
+            console.log(data);
             api.post("/create", data).then((res) => {
                 props.setisAdd(false);
                 props.ajouterEvent();
