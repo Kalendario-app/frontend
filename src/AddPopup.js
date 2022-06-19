@@ -230,37 +230,7 @@ export const AddPopup = (props) => {
                 setRecurence(-1);
             }
         }
-        if (new Date(end) > new Date(start) && name !== "") {
-            let code = decryptCode(varCode, props.user);
-            var encrypted;
-            code = code.concat(" ceci est du sel");
-            if (props.calendarList()[calendarNbr]) {
-                tempCalendar = props.calendarList()[calendarNbr];
-            } else {
-                tempCalendar = "Default Calendar";
-            }
-            //encrypted = AES.AES.encrypt(name, code).toString();
-            let cypher = new JSEncrypt({ default_key_size: 2048 });
-            cypher.setPublicKey(props.user["pub_key"]);
-            let data = {
-                "event_name": cypher.encrypt(name),
-                "start_date": new Date(start).getTime() / 1000 + TZoffset + keyGen(code),
-                "end_date": new Date(end).getTime() / 1000 + TZoffset + keyGen(code),
-                "color": color,
-                "full": true,
-                "calendar": cypher.encrypt(tempCalendar),
-                "recurence": generateRepeat(),
-                "recurenceEndType": parseInt(recurenceEndType),
-                "recurenceEndNbr": generateRecurenceEndNbr(),
-                "other_users": "",
-                "version": 1,
-            };
-            console.log(data);
-            api.post("/create", data).then((res) => {
-                props.setisAdd(false);
-                props.ajouterEvent();
-            });
-        } else if (fullDay && end === start && name !== "") {
+        if (new Date(end) >= new Date(start) && name !== "") {
             let code = decryptCode(varCode, props.user);
             code = code.concat(" ceci est du sel");
             if (props.calendarList()[calendarNbr]) {
@@ -269,12 +239,14 @@ export const AddPopup = (props) => {
                 tempCalendar = "Default Calendar";
             }
             let tempCustEnd = new Date(end);
-            tempCustEnd.setHours(tempCustEnd.getHours() + 23);
-            tempCustEnd.setMinutes(59);
-            tempCustEnd.setSeconds(59);
-            //encrypted = AES.AES.encrypt(name, code).toString();
+            if (fullDay && end === start) {
+                tempCustEnd.setHours(tempCustEnd.getHours() + 23);
+                tempCustEnd.setMinutes(59);
+                tempCustEnd.setSeconds(59);
+            }
             let cypher = new JSEncrypt({ default_key_size: 2048 });
             cypher.setPublicKey(props.user["pub_key"]);
+            console.log(new Date(start).getTime() / 1000);
             let data = {
                 "event_name": cypher.encrypt(name),
                 "start_date": new Date(start).getTime() / 1000 + 2 * TZoffset + keyGen(code),

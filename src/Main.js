@@ -262,8 +262,8 @@ export const Main = (props) => {
                         tempSto[objCalName] = [true, tempEvents[i]];
                     }
                     var TZoffset = new Date().getTimezoneOffset() * 60;
-                    tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - TZoffset;
-                    tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - TZoffset;
+                    tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - 2 * TZoffset;
+                    tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - 2 * TZoffset;
                     var recuNbr = tempEvents[i]["recurence"].toString();
                     let start = new Date(tempEvents[i]["start_date"] * 1000).setHours(0, 0, 0, 0);
                     let end = new Date(tempEvents[i]["end_date"] * 1000).setHours(0, 0, 0, 0);
