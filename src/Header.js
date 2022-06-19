@@ -167,7 +167,6 @@ export const Header = (props) => {
         let evts = parseString(str)["events"];
         let importedEvt = [];
         var TZoffset = new Date().getTimezoneOffset() * 60;
-        var dteKey = keyGen(code) + TZoffset;
         for (let i = 0; i < evts.length; i++) {
             importedEvt[i] = {};
             let evt = importedEvt[i];
@@ -178,8 +177,8 @@ export const Header = (props) => {
             let cypher = new JSEncrypt({ default_key_size: 2048 });
             cypher.setPublicKey(props.user["pub_key"]);
             evt["event_name"] = cypher.encrypt(evt["event_name"]);
-            evt["start_date"] = Math.floor(new Date(evts[i]["dtstart"]["value"]).getTime() / 1000) + dteKey;
-            evt["end_date"] = Math.floor(new Date(evts[i]["dtend"]["value"]).getTime() / 1000) + dteKey;
+            evt["start_date"] = Math.floor(new Date(evts[i]["dtstart"]["value"]).getTime() / 1000) + 2 * TZoffset + keyGen(evt["event_name"]);
+            evt["end_date"] = Math.floor(new Date(evts[i]["dtend"]["value"]).getTime() / 1000) + 2 * TZoffset + keyGen(evt["event_name"]);
             evt["color"] = 0;
             evt["version"] = 1;
             evt["full"] = true;

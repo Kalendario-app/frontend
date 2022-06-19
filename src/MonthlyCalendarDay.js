@@ -82,8 +82,8 @@ export const MonthlyCalendarDay = (props) => {
             var TZoffset = new Date().getTimezoneOffset() * 60;
             var data = {
                 "event_name": cypher.encrypt(evnt["event_name"]),
-                "start_date": newDateS.getTime() / 1000 + keyGen(fullCode),
-                "end_date": newDateE.getTime() / 1000 + keyGen(fullCode),
+                "start_date": newDateS.getTime() / 1000 + keyGen(evnt["event_name"]) + 2 * TZoffset,
+                "end_date": newDateE.getTime() / 1000 + keyGen(evnt["event_name"]) + 2 * TZoffset,
                 "color": color,
                 "full": evnt["full"],
                 "key": evnt["key"],

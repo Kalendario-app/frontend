@@ -245,16 +245,21 @@ export const Main = (props) => {
                         var bytes = AES.AES.decrypt(tempEvents[i]["event_name"], fullCode);
                         tempEvents[i]["event_name"] = bytes.toString(AES.enc.Utf8);
                         tempEvents[i]["calendar"] = AES.AES.decrypt(tempEvents[i]["calendar"], fullCode).toString(AES.enc.Utf8);
+                        if (tempEvents[i]["start_date"] > 10) {
+                            tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - keyGen(fullCode);
+                            tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - keyGen(fullCode);
+                        }
                     } else {
                         var cypher = new JSEncrypt({ default_key_size: 2048 });
                         cypher.setPrivateKey(AES.AES.decrypt(state.user.priv_key, decryptCode(varCode, state.user)).toString(AES.enc.Utf8));
                         tempEvents[i]["event_name"] = cypher.decrypt(tempEvents[i]["event_name"]);
                         tempEvents[i]["calendar"] = cypher.decrypt(tempEvents[i]["calendar"]);
+                        if (tempEvents[i]["start_date"] > 10) {
+                            tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - keyGen(tempEvents[i]["event_name"]);
+                            tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - keyGen(tempEvents[i]["event_name"]);
+                        }
                     }
-                    if (tempEvents[i]["start_date"] > 10) {
-                        tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - keyGen(fullCode);
-                        tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - keyGen(fullCode);
-                    }
+
                     var objCalName = tempEvents[i]["calendar"];
                     if (tempSto[objCalName]) {
                         tempSto[objCalName].push(tempEvents[i]);

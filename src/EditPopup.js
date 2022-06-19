@@ -179,8 +179,8 @@ export const EditPopup = (props) => {
             cypher.setPublicKey(props.user["pub_key"]);
             let data = {
                 "event_name": cypher.encrypt(name),
-                "start_date": new Date(start).getTime() / 1000 + TZoffset + keyGen(code),
-                "end_date": new Date(end).getTime() / 1000 + TZoffset + keyGen(code),
+                "start_date": new Date(start).getTime() / 1000 + TZoffset + keyGen(name),
+                "end_date": new Date(end).getTime() / 1000 + TZoffset + keyGen(name),
                 "color": color,
                 "key": props.event["key"],
                 "full": true,
@@ -213,8 +213,8 @@ export const EditPopup = (props) => {
             cypher.setPublicKey(props.user["pub_key"]);
             let data = {
                 "event_name": cypher.encrypt(name),
-                "start_date": new Date(start).getTime() / 1000 + TZoffset + keyGen(code),
-                "end_date": new Date(tempCustEnd).getTime(),
+                "start_date": new Date(start).getTime() / 1000 + TZoffset + keyGen(name),
+                "end_date": new Date(tempCustEnd).getTime() + keyGen(name),
                 "color": color,
                 "full": true,
                 "calendar": cypher.encrypt(tempCalendar),

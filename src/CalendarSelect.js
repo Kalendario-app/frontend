@@ -140,8 +140,8 @@ export const CalendarSelect = (props) => {
             api.post("/editEvent", {
                 "key": x["key"],
                 "event_name": cypher.encrypt(x["event_name"]),
-                "start_date": new Date(x["start_date"] * 1000).getTime() / 1000 + keyGen(code) + TZoffset,
-                "end_date": new Date(x["end_date"] * 1000).getTime() / 1000 + keyGen(code) + TZoffset,
+                "start_date": new Date(x["start_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
+                "end_date": new Date(x["end_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
                 "color": colorCodeConv.indexOf(x["color"]),
                 "full": x["full"],
                 "calendar": cypher.encrypt(editTxt),

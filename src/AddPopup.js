@@ -246,11 +246,11 @@ export const AddPopup = (props) => {
             }
             let cypher = new JSEncrypt({ default_key_size: 2048 });
             cypher.setPublicKey(props.user["pub_key"]);
-            console.log(new Date(start).getTime() / 1000);
+            console.log(guestList);
             let data = {
                 "event_name": cypher.encrypt(name),
-                "start_date": new Date(start).getTime() / 1000 + 2 * TZoffset + keyGen(code),
-                "end_date": new Date(tempCustEnd).getTime() / 1000 + 2 * TZoffset + keyGen(code),
+                "start_date": new Date(start).getTime() / 1000 + 2 * TZoffset + keyGen(name),
+                "end_date": new Date(tempCustEnd).getTime() / 1000 + 2 * TZoffset + keyGen(name),
                 "color": color,
                 "full": true,
                 "calendar": cypher.encrypt(tempCalendar),
