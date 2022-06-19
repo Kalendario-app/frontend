@@ -9,6 +9,7 @@ import { sha256 } from "js-sha256";
 import { BrowserView, MobileView } from "react-device-detect";
 import { Button } from "./Button";
 import validator from "validator";
+import JSEncrypt from "jsencrypt";
 
 export const Header = (props) => {
     const colorCodeConv = ["#3581B8", "#5BA94C", "#E4C111", "#FF6B35", "#A72A2A"];
@@ -174,13 +175,15 @@ export const Header = (props) => {
             if (evts[i]["summary"] === "") {
                 evt["event_name"] = "Untitled Event";
             }
-            evt["event_name"] = AES.AES.encrypt(evt["event_name"], code).toString();
+            let cypher = new JSEncrypt({ default_key_size: 2048 });
+            cypher.setPublicKey(props.user["pub_key"]);
+            evt["event_name"] = cypher.encrypt(evt["event_name"]);
             evt["start_date"] = Math.floor(new Date(evts[i]["dtstart"]["value"]).getTime() / 1000) + dteKey;
             evt["end_date"] = Math.floor(new Date(evts[i]["dtend"]["value"]).getTime() / 1000) + dteKey;
             evt["color"] = 0;
-            evt["version"] = 0;
+            evt["version"] = 1;
             evt["full"] = true;
-            evt["calendar"] = AES.AES.encrypt(props.calendarList()[calendarNbr], code).toString();
+            evt["calendar"] = cypher.encrypt(props.calendarList()[calendarNbr]);
             if (evts[i]["recurrenceRule"] === undefined) {
                 evt["recurence"] = -1;
                 evt["recurenceEndNbr"] = -1;

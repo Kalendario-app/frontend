@@ -6,6 +6,7 @@ import { api, decryptCode } from "./Main";
 import { useCookies } from "react-cookie";
 import AES from "crypto-js";
 import { sha256 } from "js-sha256";
+import JSEncrypt from "jsencrypt";
 
 export const CalendarSelect = (props) => {
     const [cookies] = useCookies();
@@ -38,17 +39,19 @@ export const CalendarSelect = (props) => {
         if (txt === "") {
             return;
         }
+        let cypher = new JSEncrypt({ default_key_size: 2048 });
+        cypher.setPublicKey(props.user["pub_key"]);
         let data = {
-            "event_name": AES.AES.encrypt(txt, code).toString(),
+            "event_name": cypher.encrypt(txt),
             "start_date": 0,
             "end_date": 1,
             "color": 0,
             "full": true,
-            "calendar": AES.AES.encrypt(txt, code).toString(),
+            "calendar": cypher.encrypt(txt),
             "recurence": -1,
             "recurenceEndType": 0,
             "recurenceEndNbr": 0,
-            "version": 0,
+            "version": 1,
         };
         api.post("/create", data).then((res) => {
             props.ajouterEvent();
@@ -130,19 +133,21 @@ export const CalendarSelect = (props) => {
         let tmpArr = props.stockageCalendar[oldName].slice(1);
         let results = 0;
         var TZoffset = new Date().getTimezoneOffset() * 60;
+        let cypher = new JSEncrypt({ default_key_size: 2048 });
+        cypher.setPublicKey(props.user["pub_key"]);
         tmpArr.forEach((x) => {
             api.post("/editEvent", {
                 "key": x["key"],
-                "event_name": AES.AES.encrypt(x["event_name"], code).toString(),
+                "event_name": cypher.encrypt(x["event_name"]),
                 "start_date": new Date(x["start_date"] * 1000).getTime() / 1000 + keyGen(code) + TZoffset,
                 "end_date": new Date(x["end_date"] * 1000).getTime() / 1000 + keyGen(code) + TZoffset,
                 "color": colorCodeConv.indexOf(x["color"]),
                 "full": x["full"],
-                "calendar": AES.AES.encrypt(editTxt, code).toString(),
+                "calendar": cypher.encrypt(editTxt),
                 "recurence": x["recurence"],
                 "recurenceEndType": x["recurenceEndType"],
                 "recurenceEndNbr": x["recurenceEndNbr"],
-                "version": 0,
+                "version": 1,
             })
                 .then((res) => {
                     if (res.status === 202) {

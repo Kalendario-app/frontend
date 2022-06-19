@@ -10,6 +10,7 @@ import { AddPopup } from "./AddPopup";
 // import { useCookies } from "react-cookie"
 import { EventDetail } from "./EventDetail";
 import { sha256 } from "js-sha256";
+import JSEncrypt from "jsencrypt";
 
 export const WeeklyCalendar = (props) => {
     var hu = Math.floor(window.innerHeight / 100);
@@ -303,20 +304,20 @@ export const WeeklyCalendar = (props) => {
                     newDateE.setFullYear(newDateE.getFullYear() + dY);
                     let fullCode = decryptCode(varCode, user);
                     fullCode = fullCode.concat(" ceci est du sel");
-                    var bytes = AES.AES.encrypt(evnt["event_name"], fullCode);
-                    var encrypted = bytes.toString();
+                    let cypher = new JSEncrypt({ default_key_size: 2048 });
+                    cypher.setPublicKey(props.user["pub_key"]);
                     var color = colorCodeConv.findIndex((arg) => {
                         return arg === evnt["color"];
                     });
                     var TZoffset = new Date().getTimezoneOffset() * 60;
                     var data = {
-                        "event_name": encrypted,
+                        "event_name": cypher.encrypt(evnt["event_name"]),
                         "start_date": newDateS.getTime() / 1000 + keyGen(fullCode),
                         "end_date": newDateE.getTime() / 1000 + keyGen(fullCode),
                         "color": color,
                         "full": evnt["full"],
                         "key": evnt["key"],
-                        "calendar": AES.AES.encrypt(evnt["calendar"], fullCode).toString(),
+                        "calendar": cypher.encrypt(evnt["calendar"]),
                         "recurence": evnt["recurence"],
                         "recurenceEndType": evnt["recurenceEndType"],
                         "recurenceEndNbr": evnt["recurenceEndNbr"],
