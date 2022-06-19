@@ -178,6 +178,7 @@ export const Header = (props) => {
             evt["start_date"] = Math.floor(new Date(evts[i]["dtstart"]["value"]).getTime() / 1000) + dteKey;
             evt["end_date"] = Math.floor(new Date(evts[i]["dtend"]["value"]).getTime() / 1000) + dteKey;
             evt["color"] = 0;
+            evt["version"] = 0;
             evt["full"] = true;
             evt["calendar"] = AES.AES.encrypt(props.calendarList()[calendarNbr], code).toString();
             if (evts[i]["recurrenceRule"] === undefined) {

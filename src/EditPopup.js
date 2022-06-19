@@ -186,6 +186,7 @@ export const EditPopup = (props) => {
                 "recurence": generateRepeat(),
                 "recurenceEndType": parseInt(recurenceEndType),
                 "recurenceEndNbr": generateRecurenceEndNbr(),
+                "version": 0,
             };
             api.post("/editEvent", data).then((res) => {
                 if (res.status === 202) {
@@ -216,6 +217,7 @@ export const EditPopup = (props) => {
                 "recurence": generateRepeat(),
                 "recurenceEndType": parseInt(recurenceEndType),
                 "recurenceEndNbr": generateRecurenceEndNbr(),
+                "version": 0,
             };
             api.post("/create", data).then((res) => {
                 props.setisAdd(false);

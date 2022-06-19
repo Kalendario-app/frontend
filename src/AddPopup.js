@@ -8,6 +8,7 @@ import AES from "crypto-js";
 import { useCookies } from "react-cookie";
 import { sha256 } from "js-sha256";
 import { TimeInput } from "./TimeInput";
+import JSEncrypt from "jsencrypt";
 
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -238,18 +239,22 @@ export const AddPopup = (props) => {
             } else {
                 tempCalendar = "Default Calendar";
             }
-            encrypted = AES.AES.encrypt(name, code).toString();
+            //encrypted = AES.AES.encrypt(name, code).toString();
+            let cypher = new JSEncrypt({ default_key_size: 2048 });
+            cypher.setPublicKey(props.user["pub_key"]);
             let data = {
-                "event_name": encrypted,
+                "event_name": cypher.encrypt(name),
                 "start_date": new Date(start).getTime() / 1000 + TZoffset + keyGen(code),
                 "end_date": new Date(end).getTime() / 1000 + TZoffset + keyGen(code),
                 "color": color,
                 "full": true,
-                "calendar": AES.AES.encrypt(tempCalendar, code).toString(),
+                "calendar": cypher.encrypt(tempCalendar),
                 "recurence": generateRepeat(),
                 "recurenceEndType": parseInt(recurenceEndType),
                 "recurenceEndNbr": generateRecurenceEndNbr(),
+                "version": 1,
             };
+            console.log(data);
             api.post("/create", data).then((res) => {
                 props.setisAdd(false);
                 props.ajouterEvent();
@@ -266,17 +271,20 @@ export const AddPopup = (props) => {
             tempCustEnd.setHours(tempCustEnd.getHours() + 23);
             tempCustEnd.setMinutes(59);
             tempCustEnd.setSeconds(59);
-            encrypted = AES.AES.encrypt(name, code).toString();
+            //encrypted = AES.AES.encrypt(name, code).toString();
+            let cypher = new JSEncrypt({ default_key_size: 2048 });
+            cypher.setPublicKey(props.user["pub_key"]);
             let data = {
-                "event_name": encrypted,
+                "event_name": cypher.encrypt(name),
                 "start_date": new Date(start).getTime() / 1000 + 2 * TZoffset + keyGen(code),
                 "end_date": new Date(tempCustEnd).getTime() / 1000 + 2 * TZoffset + keyGen(code),
                 "color": color,
                 "full": true,
-                "calendar": AES.AES.encrypt(tempCalendar, code).toString(),
+                "calendar": cypher.encrypt(tempCalendar),
                 "recurence": generateRepeat(),
                 "recurenceEndType": parseInt(recurenceEndType),
                 "recurenceEndNbr": generateRecurenceEndNbr(),
+                "version": 1,
             };
             api.post("/create", data).then((res) => {
                 props.setisAdd(false);

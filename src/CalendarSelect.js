@@ -48,6 +48,7 @@ export const CalendarSelect = (props) => {
             "recurence": -1,
             "recurenceEndType": 0,
             "recurenceEndNbr": 0,
+            "version": 0,
         };
         api.post("/create", data).then((res) => {
             props.ajouterEvent();
@@ -141,6 +142,7 @@ export const CalendarSelect = (props) => {
                 "recurence": x["recurence"],
                 "recurenceEndType": x["recurenceEndType"],
                 "recurenceEndNbr": x["recurenceEndNbr"],
+                "version": 0,
             })
                 .then((res) => {
                     if (res.status === 202) {

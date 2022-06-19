@@ -320,6 +320,7 @@ export const WeeklyCalendar = (props) => {
                         "recurence": evnt["recurence"],
                         "recurenceEndType": evnt["recurenceEndType"],
                         "recurenceEndNbr": evnt["recurenceEndNbr"],
+                        "version": 0,
                     };
                     api.post("/editEvent", data).then((res) => {
                         if (res.status === 202) {
