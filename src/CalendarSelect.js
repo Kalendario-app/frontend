@@ -51,6 +51,7 @@ export const CalendarSelect = (props) => {
             "recurence": -1,
             "recurenceEndType": 0,
             "recurenceEndNbr": 0,
+            "other_users": "",
             "version": 1,
         };
         api.post("/create", data).then((res) => {

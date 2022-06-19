@@ -223,7 +223,7 @@ export const EditPopup = (props) => {
                 "recurenceEndNbr": generateRecurenceEndNbr(),
                 "version": 1,
             };
-            api.post("/create", data).then((res) => {
+            api.post("/editEvent", data).then((res) => {
                 props.setisAdd(false);
                 props.ajouterEvent();
             });

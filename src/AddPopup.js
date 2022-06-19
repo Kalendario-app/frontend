@@ -252,6 +252,7 @@ export const AddPopup = (props) => {
                 "recurence": generateRepeat(),
                 "recurenceEndType": parseInt(recurenceEndType),
                 "recurenceEndNbr": generateRecurenceEndNbr(),
+                "other_users": "",
                 "version": 1,
             };
             console.log(data);
@@ -284,6 +285,7 @@ export const AddPopup = (props) => {
                 "recurence": generateRepeat(),
                 "recurenceEndType": parseInt(recurenceEndType),
                 "recurenceEndNbr": generateRecurenceEndNbr(),
+                "other_users": "",
                 "version": 1,
             };
             api.post("/create", data).then((res) => {
@@ -541,6 +543,7 @@ export const AddPopup = (props) => {
                                     {guestList.map((x, y) => (
                                         <div
                                             className="guest-item"
+                                            key={y}
                                             onDoubleClick={() => {
                                                 let tmparr = guestList.map((x) => x);
                                                 tmparr.splice(y, 1);
@@ -576,6 +579,7 @@ export const AddPopup = (props) => {
                                     <div className="guest-search-list">
                                         {guestSearchList.map((searchResults, y) => (
                                             <div
+                                                key={y}
                                                 onClick={(e) => {
                                                     if (!guestList.includes(searchResults)) {
                                                         let tmp = guestList;

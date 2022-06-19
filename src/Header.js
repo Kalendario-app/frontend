@@ -184,6 +184,7 @@ export const Header = (props) => {
             evt["version"] = 1;
             evt["full"] = true;
             evt["calendar"] = cypher.encrypt(props.calendarList()[calendarNbr]);
+            evt["other_users"] = "";
             if (evts[i]["recurrenceRule"] === undefined) {
                 evt["recurence"] = -1;
                 evt["recurenceEndNbr"] = -1;
