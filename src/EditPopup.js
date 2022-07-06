@@ -139,7 +139,7 @@ export const EditPopup = (props) => {
             return props.event["color"] === col;
         })
     );
-    const [guestList, setGuestList] = useState(JSON.parse(props.event["other_users_email"]));
+    const [guestList, setGuestList] = useState(props.event["shared"] ? JSON.parse(props.event["other_users_email"]) : []);
     const [guestSearchList, setGuestSearchList] = useState([]);
     const [guestSearIn, setGuestSearIn] = useState("");
 

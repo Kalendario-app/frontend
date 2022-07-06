@@ -80,12 +80,12 @@ export const MonthlyCalendarDay = (props) => {
                 return arg === evnt["color"];
             });
             var TZoffset = new Date().getTimezoneOffset() * 60;
-            api.get("/getFriendInfo").then((res) => {
+            api.get("/getFriendInfo").then((rep) => {
                 let listInvite;
                 if (evnt["other_users_email"] === "") {
                     listInvite = [];
                 } else {
-                    listInvite = res.data.filter((x) => JSON.parse(evnt["other_users_email"]).includes(x.email));
+                    listInvite = rep.data.filter((x) => JSON.parse(evnt["other_users_email"]).includes(x.email));
                 }
                 let keyList = listInvite.map(({ pub }) => pub);
                 let nameList = "";

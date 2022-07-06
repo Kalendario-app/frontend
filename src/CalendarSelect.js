@@ -131,38 +131,74 @@ export const CalendarSelect = (props) => {
         }
 
         //let data = "";
-        let tmpArr = props.stockageCalendar[oldName].slice(1);
+        let tmpArr = props.stockageCalendar[oldName].slice(1).filter((x) => {
+            return x["isOwner"];
+        });
+        console.log(tmpArr);
         let results = 0;
         var TZoffset = new Date().getTimezoneOffset() * 60;
         let cypher = new JSEncrypt({ default_key_size: 2048 });
         cypher.setPublicKey(props.user["pub_key"]);
-        tmpArr.forEach((x) => {
-            api.post("/editEvent", {
-                "key": x["key"],
-                "event_name": cypher.encrypt(x["event_name"]),
-                "start_date": new Date(x["start_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
-                "end_date": new Date(x["end_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
-                "color": colorCodeConv.indexOf(x["color"]),
-                "full": x["full"],
-                "calendar": cypher.encrypt(editTxt),
-                "recurence": x["recurence"],
-                "recurenceEndType": x["recurenceEndType"],
-                "recurenceEndNbr": x["recurenceEndNbr"],
-                "version": 1,
-            })
-                .then((res) => {
-                    if (res.status === 202) {
-                        results += 1;
-                    }
-                    if (results === tmpArr.length) {
-                        props.reload();
-                        setIsEdit(-1);
-                    }
-                })
-                .catch((err) => {
-                    results = false;
+        api.get("/getFriendInfo").then((rep) => {
+            tmpArr.forEach((x) => {
+                let listInvite;
+                if (x["other_users_email"] === "") {
+                    listInvite = [];
+                } else {
+                    listInvite = rep.data.filter((evt) => JSON.parse(x["other_users_email"]).includes(evt.email));
+                }
+                let keyList = listInvite.map(({ pub }) => pub);
+                let nameList = "";
+                let calendarList = "";
+                for (let i = 0; i < keyList.length; i++) {
+                    let cipher = new JSEncrypt({ default_key_size: 2048 });
+                    cipher.setPublicKey(keyList[i]);
+                    nameList = nameList.concat("," + cipher.encrypt(x["event_name"]));
+                    calendarList = calendarList.concat("," + cipher.encrypt(x["calendar"]));
+                }
+                console.log({
+                    "key": x["key"],
+                    "event_name": cypher.encrypt(x["event_name"]) + nameList,
+                    "start_date": new Date(x["start_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
+                    "end_date": new Date(x["end_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
+                    "color": colorCodeConv.indexOf(x["color"]),
+                    "full": x["full"],
+                    "calendar": cypher.encrypt(editTxt) + calendarList,
+                    "recurence": x["recurence"],
+                    "recurenceEndType": x["recurenceEndType"],
+                    "recurenceEndNbr": x["recurenceEndNbr"],
+                    "other_users": x["other_users"],
+                    "version": 1,
                 });
+                api.post("/editEvent", {
+                    "key": x["key"],
+                    "event_name": cypher.encrypt(x["event_name"]) + nameList,
+                    "start_date": new Date(x["start_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
+                    "end_date": new Date(x["end_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
+                    "color": colorCodeConv.indexOf(x["color"]),
+                    "full": x["full"],
+                    "calendar": cypher.encrypt(editTxt) + calendarList,
+                    "recurence": x["recurence"],
+                    "recurenceEndType": x["recurenceEndType"],
+                    "recurenceEndNbr": x["recurenceEndNbr"],
+                    "other_users": x["other_users"],
+                    "version": 1,
+                })
+                    .then((res) => {
+                        if (res.status === 202) {
+                            results += 1;
+                        }
+                        if (results === tmpArr.length) {
+                            props.reload();
+                            setIsEdit(-1);
+                        }
+                    })
+                    .catch((err) => {
+                        results = false;
+                    });
+            });
         });
+
         /*
         api.post("editCalendar", JSON.stringify({ "old": data, "new": AES.AES.encrypt(editTxt, code).toString() })).then((response) => {
             if (response.status === 202) {
