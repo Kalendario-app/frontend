@@ -310,23 +310,41 @@ export const WeeklyCalendar = (props) => {
                         return arg === evnt["color"];
                     });
                     var TZoffset = new Date().getTimezoneOffset() * 60;
-                    var data = {
-                        "event_name": cypher.encrypt(evnt["event_name"]),
-                        "start_date": newDateS.getTime() / 1000 + keyGen(evnt["event_name"]) + TZoffset,
-                        "end_date": newDateE.getTime() / 1000 + keyGen(evnt["event_name"]) + TZoffset,
-                        "color": color,
-                        "full": evnt["full"],
-                        "key": evnt["key"],
-                        "calendar": cypher.encrypt(evnt["calendar"]),
-                        "recurence": evnt["recurence"],
-                        "recurenceEndType": evnt["recurenceEndType"],
-                        "recurenceEndNbr": evnt["recurenceEndNbr"],
-                        "version": 0,
-                    };
-                    api.post("/editEvent", data).then((res) => {
-                        if (res.status === 202) {
-                            reload();
+                    api.get("/getFriendInfo").then((rep) => {
+                        let listInvite;
+                        if (evnt["other_users_email"] === "") {
+                            listInvite = [];
+                        } else {
+                            listInvite = rep.data.filter((x) => JSON.parse(evnt["other_users_email"]).includes(x.email));
                         }
+                        let keyList = listInvite.map(({ pub }) => pub);
+                        let nameList = "";
+                        let calendarList = "";
+                        for (let i = 0; i < keyList.length; i++) {
+                            let cipher = new JSEncrypt({ default_key_size: 2048 });
+                            cipher.setPublicKey(keyList[i]);
+                            nameList = nameList.concat("," + cipher.encrypt(evnt["event_name"]));
+                            calendarList = calendarList.concat("," + cipher.encrypt(evnt["calendar"]));
+                        }
+                        var data = {
+                            "event_name": cypher.encrypt(evnt["event_name"]) + nameList,
+                            "start_date": newDateS.getTime() / 1000 + keyGen(evnt["event_name"]) + 2 * TZoffset,
+                            "end_date": newDateE.getTime() / 1000 + keyGen(evnt["event_name"]) + 2 * TZoffset,
+                            "color": color,
+                            "full": evnt["full"],
+                            "key": evnt["key"],
+                            "calendar": cypher.encrypt(evnt["calendar"]) + calendarList,
+                            "recurence": evnt["recurence"],
+                            "recurenceEndType": evnt["recurenceEndType"],
+                            "recurenceEndNbr": evnt["recurenceEndNbr"],
+                            "other_users": evnt["other_users"],
+                            "version": 1,
+                        };
+                        api.post("/editEvent", data).then((res) => {
+                            if (res.status === 202) {
+                                reload();
+                            }
+                        });
                     });
                 },
                 collect: (monitor) => ({
@@ -351,30 +369,30 @@ export const WeeklyCalendar = (props) => {
 
         return (
             <div className="day-row">
-                <WeekCell fullList={props.fullList} date={props.date} hour={0} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={1} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={2} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={3} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={4} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={5} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={6} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={7} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={8} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={9} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={10} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={11} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={12} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={13} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={14} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={15} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={16} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={17} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={18} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={19} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={20} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={21} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={22} />
-                <WeekCell fullList={props.fullList} date={props.date} hour={23} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={0} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={1} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={2} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={3} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={4} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={5} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={6} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={7} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={8} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={9} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={10} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={11} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={12} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={13} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={14} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={15} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={16} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={17} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={18} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={19} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={20} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={21} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={22} />
+                <WeekCell user={props.user} fullList={props.fullList} date={props.date} hour={23} />
                 {evenements.map((x, index) => (
                     <WeeklyEvent
                         absolute
@@ -393,6 +411,7 @@ export const WeeklyCalendar = (props) => {
                         backColor={x["fillColor"]}
                         borderColor={x["borderColor"]}
                         cle={x["key"]}
+                        isOwner={x["isOwner"]}
                     />
                 ))}
                 {props.date.getDate() === new Date().getDate() &&
@@ -438,7 +457,7 @@ export const WeeklyCalendar = (props) => {
                 <div
                     onClick={() => openPopup()}
                     className="weekly-event"
-                    ref={drag}
+                    ref={props.isOwner ? drag : null}
                     key={props.cle}
                     style={{
                         position: props.absolute ? "absolute" : false,
@@ -595,6 +614,7 @@ export const WeeklyCalendar = (props) => {
                                         backColor={x["fillColor"]}
                                         borderColor={x["borderColor"]}
                                         width={x["longueur"]}
+                                        isOwner={x["isOwner"]}
                                     />
                                 ))}
                             </div>
@@ -625,6 +645,7 @@ export const WeeklyCalendar = (props) => {
                                         backColor={x["fillColor"]}
                                         borderColor={x["borderColor"]}
                                         width={x["longueur"]}
+                                        isOwner={x["isOwner"]}
                                     />
                                 ))}
                             </div>
@@ -655,6 +676,7 @@ export const WeeklyCalendar = (props) => {
                                         backColor={x["fillColor"]}
                                         borderColor={x["borderColor"]}
                                         width={x["longueur"]}
+                                        isOwner={x["isOwner"]}
                                     />
                                 ))}
                             </div>
@@ -685,6 +707,7 @@ export const WeeklyCalendar = (props) => {
                                         backColor={x["fillColor"]}
                                         borderColor={x["borderColor"]}
                                         width={x["longueur"]}
+                                        isOwner={x["isOwner"]}
                                     />
                                 ))}
                             </div>
@@ -715,6 +738,7 @@ export const WeeklyCalendar = (props) => {
                                         backColor={x["fillColor"]}
                                         borderColor={x["borderColor"]}
                                         width={x["longueur"]}
+                                        isOwner={x["isOwner"]}
                                     />
                                 ))}
                             </div>
@@ -745,6 +769,7 @@ export const WeeklyCalendar = (props) => {
                                         backColor={x["fillColor"]}
                                         borderColor={x["borderColor"]}
                                         width={x["longueur"]}
+                                        isOwner={x["isOwner"]}
                                     />
                                 ))}
                             </div>
@@ -775,6 +800,7 @@ export const WeeklyCalendar = (props) => {
                                         backColor={x["fillColor"]}
                                         borderColor={x["borderColor"]}
                                         width={x["longueur"]}
+                                        isOwner={x["isOwner"]}
                                     />
                                 ))}
                             </div>
@@ -889,13 +915,13 @@ export const WeeklyCalendar = (props) => {
                 )}
                 <div className="weekly-other-line" id="weekly-scroll-cont">
                     <NumRow />
-                    <DayRow fullList={props.fullList} evenements={weeklyStockage[0]} date={rowToJour(0)} dayName="Monday" />
-                    <DayRow fullList={props.fullList} evenements={weeklyStockage[1]} date={rowToJour(1)} dayName="Tuesday" />
-                    <DayRow fullList={props.fullList} evenements={weeklyStockage[2]} date={rowToJour(2)} dayName="Wednesday" />
-                    <DayRow fullList={props.fullList} evenements={weeklyStockage[3]} date={rowToJour(3)} dayName="Thursday" />
-                    <DayRow fullList={props.fullList} evenements={weeklyStockage[4]} date={rowToJour(4)} dayName="Friday" />
-                    <DayRow fullList={props.fullList} evenements={weeklyStockage[5]} date={rowToJour(5)} dayName="Saturday" />
-                    <DayRow fullList={props.fullList} evenements={weeklyStockage[6]} date={rowToJour(6)} dayName="Sunday" />
+                    <DayRow user={props.user} fullList={props.fullList} evenements={weeklyStockage[0]} date={rowToJour(0)} dayName="Monday" />
+                    <DayRow user={props.user} fullList={props.fullList} evenements={weeklyStockage[1]} date={rowToJour(1)} dayName="Tuesday" />
+                    <DayRow user={props.user} fullList={props.fullList} evenements={weeklyStockage[2]} date={rowToJour(2)} dayName="Wednesday" />
+                    <DayRow user={props.user} fullList={props.fullList} evenements={weeklyStockage[3]} date={rowToJour(3)} dayName="Thursday" />
+                    <DayRow user={props.user} fullList={props.fullList} evenements={weeklyStockage[4]} date={rowToJour(4)} dayName="Friday" />
+                    <DayRow user={props.user} fullList={props.fullList} evenements={weeklyStockage[5]} date={rowToJour(5)} dayName="Saturday" />
+                    <DayRow user={props.user} fullList={props.fullList} evenements={weeklyStockage[6]} date={rowToJour(6)} dayName="Sunday" />
                 </div>
             </div>
             {isDetail !== -1 ? (
