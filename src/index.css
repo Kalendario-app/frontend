@@ -1176,6 +1176,7 @@ header img:hover {
 }
 .detail-line i {
     font-size: var(--16px);
+    width: 20px;
 }
 .detail-first-line i:hover {
     cursor: pointer;

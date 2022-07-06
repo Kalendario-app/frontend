@@ -132,7 +132,14 @@ export const EventDetail = (props) => {
                             e.stopPropagation();
                         }}></i>
                     <h2 style={{ color: props.event["color"] }}>{name}</h2>
-                    <i className="fas fa-ellipsis-h" onClick={() => setisDropdown(isDropdown ? false : true)}></i>
+                    <i
+                        className="fas fa-ellipsis-h"
+                        onClick={() => {
+                            if (props.event["isOwner"]) {
+                                setisDropdown(isDropdown ? false : true);
+                            }
+                        }}
+                        style={{ opacity: props.event["isOwner"] ? "100%" : 0 }}></i>
                 </div>
                 {isDropdown ? (
                     <div className="detail-dropdown">
@@ -171,6 +178,18 @@ export const EventDetail = (props) => {
                         <i style={{ color: props.event["color"] }} className="fas fa-redo"></i>
                         <p>{repetition}</p>
                     </div>
+                ) : null}
+                {props.event["shared"] ? (
+                    <>
+                        <div className="detail-line">
+                            <i style={{ color: props.event["color"] }} className="fa-solid fa-user-large"></i>
+                            <p>{props.event["owner"]}</p>
+                        </div>
+                        <div className="detail-line">
+                            <i style={{ color: props.event["color"] }} className="fa-solid fa-users"></i>
+                            <p>{JSON.parse(props.event["other_users_email"]).map((x) => x + " ")}</p>
+                        </div>
+                    </>
                 ) : null}
             </div>
         </div>

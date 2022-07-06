@@ -145,7 +145,7 @@ export const Main = (props) => {
                         "codeHash": response.data.code[0]["key"],
                         "user": response.data.user[0],
                     });
-                    traiterEvent(response.data.event, response.data.todo);
+                    traiterEvent(response.data.event, response.data.todo, response.data.shared_events);
                 }
             })
             .catch((err) => {
@@ -209,8 +209,8 @@ export const Main = (props) => {
         return parseInt(tmp);
     }
 
-    function traiterEvent(list, todos) {
-        var tempList = list.sort((a, b) => a["start_date"] - b["start_date"]);
+    function traiterEvent(list, todos, shared) {
+        var tempList = list.sort((a, b) => a["start_date"] - b["start_date"]).concat(shared.sort((a, b) => a["start_date"] - b["start_date"]));
         var todoTemp = todos.sort((a, b) => a["date"] - b["date"]);
         let tempEvents = [];
         let eventToAdd = [];
@@ -252,8 +252,22 @@ export const Main = (props) => {
                     } else {
                         var cypher = new JSEncrypt({ default_key_size: 2048 });
                         cypher.setPrivateKey(AES.AES.decrypt(state.user.priv_key, decryptCode(varCode, state.user)).toString(AES.enc.Utf8));
-                        tempEvents[i]["event_name"] = cypher.decrypt(tempEvents[i]["event_name"]);
-                        tempEvents[i]["calendar"] = cypher.decrypt(tempEvents[i]["calendar"]);
+                        let nameList = tempEvents[i]["event_name"].split(",");
+                        let tmpCalLi = tempEvents[i]["calendar"].split(",");
+                        for (let u = 0; u < nameList.length; u++) {
+                            let temporary = cypher.decrypt(nameList[u]);
+                            if (temporary !== null) {
+                                tempEvents[i]["event_name"] = temporary;
+                                tempEvents[i]["calendar"] = cypher.decrypt(tmpCalLi[u]);
+                                if (tempEvents[i]["owner"] === state.user.email) {
+                                    tempEvents[i]["isOwner"] = true;
+                                } else {
+                                    tempEvents[i]["isOwner"] = false;
+                                }
+                                break;
+                            }
+                        }
+
                         if (tempEvents[i]["start_date"] > 10) {
                             tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - keyGen(tempEvents[i]["event_name"]);
                             tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - keyGen(tempEvents[i]["event_name"]);
