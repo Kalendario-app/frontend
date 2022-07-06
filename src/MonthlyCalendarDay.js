@@ -80,23 +80,41 @@ export const MonthlyCalendarDay = (props) => {
                 return arg === evnt["color"];
             });
             var TZoffset = new Date().getTimezoneOffset() * 60;
-            var data = {
-                "event_name": cypher.encrypt(evnt["event_name"]),
-                "start_date": newDateS.getTime() / 1000 + keyGen(evnt["event_name"]) + 2 * TZoffset,
-                "end_date": newDateE.getTime() / 1000 + keyGen(evnt["event_name"]) + 2 * TZoffset,
-                "color": color,
-                "full": evnt["full"],
-                "key": evnt["key"],
-                "calendar": cypher.encrypt(evnt["calendar"]),
-                "recurence": evnt["recurence"],
-                "recurenceEndType": evnt["recurenceEndType"],
-                "recurenceEndNbr": evnt["recurenceEndNbr"],
-                "version": 1,
-            };
-            api.post("/editEvent", data).then((res) => {
-                if (res.status === 202) {
-                    props.reload();
+            api.get("/getFriendInfo").then((res) => {
+                let listInvite;
+                if (evnt["other_users_email"] === "") {
+                    listInvite = [];
+                } else {
+                    listInvite = res.data.filter((x) => JSON.parse(evnt["other_users_email"]).includes(x.email));
                 }
+                let keyList = listInvite.map(({ pub }) => pub);
+                let nameList = "";
+                let calendarList = "";
+                for (let i = 0; i < keyList.length; i++) {
+                    let cipher = new JSEncrypt({ default_key_size: 2048 });
+                    cipher.setPublicKey(keyList[i]);
+                    nameList = nameList.concat("," + cipher.encrypt(evnt["event_name"]));
+                    calendarList = calendarList.concat("," + cipher.encrypt(evnt["calendar"]));
+                }
+                var data = {
+                    "event_name": cypher.encrypt(evnt["event_name"]) + nameList,
+                    "start_date": newDateS.getTime() / 1000 + keyGen(evnt["event_name"]) + 2 * TZoffset,
+                    "end_date": newDateE.getTime() / 1000 + keyGen(evnt["event_name"]) + 2 * TZoffset,
+                    "color": color,
+                    "full": evnt["full"],
+                    "key": evnt["key"],
+                    "calendar": cypher.encrypt(evnt["calendar"]) + calendarList,
+                    "recurence": evnt["recurence"],
+                    "recurenceEndType": evnt["recurenceEndType"],
+                    "recurenceEndNbr": evnt["recurenceEndNbr"],
+                    "other_users": evnt["other_users"],
+                    "version": 1,
+                };
+                api.post("/editEvent", data).then((res) => {
+                    if (res.status === 202) {
+                        props.reload();
+                    }
+                });
             });
         },
         collect: (monitor) => ({
@@ -226,7 +244,7 @@ export const MonthlyCalendarDay = (props) => {
         } else {
             return (
                 <div
-                    ref={drag}
+                    ref={props.isOwner ? drag : null}
                     onClick={() => openPopup(props.nbr)}
                     className="monthly-item"
                     style={{
@@ -286,6 +304,7 @@ export const MonthlyCalendarDay = (props) => {
                         full={eventList[x]["full"]}
                         cle={eventList[x]["key"]}
                         len={eventList[x]["nbr-day"]}
+                        isOwner={eventList[x]["isOwner"]}
                     />
                 ))}
             </div>

@@ -270,7 +270,6 @@ export const AddPopup = (props) => {
                 "other_users": JSON.stringify(proprioList),
                 "version": 1,
             };
-            console.log(data);
             api.post("/create", data).then((res) => {
                 props.setisAdd(false);
                 props.ajouterEvent();
