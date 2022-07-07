@@ -38,7 +38,7 @@ describe("calendar select", () => {
         cy.get(".fa-trash").click();
         cy.get(".calendar-delete-popup > p").should("contain", "Are you sure to delete Default Calendar? It will destroy every event inside of it! (It has 2 events !)");
         cy.get(".last-button").click();
-        cy.wait(10);
+        cy.wait(500);
         cy.get("#calendar-add").click();
         cy.get(".input-open").should("be.enabled");
         cy.wait(10);

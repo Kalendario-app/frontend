@@ -28,7 +28,7 @@ export const CreateAccount = () => {
         noCode: false,
         noUser: false,
     });
-    const [created, setCreated] = useState(true);
+    const [created, setCreated] = useState(false);
 
     const [relaod, setRelaod] = useState(0);
     const [resended, setResended] = useState(false);

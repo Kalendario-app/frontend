@@ -743,7 +743,7 @@ export const Main = (props) => {
                     className="main-section"
                     style={large ? { gridTemplateColumns: "300px 3fr 255px" } : mobile ? { gridTemplateColumns: "3fr" } : { gridTemplateColumns: "300px 3fr" }}>
                     <div className="code-popup-container">
-                        <div className="code-popup">
+                        <div className="code-popup true-code-popup">
                             <h1>There is a problem !</h1>
                             <p>We need your code to access the events !</p>
                             <div className="code-in-line">
@@ -909,7 +909,7 @@ export const Main = (props) => {
                     {state.user.verified || state.bypassVerif ? null : (
                         <>
                             <div className="code-popup-container">
-                                <div className="code-popup">
+                                <div className="code-popup verif-popup">
                                     <h1>Verify your account !</h1>
                                     <p>We've sent you a mail containing a link to verify your account.</p>
                                     <p>
@@ -939,7 +939,7 @@ export const Main = (props) => {
                     )}
                     {state.isCode ? (
                         <div className="code-popup-container">
-                            <div className="code-popup">
+                            <div className="code-popup true-code-popup">
                                 <h1>There is a problem !</h1>
                                 <p>We need your code to access the events !</p>
                                 <div className="code-in-line">
