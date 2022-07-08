@@ -29,12 +29,12 @@ describe("shared event", () => {
             }
         });
         cy.get(".social-icon").click();
-        cy.get(".social-right").should("contain", "T2");
+        cy.get(".social-right").should("contain", "Test1");
         cy.get(".friend-request-cross").each(($el) => {
             cy.get($el).click({ force: true });
         });
         cy.wait(500);
-        cy.get(".social-right").should("not.contain", "T2");
+        cy.get(".social-right").should("not.contain", "Test1");
         cy.get(".input-contained").type("test.test@kalendario.test");
         cy.get(".search-res-item").click();
         cy.get(".social-cross").click();
