@@ -124,7 +124,7 @@ describe("shared event", () => {
         cy.wait(500);
         cy.get("body").then(($body) => {
             if ($body.find(".true-code-popup").length !== 0) {
-                cy.get(".input-contained").type(alt ? Cypress.env("pass_alt") : Cypress.env("code"));
+                cy.get(".input-contained").type(Cypress.env("pass_alt"));
                 cy.get(".code-in-line button").click();
                 cy.wait("@api");
             }
