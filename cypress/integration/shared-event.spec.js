@@ -29,7 +29,7 @@ describe("shared event", () => {
             }
         });
         cy.get(".social-icon").click();
-        cy.get(".social-right").should("contain", "Test1");
+        cy.get(".social-right").should("contain", "T2");
         cy.get(".friend-request-cross").each(($el) => {
             cy.get($el).click({ force: true });
         });
