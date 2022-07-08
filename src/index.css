@@ -272,6 +272,8 @@ header img:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-height: 60vh;
+    overflow-y: scroll;
 }
 .social-drop-content h2 {
     text-align: center;
@@ -288,7 +290,7 @@ header img:hover {
     width: 300px;
     border-radius: 5em;
     box-shadow: 0px 2px 7px 2px var(--shadow-color);
-    overflow: hidden;
+    height: 75px;
 }
 .friend-item + .friend-item {
     margin-top: 1.5em;

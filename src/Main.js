@@ -31,7 +31,14 @@ export function decryptCode(code, user) {
         key = sha256(user["email"]);
         key = key + sha256(user["account_creation_date"]);
         key = sha256(key);
-        return AES.AES.decrypt(code, key).toString(AES.enc.Utf8);
+        let bt = "";
+        try {
+            AES.AES.decrypt(code, key).toString(AES.enc.Utf8);
+            bt = AES.AES.decrypt(code, key).toString(AES.enc.Utf8);
+        } catch (e) {
+            return "";
+        }
+        return bt;
     }
 }
 

@@ -80,14 +80,16 @@ export const CalendarSelect = (props) => {
         eventList.shift();
         var count = 0;
         eventList.map((x) => {
-            api.get("eventDelete?key=" + x["key"]).then((response) => {
-                if (response.status === 200) {
-                    count++;
-                }
-                if (count === eventList.length) {
-                    props.reload();
-                }
-            });
+            api.get("eventDelete?key=" + x["key"])
+                .then((response) => {
+                    if (response.status === 200) {
+                        count++;
+                    }
+                    if (count === eventList.length) {
+                        props.reload();
+                    }
+                })
+                .catch((err) => {});
             return null;
         });
         setIsDelete("");

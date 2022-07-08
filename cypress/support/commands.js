@@ -23,7 +23,7 @@ Cypress.Commands.add("deleteEvent", () => {
     cy.wait(1000);
     cy.get("@dayCard").should("not.contain", "test event");
 });
-Cypress.Commands.add("login", (noEvt) => {
+Cypress.Commands.add("login", (noEvt, alt) => {
     cy.intercept(Cypress.env("api_url")).as("api");
     cy.visit("127.0.0.1:3000/calendar");
     cy.wait("@api");
@@ -31,8 +31,8 @@ Cypress.Commands.add("login", (noEvt) => {
     cy.get("body").then(($body) => {
         if ($body.find("header").length === 0) {
             cy.visit("http://127.0.0.1:3000/login");
-            cy.get("input[type=email]").type(Cypress.env("email"));
-            cy.get("input[type=password]").type(Cypress.env("password"));
+            cy.get("input[type=email]").type(alt ? Cypress.env("email_alt") : Cypress.env("email"));
+            cy.get("input[type=password]").type(alt ? Cypress.env("pass_alt") : Cypress.env("password"));
             cy.intercept(Cypress.env("api_url")).as("api");
             cy.get(".login-submit button").click();
             cy.wait("@api");
@@ -41,10 +41,16 @@ Cypress.Commands.add("login", (noEvt) => {
     cy.wait(500);
     cy.get("body").then(($body) => {
         if ($body.find(".true-code-popup").length !== 0) {
-            cy.get(".input-contained").type(Cypress.env("code"));
+            cy.get(".input-contained").type(alt ? Cypress.env("pass_alt") : Cypress.env("code"));
             cy.get(".code-in-line button").click();
             cy.wait("@api");
         }
+        cy.wait(500);
+        if ($body.find(".verif-cross").length !== 0) {
+            cy.get(".verif-cross").click();
+        }
+    });
+    cy.get("body").then(($body) => {
         if ($body.find(".verif-cross").length !== 0) {
             cy.get(".verif-cross").click();
         }
@@ -58,7 +64,7 @@ Cypress.Commands.add("login", (noEvt) => {
         cy.wait("@create");
         cy.wait("@api");
         cy.get(".fa-trash").each((x, y) => {
-            cy.get(".fa-trash").eq(y).click();
+            cy.get(".fa-trash").eq(y).click({ force: true });
             cy.intercept(Cypress.env("api_url") + "eventDelete?key=*").as("delete");
             cy.intercept(Cypress.env("api_url")).as("api");
             cy.get(".last-button").click();

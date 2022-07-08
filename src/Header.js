@@ -312,7 +312,7 @@ export const Header = (props) => {
                 <div className="friend-icon">
                     {props.request ? (
                         <i
-                            className="fa-solid fa-check friend-cross"
+                            className="fa-solid fa-check friend-cross friend-check"
                             onClick={() =>
                                 api.get("addFriend?user=" + props.friend.email).then((res) => {
                                     if (res.status === 200) {
@@ -329,7 +329,7 @@ export const Header = (props) => {
                         />
                     ) : null}
                     <i
-                        className="fas fa-times friend-cross"
+                        className={props.request ? "fas fa-times friend-cross friend-request-cross friend-reject" : "fas fa-times friend-cross friend-reject"}
                         onClick={() => {
                             if (props.request) {
                                 api.get("removeFriendRequest?user=" + props.friend.email).then((res) => {
@@ -370,7 +370,7 @@ export const Header = (props) => {
                             <div className="social-drop-cont" onClick={() => setIsSocialDrop(false)}>
                                 <div className="social-drop" onClick={(e) => e.stopPropagation()}>
                                     <i
-                                        className="fas fa-times cross"
+                                        className="fas fa-times cross social-cross"
                                         onClick={(e) => {
                                             setIsSocialDrop(false);
                                         }}
