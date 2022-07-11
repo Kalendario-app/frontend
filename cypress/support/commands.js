@@ -50,6 +50,7 @@ Cypress.Commands.add("login", (noEvt, alt) => {
             cy.get(".verif-cross").click();
         }
     });
+    cy.wait(500);
     cy.get("body").then(($body) => {
         if ($body.find(".verif-cross").length !== 0) {
             cy.get(".verif-cross").click();
