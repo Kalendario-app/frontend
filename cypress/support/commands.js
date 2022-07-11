@@ -23,6 +23,25 @@ Cypress.Commands.add("deleteEvent", () => {
     cy.wait(1000);
     cy.get("@dayCard").should("not.contain", "test event");
 });
+Cypress.Commands.add("popups", (alt) => {
+    cy.wait(500);
+    cy.get("body").then(($body) => {
+        let shldCtn = false;
+        if ($body.find(".true-code-popup").length !== 0) {
+            cy.get(".input-contained").type(alt ? Cypress.env("pass_alt") : Cypress.env("code"));
+            cy.get(".code-in-line button").click();
+            cy.wait("@api");
+            shldCtn = true;
+        }
+        if ($body.find(".verif-cross").length !== 0) {
+            cy.get(".verif-cross").click();
+            shldCtn = true;
+        }
+        if (shldCtn) {
+            cy.popups(alt);
+        }
+    });
+});
 Cypress.Commands.add("login", (noEvt, alt) => {
     cy.intercept(Cypress.env("api_url")).as("api");
     cy.visit("127.0.0.1:3000/calendar");
@@ -39,23 +58,7 @@ Cypress.Commands.add("login", (noEvt, alt) => {
         }
     });
     cy.wait(500);
-    cy.get("body").then(($body) => {
-        if ($body.find(".true-code-popup").length !== 0) {
-            cy.get(".input-contained").type(alt ? Cypress.env("pass_alt") : Cypress.env("code"));
-            cy.get(".code-in-line button").click();
-            cy.wait("@api");
-        }
-        cy.wait(500);
-        if ($body.find(".verif-cross").length !== 0) {
-            cy.get(".verif-cross").click();
-        }
-    });
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-        if ($body.find(".verif-cross").length !== 0) {
-            cy.get(".verif-cross").click();
-        }
-    });
+    cy.popups(alt);
     if (noEvt !== true) {
         cy.get(".monthly-top-button button").click();
         cy.get("input[placeholder='Event name']").type("test event");
