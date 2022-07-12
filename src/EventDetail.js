@@ -135,30 +135,47 @@ export const EventDetail = (props) => {
                     <i
                         className="fas fa-ellipsis-h"
                         onClick={() => {
-                            if (props.event["isOwner"]) {
-                                setisDropdown(isDropdown ? false : true);
-                            }
-                        }}
-                        style={{ opacity: props.event["isOwner"] ? "100%" : 0 }}></i>
+                            setisDropdown(isDropdown ? false : true);
+                        }}></i>
                 </div>
                 {isDropdown ? (
                     <div className="detail-dropdown">
-                        <div
-                            onClick={() => {
-                                props.closeDetail();
-                                props.setEdit(props.event);
-                            }}
-                            className="detail-drop-edit">
-                            <i className="fas fa-pen"></i>Edit
-                        </div>
-                        <div
-                            onClick={() => {
-                                setisDropdown(false);
-                                deleteEvent();
-                            }}
-                            className="detail-drop-delete">
-                            <i className="fas fa-trash"></i>Delete
-                        </div>
+                        {props.event["isOwner"] ? (
+                            <>
+                                <div
+                                    onClick={() => {
+                                        props.closeDetail();
+                                        props.setEdit(props.event);
+                                    }}
+                                    className="detail-drop-edit">
+                                    <i className="fas fa-pen"></i>Edit
+                                </div>
+                                <div
+                                    onClick={() => {
+                                        setisDropdown(false);
+                                        deleteEvent();
+                                    }}
+                                    className="detail-drop-delete">
+                                    <i className="fas fa-trash"></i>Delete
+                                </div>
+                            </>
+                        ) : (
+                            <div
+                                onClick={() => {
+                                    api.get("/removeFromList?key=" + props.event["key"])
+                                        .then((res) => {
+                                            if (res.status === 200) {
+                                                setisDropdown(false);
+                                                props.closeDetail();
+                                                props.reload();
+                                            }
+                                        })
+                                        .catch((err) => {});
+                                }}
+                                className="detail-drop-delete">
+                                <i className="fas fa-trash"></i>Quit this event
+                            </div>
+                        )}
                     </div>
                 ) : null}
                 <div className="detail-line">
