@@ -35,6 +35,8 @@ export const EventDetail = (props) => {
         });
     }
 
+    console.log(props.event);
+
     var name = props.event["event_name"];
     var date_debut = "";
     var duration = "";
@@ -196,7 +198,7 @@ export const EventDetail = (props) => {
                         <p>{repetition}</p>
                     </div>
                 ) : null}
-                {props.event["shared"] ? (
+                {props.event["shared"] && props.event["other_users_email"] !== "" ? (
                     <>
                         <div className="detail-line">
                             <i style={{ color: props.event["color"] }} className="fa-solid fa-user-large"></i>
