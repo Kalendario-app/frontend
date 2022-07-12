@@ -58,11 +58,13 @@ export const HomePage = () => {
     var events = {};
     var evenements = [];
 
-    api.get("/").then((res) => {
-        if (res.status === 200) {
-            setLogged(true);
-        }
-    });
+    api.get("/")
+        .then((res) => {
+            if (res.status === 200) {
+                setLogged(true);
+            }
+        })
+        .catch((err) => {});
 
     function getWeekNum(year, month) {
         var daysNum = 32 - new Date(year, month, 32).getDate(),

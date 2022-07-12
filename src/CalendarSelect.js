@@ -6,6 +6,7 @@ import { api, decryptCode } from "./Main";
 import { useCookies } from "react-cookie";
 import AES from "crypto-js";
 import { sha256 } from "js-sha256";
+import JSEncrypt from "jsencrypt";
 
 export const CalendarSelect = (props) => {
     const [cookies] = useCookies();
@@ -38,16 +39,20 @@ export const CalendarSelect = (props) => {
         if (txt === "") {
             return;
         }
+        let cypher = new JSEncrypt({ default_key_size: 2048 });
+        cypher.setPublicKey(props.user["pub_key"]);
         let data = {
-            "event_name": AES.AES.encrypt(txt, code).toString(),
+            "event_name": cypher.encrypt(txt),
             "start_date": 0,
             "end_date": 1,
             "color": 0,
             "full": true,
-            "calendar": AES.AES.encrypt(txt, code).toString(),
+            "calendar": cypher.encrypt(txt),
             "recurence": -1,
             "recurenceEndType": 0,
             "recurenceEndNbr": 0,
+            "other_users": "",
+            "version": 1,
         };
         api.post("/create", data).then((res) => {
             props.ajouterEvent();
@@ -75,14 +80,16 @@ export const CalendarSelect = (props) => {
         eventList.shift();
         var count = 0;
         eventList.map((x) => {
-            api.get("eventDelete?key=" + x["key"]).then((response) => {
-                if (response.status === 200) {
-                    count++;
-                }
-                if (count === eventList.length) {
-                    props.reload();
-                }
-            });
+            api.get("eventDelete?key=" + x["key"])
+                .then((response) => {
+                    if (response.status === 200) {
+                        count++;
+                    }
+                    if (count === eventList.length) {
+                        props.reload();
+                    }
+                })
+                .catch((err) => {});
             return null;
         });
         setIsDelete("");
@@ -126,35 +133,74 @@ export const CalendarSelect = (props) => {
         }
 
         //let data = "";
-        let tmpArr = props.stockageCalendar[oldName].slice(1);
+        let tmpArr = props.stockageCalendar[oldName].slice(1).filter((x) => {
+            return x["isOwner"];
+        });
+        console.log(tmpArr);
         let results = 0;
         var TZoffset = new Date().getTimezoneOffset() * 60;
-        tmpArr.forEach((x) => {
-            api.post("/editEvent", {
-                "key": x["key"],
-                "event_name": AES.AES.encrypt(x["event_name"], code).toString(),
-                "start_date": new Date(x["start_date"] * 1000).getTime() / 1000 + keyGen(code) + TZoffset,
-                "end_date": new Date(x["end_date"] * 1000).getTime() / 1000 + keyGen(code) + TZoffset,
-                "color": colorCodeConv.indexOf(x["color"]),
-                "full": x["full"],
-                "calendar": AES.AES.encrypt(editTxt, code).toString(),
-                "recurence": x["recurence"],
-                "recurenceEndType": x["recurenceEndType"],
-                "recurenceEndNbr": x["recurenceEndNbr"],
-            })
-                .then((res) => {
-                    if (res.status === 202) {
-                        results += 1;
-                    }
-                    if (results === tmpArr.length) {
-                        props.reload();
-                        setIsEdit(-1);
-                    }
-                })
-                .catch((err) => {
-                    results = false;
+        let cypher = new JSEncrypt({ default_key_size: 2048 });
+        cypher.setPublicKey(props.user["pub_key"]);
+        api.get("/getFriendInfo").then((rep) => {
+            tmpArr.forEach((x) => {
+                let listInvite;
+                if (x["other_users_email"] === "") {
+                    listInvite = [];
+                } else {
+                    listInvite = rep.data.filter((evt) => JSON.parse(x["other_users_email"]).includes(evt.email));
+                }
+                let keyList = listInvite.map(({ pub }) => pub);
+                let nameList = "";
+                let calendarList = "";
+                for (let i = 0; i < keyList.length; i++) {
+                    let cipher = new JSEncrypt({ default_key_size: 2048 });
+                    cipher.setPublicKey(keyList[i]);
+                    nameList = nameList.concat("," + cipher.encrypt(x["event_name"]));
+                    calendarList = calendarList.concat("," + cipher.encrypt(x["calendar"]));
+                }
+                console.log({
+                    "key": x["key"],
+                    "event_name": cypher.encrypt(x["event_name"]) + nameList,
+                    "start_date": new Date(x["start_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
+                    "end_date": new Date(x["end_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
+                    "color": colorCodeConv.indexOf(x["color"]),
+                    "full": x["full"],
+                    "calendar": cypher.encrypt(editTxt) + calendarList,
+                    "recurence": x["recurence"],
+                    "recurenceEndType": x["recurenceEndType"],
+                    "recurenceEndNbr": x["recurenceEndNbr"],
+                    "other_users": x["other_users"],
+                    "version": 1,
                 });
+                api.post("/editEvent", {
+                    "key": x["key"],
+                    "event_name": cypher.encrypt(x["event_name"]) + nameList,
+                    "start_date": new Date(x["start_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
+                    "end_date": new Date(x["end_date"] * 1000).getTime() / 1000 + keyGen(x["event_name"]) + 2 * TZoffset,
+                    "color": colorCodeConv.indexOf(x["color"]),
+                    "full": x["full"],
+                    "calendar": cypher.encrypt(editTxt) + calendarList,
+                    "recurence": x["recurence"],
+                    "recurenceEndType": x["recurenceEndType"],
+                    "recurenceEndNbr": x["recurenceEndNbr"],
+                    "other_users": x["other_users"],
+                    "version": 1,
+                })
+                    .then((res) => {
+                        if (res.status === 202) {
+                            results += 1;
+                        }
+                        if (results === tmpArr.length) {
+                            props.reload();
+                            setIsEdit(-1);
+                        }
+                    })
+                    .catch((err) => {
+                        results = false;
+                    });
+            });
         });
+
         /*
         api.post("editCalendar", JSON.stringify({ "old": data, "new": AES.AES.encrypt(editTxt, code).toString() })).then((response) => {
             if (response.status === 202) {

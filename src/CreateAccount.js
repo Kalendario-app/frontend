@@ -5,6 +5,8 @@ import axios from "axios";
 import { api } from "./Main";
 import { Checkbox } from "./Checkbox";
 import validator from "validator";
+import { JSEncrypt } from "jsencrypt";
+import { AES } from "crypto-js";
 
 axios.defaults.withCredentials = true;
 
@@ -41,12 +43,17 @@ export const CreateAccount = () => {
                     if (res.data["email"] !== true && res.data["user"] !== true) {
                         var mdp = email + "sel" + password;
                         mdp = sha256(mdp);
+                        var encrypt = new JSEncrypt();
+                        var pub_key = encrypt.getPublicKey();
+                        var priv_key_enc = AES.encrypt(encrypt.getPrivateKey(), code).toString();
                         var data = {
                             "email": email,
                             "password": mdp,
                             "username": username,
                             "key": sha256(code),
                             "want_mail": Wmail,
+                            "pub_key": pub_key,
+                            "priv_key": priv_key_enc,
                         };
                         api.post("/userCreate", data)
                             .then((res) => {
@@ -295,6 +302,9 @@ export const CreateAccount = () => {
                             }}>
                             Resend email
                         </button>
+                        <a href="/login" className="login-create-account">
+                            Log-in anyway
+                        </a>
                     </div>
                 ) : (
                     <div className="mail-conf-popup">

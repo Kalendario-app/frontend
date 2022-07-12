@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { NextEvents } from "./NextEvents";
 import { MonthlyCalendar } from "./MonthlyCalendar";
 import { CalendarSelect } from "./CalendarSelect";
 import { MiniCalendar } from "./MiniCalendar";
@@ -15,6 +14,7 @@ import { Checkbox } from "./Checkbox";
 import { EditPopup } from "./EditPopup";
 import { Header } from "./Header";
 import { Todo } from "./Todo";
+import { JSEncrypt } from "jsencrypt";
 
 export function encryptCode(code, user) {
     var key = "";
@@ -31,7 +31,14 @@ export function decryptCode(code, user) {
         key = sha256(user["email"]);
         key = key + sha256(user["account_creation_date"]);
         key = sha256(key);
-        return AES.AES.decrypt(code, key).toString(AES.enc.Utf8);
+        let bt = "";
+        try {
+            AES.AES.decrypt(code, key).toString(AES.enc.Utf8);
+            bt = AES.AES.decrypt(code, key).toString(AES.enc.Utf8);
+        } catch (e) {
+            return "";
+        }
+        return bt;
     }
 }
 
@@ -145,9 +152,7 @@ export const Main = (props) => {
                         "codeHash": response.data.code[0]["key"],
                         "user": response.data.user[0],
                     });
-                    if (response.data.user[0]["verified"] === false) {
-                    }
-                    traiterEvent(response.data.event, response.data.todo);
+                    traiterEvent(response.data.event, response.data.todo, response.data.shared_events);
                 }
             })
             .catch((err) => {
@@ -211,8 +216,8 @@ export const Main = (props) => {
         return parseInt(tmp);
     }
 
-    function traiterEvent(list, todos) {
-        var tempList = list.sort((a, b) => a["start_date"] - b["start_date"]);
+    function traiterEvent(list, todos, shared) {
+        var tempList = list.sort((a, b) => a["start_date"] - b["start_date"]).concat(shared.sort((a, b) => a["start_date"] - b["start_date"]));
         var todoTemp = todos.sort((a, b) => a["date"] - b["date"]);
         let tempEvents = [];
         let eventToAdd = [];
@@ -224,6 +229,18 @@ export const Main = (props) => {
                 temp["Default Calendar"] = [true];
                 changeState({ "isCode": true, "stockageCalendar": temp });
             } else {
+                if (state.user.pub_key === "") {
+                    let encrypt = new JSEncrypt({ default_key_size: 2048 });
+                    let enc_private_key = AES.AES.encrypt(encrypt.getPrivateKey(), decryptCode(varCode, state.user)).toString();
+                    let pub_key = encrypt.getPublicKey();
+                    let data = {
+                        "pub_key": pub_key,
+                        "priv_key": enc_private_key,
+                    };
+                    api.post("/addRSAKey", data)
+                        .then((res) => {})
+                        .catch((err) => console.log(err));
+                }
                 for (let i = 0; i < tempList.length; i++) {
                     let code = parseInt(tempList[i]["color"]);
                     tempEvents.push(tempList[i]);
@@ -231,13 +248,39 @@ export const Main = (props) => {
                     tempEvents[i]["nbr"] = i;
                     let fullCode = decryptCode(varCode, state.user);
                     fullCode = fullCode.concat(" ceci est du sel");
-                    var bytes = AES.AES.decrypt(tempEvents[i]["event_name"], fullCode);
-                    tempEvents[i]["event_name"] = bytes.toString(AES.enc.Utf8);
-                    tempEvents[i]["calendar"] = AES.AES.decrypt(tempEvents[i]["calendar"], fullCode).toString(AES.enc.Utf8);
-                    if (tempEvents[i]["start_date"] > 10) {
-                        tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - keyGen(fullCode);
-                        tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - keyGen(fullCode);
+                    if (tempEvents[i]["version"] === 0) {
+                        var bytes = AES.AES.decrypt(tempEvents[i]["event_name"], fullCode);
+                        tempEvents[i]["event_name"] = bytes.toString(AES.enc.Utf8);
+                        tempEvents[i]["calendar"] = AES.AES.decrypt(tempEvents[i]["calendar"], fullCode).toString(AES.enc.Utf8);
+                        if (tempEvents[i]["start_date"] > 10) {
+                            tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - keyGen(fullCode);
+                            tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - keyGen(fullCode);
+                        }
+                    } else {
+                        var cypher = new JSEncrypt({ default_key_size: 2048 });
+                        cypher.setPrivateKey(AES.AES.decrypt(state.user.priv_key, decryptCode(varCode, state.user)).toString(AES.enc.Utf8));
+                        let nameList = tempEvents[i]["event_name"].split(",");
+                        let tmpCalLi = tempEvents[i]["calendar"].split(",");
+                        for (let u = 0; u < nameList.length; u++) {
+                            let temporary = cypher.decrypt(nameList[u]);
+                            if (temporary !== null) {
+                                tempEvents[i]["event_name"] = temporary;
+                                tempEvents[i]["calendar"] = cypher.decrypt(tmpCalLi[u]);
+                                if (tempEvents[i]["owner"] === state.user.email) {
+                                    tempEvents[i]["isOwner"] = true;
+                                } else {
+                                    tempEvents[i]["isOwner"] = false;
+                                }
+                                break;
+                            }
+                        }
+
+                        if (tempEvents[i]["start_date"] > 10) {
+                            tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - keyGen(tempEvents[i]["event_name"]);
+                            tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - keyGen(tempEvents[i]["event_name"]);
+                        }
                     }
+
                     var objCalName = tempEvents[i]["calendar"];
                     if (tempSto[objCalName]) {
                         tempSto[objCalName].push(tempEvents[i]);
@@ -245,8 +288,8 @@ export const Main = (props) => {
                         tempSto[objCalName] = [true, tempEvents[i]];
                     }
                     var TZoffset = new Date().getTimezoneOffset() * 60;
-                    tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - TZoffset;
-                    tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - TZoffset;
+                    tempEvents[i]["start_date"] = tempEvents[i]["start_date"] - 2 * TZoffset;
+                    tempEvents[i]["end_date"] = tempEvents[i]["end_date"] - 2 * TZoffset;
                     var recuNbr = tempEvents[i]["recurence"].toString();
                     let start = new Date(tempEvents[i]["start_date"] * 1000).setHours(0, 0, 0, 0);
                     let end = new Date(tempEvents[i]["end_date"] * 1000).setHours(0, 0, 0, 0);
@@ -707,7 +750,7 @@ export const Main = (props) => {
                     className="main-section"
                     style={large ? { gridTemplateColumns: "300px 3fr 255px" } : mobile ? { gridTemplateColumns: "3fr" } : { gridTemplateColumns: "300px 3fr" }}>
                     <div className="code-popup-container">
-                        <div className="code-popup">
+                        <div className="code-popup true-code-popup">
                             <h1>There is a problem !</h1>
                             <p>We need your code to access the events !</p>
                             <div className="code-in-line">
@@ -873,7 +916,7 @@ export const Main = (props) => {
                     {state.user.verified || state.bypassVerif ? null : (
                         <>
                             <div className="code-popup-container">
-                                <div className="code-popup">
+                                <div className="code-popup verif-popup">
                                     <h1>Verify your account !</h1>
                                     <p>We've sent you a mail containing a link to verify your account.</p>
                                     <p>
@@ -903,7 +946,7 @@ export const Main = (props) => {
                     )}
                     {state.isCode ? (
                         <div className="code-popup-container">
-                            <div className="code-popup">
+                            <div className="code-popup true-code-popup">
                                 <h1>There is a problem !</h1>
                                 <p>We need your code to access the events !</p>
                                 <div className="code-in-line">

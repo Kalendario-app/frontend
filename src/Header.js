@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import LogoL from "./logoL.png";
 import { useState } from "react";
 import { parseString } from "./Icalparse";
@@ -8,8 +8,12 @@ import AES from "crypto-js";
 import { sha256 } from "js-sha256";
 import { BrowserView, MobileView } from "react-device-detect";
 import { Button } from "./Button";
+import validator from "validator";
+import JSEncrypt from "jsencrypt";
 
 export const Header = (props) => {
+    const colorCodeConv = ["#3581B8", "#5BA94C", "#E4C111", "#FF6B35", "#A72A2A"];
+
     const [cookies] = useCookies();
 
     var varCode = "";
@@ -37,6 +41,51 @@ export const Header = (props) => {
     const [passMatch, setPassMatch] = useState(false);
     const [passRight, setPassRight] = useState(false);
     const [isPassChPop, setIsPassChPop] = useState(false);
+
+    const [isSocialDrop, setIsSocialDrop] = useState(false);
+    const [searchResults, setSearchResults] = useState(null);
+    const [friendsRequests, setFriendsRequests] = useState(null);
+    const [friendList, setFriendList] = useState(null);
+    const [, reload] = useState(0);
+
+    useEffect(() => {
+        if (friendsRequests === null && props.user.friend_requests !== undefined) {
+            let str = props.user.friend_requests;
+            let arr = str.split(",");
+            arr.pop();
+            let arr2 = [];
+            for (let i = 0; i < arr.length; i++) {
+                api.get("getUserByEmail?email=" + arr[i]).then((res) => {
+                    let tmp = { email: arr[i], name: res.data.username };
+                    arr2.push(tmp);
+                    if (arr2.length === arr.length) {
+                        setFriendsRequests(arr2);
+                    }
+                });
+            }
+            if (arr.length === 0) {
+                setFriendsRequests([]);
+            }
+        }
+        if (friendList === null && props.user.friend_list !== undefined) {
+            let str = props.user.friend_list;
+            let arr = str.split(",");
+            arr.pop();
+            let arr2 = [];
+            for (let i = 0; i < arr.length; i++) {
+                api.get("getUserByEmail?email=" + arr[i]).then((res) => {
+                    let tmp = { email: arr[i], name: res.data.username };
+                    arr2.push(tmp);
+                    if (arr2.length === arr.length) {
+                        setFriendList(arr2);
+                    }
+                });
+            }
+            if (arr.length === 0) {
+                setFriendList([]);
+            }
+        }
+    }, [props.user]);
 
     var code = decryptCode(varCode, props.user) + " ceci est du sel";
 
@@ -118,7 +167,6 @@ export const Header = (props) => {
         let evts = parseString(str)["events"];
         let importedEvt = [];
         var TZoffset = new Date().getTimezoneOffset() * 60;
-        var dteKey = keyGen(code) + TZoffset;
         for (let i = 0; i < evts.length; i++) {
             importedEvt[i] = {};
             let evt = importedEvt[i];
@@ -126,12 +174,16 @@ export const Header = (props) => {
             if (evts[i]["summary"] === "") {
                 evt["event_name"] = "Untitled Event";
             }
-            evt["event_name"] = AES.AES.encrypt(evt["event_name"], code).toString();
-            evt["start_date"] = Math.floor(new Date(evts[i]["dtstart"]["value"]).getTime() / 1000) + dteKey;
-            evt["end_date"] = Math.floor(new Date(evts[i]["dtend"]["value"]).getTime() / 1000) + dteKey;
+            let cypher = new JSEncrypt({ default_key_size: 2048 });
+            cypher.setPublicKey(props.user["pub_key"]);
+            evt["event_name"] = cypher.encrypt(evt["event_name"]);
+            evt["start_date"] = Math.floor(new Date(evts[i]["dtstart"]["value"]).getTime() / 1000) + 2 * TZoffset + keyGen(evt["event_name"]);
+            evt["end_date"] = Math.floor(new Date(evts[i]["dtend"]["value"]).getTime() / 1000) + 2 * TZoffset + keyGen(evt["event_name"]);
             evt["color"] = 0;
+            evt["version"] = 1;
             evt["full"] = true;
-            evt["calendar"] = AES.AES.encrypt(props.calendarList()[calendarNbr], code).toString();
+            evt["calendar"] = cypher.encrypt(props.calendarList()[calendarNbr]);
+            evt["other_users"] = "";
             if (evts[i]["recurrenceRule"] === undefined) {
                 evt["recurence"] = -1;
                 evt["recurenceEndNbr"] = -1;
@@ -190,201 +242,405 @@ export const Header = (props) => {
         }
     }
 
+    const letterNum = {
+        "A": 1,
+        "B": 2,
+        "C": 3,
+        "D": 4,
+        "E": 5,
+        "F": 6,
+        "G": 7,
+        "H": 8,
+        "I": 9,
+        "J": 10,
+        "K": 11,
+        "L": 12,
+        "M": 13,
+        "N": 14,
+        "O": 15,
+        "P": 16,
+        "Q": 17,
+        "R": 18,
+        "S": 19,
+        "T": 20,
+        "U": 21,
+        "V": 22,
+        "W": 23,
+        "X": 24,
+        "Y": 25,
+        "Z": 26,
+        "a": 27,
+        "b": 28,
+        "c": 29,
+        "d": 30,
+        "e": 31,
+        "f": 32,
+        "g": 33,
+        "h": 34,
+        "i": 35,
+        "j": 36,
+        "k": 37,
+        "l": 38,
+        "m": 39,
+        "n": 40,
+        "o": 41,
+        "p": 42,
+        "q": 43,
+        "r": 44,
+        "s": 45,
+        "t": 46,
+        "u": 47,
+        "v": 48,
+        "w": 49,
+        "x": 50,
+        "y": 51,
+        "z": 52,
+    };
+
+    function FriendItem(props) {
+        return (
+            <div className="friend-item">
+                <div className="friend-left">
+                    <div className="friend-pp" style={{ backgroundColor: colorCodeConv[letterNum[props.friend.name[0]] % 6] }}>
+                        {props.friend.name[0] + props.friend.name[1]}
+                    </div>
+                    <div className="friend-txt">
+                        <div className="friend-name">{props.friend.name}</div>
+                        <div className="friend-email">{props.friend.email}</div>
+                    </div>
+                </div>
+                <div className="friend-icon">
+                    {props.request ? (
+                        <i
+                            className="fa-solid fa-check friend-cross friend-check"
+                            onClick={() =>
+                                api.get("addFriend?user=" + props.friend.email).then((res) => {
+                                    if (res.status === 200) {
+                                        let tmpArr = friendsRequests;
+                                        let tmpFriend = friendList;
+                                        tmpArr.splice(props.index, 1);
+                                        tmpFriend.push(props.friend);
+                                        setFriendsRequests(tmpArr);
+                                        setFriendList(tmpFriend);
+                                        reload(new Date().getTime());
+                                    }
+                                })
+                            }
+                        />
+                    ) : null}
+                    <i
+                        className={props.request ? "fas fa-times friend-cross friend-request-cross friend-reject" : "fas fa-times friend-cross friend-reject"}
+                        onClick={() => {
+                            if (props.request) {
+                                api.get("removeFriendRequest?user=" + props.friend.email).then((res) => {
+                                    if (res.status === 200) {
+                                        let tmpArr = friendsRequests;
+                                        tmpArr.splice(props.index, 1);
+                                        setFriendsRequests(tmpArr);
+                                        reload(new Date().getTime());
+                                    }
+                                });
+                            } else {
+                                api.get("removeFriend?user=" + props.friend.email).then((res) => {
+                                    if (res.status === 200) {
+                                        let tmpArr = friendList;
+                                        tmpArr.splice(props.index, 1);
+                                        setFriendList(tmpArr);
+                                        reload(new Date().getTime());
+                                    }
+                                });
+                            }
+                        }}
+                    />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div>
             <header>
                 <img src={LogoL} alt="logo-large" onClick={() => (window.location.href = "/")} />
-
-                {props.user.username !== undefined ? (
-                    <div className="profil-pic" onClick={() => setisDrop(!isDrop)}>
-                        <p>
-                            {props.user.username[0]}
-                            {props.user.username[1]}
-                        </p>
-                    </div>
-                ) : (
-                    <div className="profil-pic-not-logged"></div>
-                )}
-                {isDrop ? (
-                    <>
-                        <div className="profil-drop-detector" onClick={() => setisDrop(false)}>
-                            <div className="profil-pic-drop" onClick={(e) => e.stopPropagation()}>
-                                <i
-                                    className="fas fa-times cross"
-                                    onClick={(e) => {
-                                        setisDrop(false);
-                                    }}
-                                />
-                                <section>
-                                    {labels.map((x, y) => (
-                                        <label className={selected === y ? "selected" : ""} key={y} onClick={(e) => setSelected(y)}>
-                                            {x}
-                                        </label>
-                                    ))}
-                                    <label
-                                        className="logout"
-                                        onClick={() => {
-                                            setisDrop(false);
-                                            api.get("/logout").then((res) => {
-                                                if (res.status === 200) {
-                                                    window.location.href = "/";
+                <div className="header-right">
+                    <div className="social">
+                        <div className="social-icon" onClick={() => setIsSocialDrop(true)}>
+                            <i className="fa-solid fa-user-group" />
+                        </div>
+                        {isSocialDrop ? (
+                            <div className="social-drop-cont" onClick={() => setIsSocialDrop(false)}>
+                                <div className="social-drop" onClick={(e) => e.stopPropagation()}>
+                                    <i
+                                        className="fas fa-times cross social-cross"
+                                        onClick={(e) => {
+                                            setIsSocialDrop(false);
+                                        }}
+                                    />
+                                    <div className="search-cont">
+                                        <input
+                                            type="search"
+                                            className="input-contained"
+                                            onChange={(e) => {
+                                                if (validator.isEmail(e.target.value)) {
+                                                    api.get("getUserByEmail?email=" + e.target.value)
+                                                        .then((res) => {
+                                                            if (res.status === 200) {
+                                                                setSearchResults({ "name": res.data.username, "email": res.data.email });
+                                                            }
+                                                        })
+                                                        .catch((err) => {
+                                                            setSearchResults(null);
+                                                        });
                                                 }
-                                            });
-                                        }}>
-                                        <i className="fas fa-sign-out-alt" />
-                                        Logout
-                                    </label>
-                                </section>
-                                <section>
-                                    {selected === 0 ? (
-                                        <>
-                                            {isPassChPop ? (
-                                                <div className="calendar-delete-container" onClick={() => setIsPassChPop(false)}>
-                                                    <div className="calendar-delete-popup" onClick={(e) => e.stopPropagation()}>
-                                                        <h2>Are you sure that you want to change your password</h2>
-                                                        <div className="calendar-delete-btn">
-                                                            <Button full txt="No take me back" first onClick={() => setIsPassChPop(false)} />
-                                                            <Button full txt="Yes Change it" last onClick={() => changePassword()} />
-                                                        </div>
+                                            }}
+                                        />
+                                        <i className="fa-solid fa-magnifying-glass" />
+                                        {searchResults !== null ? (
+                                            <div className="search-res">
+                                                <div
+                                                    className="search-res-item"
+                                                    onClick={() => {
+                                                        api.get("friendRequest?user=" + searchResults.email)
+                                                            .then((res) => {
+                                                                setSearchResults(null);
+                                                            })
+                                                            .catch((err) => {
+                                                                setSearchResults(null);
+                                                            });
+                                                    }}>
+                                                    <div className="friend-pp" style={{ backgroundColor: colorCodeConv[letterNum[searchResults.name[0]] % 6] }}>
+                                                        {searchResults.name[0] + searchResults.name[1]}
+                                                    </div>
+                                                    <div className="search-res-text">
+                                                        <div className="search-res-name">{searchResults.name}</div>
+                                                        <div className="search-res-email">{searchResults.email}</div>
                                                     </div>
                                                 </div>
-                                            ) : null}
-                                            <h2>Account</h2>
-                                            <h3>Name</h3>
-                                            <p>{props.user.username}</p>
-                                            <h3>Email</h3>
-                                            <p>{props.user.email}</p>
-                                            <h3>Change your password</h3>
-                                            <p style={{ marginBottom: "0.2em" }}>Your old password</p>
-                                            {passRight ? <p style={{ color: "var(--error-color)", fontWeight: 500, marginBottom: 0 }}>Wrong password</p> : null}
-                                            <input className="input-contained" type="password" placeholder="Old password" onChange={(e) => setOldPass(e.target.value)} />
-                                            <p style={{ marginBottom: "0.2em" }}>Your new password</p>
-                                            <input className="input-contained" type="password" placeholder="New password" onChange={(e) => setNewPass(e.target.value)} />
-                                            <p style={{ marginBottom: "0.2em" }}>Your new password again</p>
-                                            {passMatch ? (
-                                                <p style={{ color: "var(--error-color)", fontWeight: 500, marginBottom: 0 }}>Both passwords don't match</p>
-                                            ) : null}
-                                            <input
-                                                className="input-contained"
-                                                type="password"
-                                                placeholder="Confirm new password"
-                                                onChange={(e) => setConfirmPass(e.target.value)}
-                                            />
-                                            <div className="imp-buttons">
-                                                <button
-                                                    style={{ fontSize: "16px" }}
-                                                    id="import-button"
-                                                    className="imp-button button-full cta-2"
-                                                    onClick={() => setIsPassChPop(true)}>
-                                                    Change password
-                                                </button>
                                             </div>
-                                            {/*<div className="profil-pic">
+                                        ) : null}
+                                    </div>
+                                    <div className="social-drop-content">
+                                        <div className="social-left">
+                                            <h2>Your friends</h2>
+                                            {friendList !== null ? (
+                                                <>
+                                                    {friendList.map((friend, y) => (
+                                                        <FriendItem key={y} friend={friend} index={y} />
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <p className="social-nofriend-txt">Sadly you don't have any friend yet</p>
+                                            )}
+
+                                            {/*<FriendItem friend={{ name: "John Doe", email: "john.doe@kalendario.app" }} />*/}
+                                        </div>
+                                        <div className="social-right">
+                                            <h2>Friends Request</h2>
+                                            {/*//todo afficher un msg si y'a pas d'amis */}
+                                            {friendsRequests !== null ? (
+                                                <>
+                                                    {friendsRequests.map((friend, y) => (
+                                                        <FriendItem friend={friend} request={true} key={y} index={y} />
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <p className="social-nofriend-txt">You don't have any friend requests</p>
+                                            )}
+                                            {/* <FriendItem request friend={{ name: "Sohn Doe", email: "john.doe@kalendario.app" }} /> */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : null}
+                    </div>
+                    {props.user.username !== undefined ? (
+                        <div className="profil-pic" onClick={() => setisDrop(!isDrop)}>
+                            <p>
+                                {props.user.username[0]}
+                                {props.user.username[1]}
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="profil-pic-not-logged"></div>
+                    )}
+                    {isDrop ? (
+                        <>
+                            <div className="profil-drop-detector" onClick={() => setisDrop(false)}>
+                                <div className="profil-pic-drop" onClick={(e) => e.stopPropagation()}>
+                                    <i
+                                        className="fas fa-times cross"
+                                        onClick={(e) => {
+                                            setisDrop(false);
+                                        }}
+                                    />
+                                    <section>
+                                        {labels.map((x, y) => (
+                                            <label className={selected === y ? "selected" : ""} key={y} onClick={(e) => setSelected(y)}>
+                                                {x}
+                                            </label>
+                                        ))}
+                                        <label
+                                            className="logout"
+                                            onClick={() => {
+                                                setisDrop(false);
+                                                api.get("/logout").then((res) => {
+                                                    if (res.status === 200) {
+                                                        window.location.href = "/";
+                                                    }
+                                                });
+                                            }}>
+                                            <i className="fas fa-sign-out-alt" />
+                                            Logout
+                                        </label>
+                                    </section>
+                                    <section>
+                                        {selected === 0 ? (
+                                            <>
+                                                {isPassChPop ? (
+                                                    <div className="calendar-delete-container" onClick={() => setIsPassChPop(false)}>
+                                                        <div className="calendar-delete-popup" onClick={(e) => e.stopPropagation()}>
+                                                            <h2>Are you sure that you want to change your password</h2>
+                                                            <div className="calendar-delete-btn">
+                                                                <Button full txt="No take me back" first onClick={() => setIsPassChPop(false)} />
+                                                                <Button full txt="Yes Change it" last onClick={() => changePassword()} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ) : null}
+                                                <h2>Account</h2>
+                                                <h3>Name</h3>
+                                                <p>{props.user.username}</p>
+                                                <h3>Email</h3>
+                                                <p>{props.user.email}</p>
+                                                <h3>Change your password</h3>
+                                                <p style={{ marginBottom: "0.2em" }}>Your old password</p>
+                                                {passRight ? <p style={{ color: "var(--error-color)", fontWeight: 500, marginBottom: 0 }}>Wrong password</p> : null}
+                                                <input
+                                                    className="input-contained"
+                                                    type="password"
+                                                    placeholder="Old password"
+                                                    onChange={(e) => setOldPass(e.target.value)}
+                                                />
+                                                <p style={{ marginBottom: "0.2em" }}>Your new password</p>
+                                                <input
+                                                    className="input-contained"
+                                                    type="password"
+                                                    placeholder="New password"
+                                                    onChange={(e) => setNewPass(e.target.value)}
+                                                />
+                                                <p style={{ marginBottom: "0.2em" }}>Your new password again</p>
+                                                {passMatch ? (
+                                                    <p style={{ color: "var(--error-color)", fontWeight: 500, marginBottom: 0 }}>Both passwords don't match</p>
+                                                ) : null}
+                                                <input
+                                                    className="input-contained"
+                                                    type="password"
+                                                    placeholder="Confirm new password"
+                                                    onChange={(e) => setConfirmPass(e.target.value)}
+                                                />
+                                                <div className="imp-buttons">
+                                                    <button
+                                                        style={{ fontSize: "16px" }}
+                                                        id="import-button"
+                                                        className="imp-button button-full cta-2"
+                                                        onClick={() => setIsPassChPop(true)}>
+                                                        Change password
+                                                    </button>
+                                                </div>
+                                                {/*<div className="profil-pic">
                                                 <p>
                                                     {props.user.username[0]}
                                                     {props.user.username[1]}
                                                 </p>
                                     </div>*/}
-                                        </>
-                                    ) : selected === 1 ? (
-                                        <>
-                                            <h2>Settings</h2>
-                                        </>
-                                    ) : selected === 2 ? (
-                                        <>
-                                            <BrowserView>
-                                                <div className="import-section">
-                                                    <div>
-                                                        <h2>Import</h2>
-                                                        <p className="imp-cal-p">First select your .ics file</p>
-                                                        {/*//todo help to export*/}
-                                                        <div className="file-input">
-                                                            <input
-                                                                className="input-contained"
-                                                                type="file"
-                                                                accept=".ics"
-                                                                onChange={(e) => {
-                                                                    e.target.files[0].text().then((f) => handleImport(f));
-                                                                    setstep(1);
-                                                                    setFile(e.target.files[0].name);
-                                                                }}
-                                                                multiple={false}
-                                                            />
-                                                            {file !== null ? file : "Select a file from your computer"}
-                                                        </div>
-                                                        {step > 0 ? (
-                                                            <>
-                                                                {" "}
-                                                                <p className="imp-cal-p">Then select the calendar in wich you want your event to be imported </p>
-                                                                <div className="import-select select-wrapper" style={{ borderColor: "#3581b8" }}>
-                                                                    <select
-                                                                        style={{ borderColor: "#3581b8" }}
-                                                                        value={calendarNbr}
-                                                                        onChange={(e) => setCalendarNbr(e.target.value)}>
-                                                                        {props.calendarList().map((x, y) => (
-                                                                            <option key={y} value={y}>
-                                                                                {x}
-                                                                            </option>
-                                                                        ))}
-                                                                    </select>
-                                                                </div>
-                                                            </>
-                                                        ) : null}
-                                                        {step > 0 ? (
-                                                            <>
-                                                                <p className="imp-cal-p">Then just click import</p>
-                                                                <div className="imp-buttons">
-                                                                    <button
-                                                                        id="import-button"
-                                                                        className={importEvt.length === 0 ? "disabled-input file-input" : "imp-button button-full cta-2"}
-                                                                        onClick={() => {
-                                                                            if (importEvt.length !== 0) {
-                                                                                submitImport();
-                                                                                document.getElementById("import-button").classList = "disabled-input file-input";
-                                                                            } else {
-                                                                                return;
+                                            </>
+                                        ) : selected === 1 ? (
+                                            <>
+                                                <h2>Settings</h2>
+                                            </>
+                                        ) : selected === 2 ? (
+                                            <>
+                                                <BrowserView>
+                                                    <div className="import-section">
+                                                        <div>
+                                                            <h2>Import</h2>
+                                                            <p className="imp-cal-p">First select your .ics file</p>
+                                                            {/*//todo help to export*/}
+                                                            <div className="file-input">
+                                                                <input
+                                                                    className="input-contained"
+                                                                    type="file"
+                                                                    accept=".ics"
+                                                                    onChange={(e) => {
+                                                                        e.target.files[0].text().then((f) => handleImport(f));
+                                                                        setstep(1);
+                                                                        setFile(e.target.files[0].name);
+                                                                    }}
+                                                                    multiple={false}
+                                                                />
+                                                                {file !== null ? file : "Select a file from your computer"}
+                                                            </div>
+                                                            {step > 0 ? (
+                                                                <>
+                                                                    {" "}
+                                                                    <p className="imp-cal-p">Then select the calendar in wich you want your event to be imported </p>
+                                                                    <div className="import-select select-wrapper" style={{ borderColor: "#3581b8" }}>
+                                                                        <select
+                                                                            style={{ borderColor: "#3581b8" }}
+                                                                            value={calendarNbr}
+                                                                            onChange={(e) => setCalendarNbr(e.target.value)}>
+                                                                            {props.calendarList().map((x, y) => (
+                                                                                <option key={y} value={y}>
+                                                                                    {x}
+                                                                                </option>
+                                                                            ))}
+                                                                        </select>
+                                                                    </div>
+                                                                </>
+                                                            ) : null}
+                                                            {step > 0 ? (
+                                                                <>
+                                                                    <p className="imp-cal-p">Then just click import</p>
+                                                                    <div className="imp-buttons">
+                                                                        <button
+                                                                            id="import-button"
+                                                                            className={
+                                                                                importEvt.length === 0 ? "disabled-input file-input" : "imp-button button-full cta-2"
                                                                             }
-                                                                        }}>
-                                                                        Import
-                                                                    </button>
-                                                                </div>
-                                                            </>
-                                                        ) : null}
-                                                        {/*<h2>Export</h2>*/}
+                                                                            onClick={() => {
+                                                                                if (importEvt.length !== 0) {
+                                                                                    submitImport();
+                                                                                    document.getElementById("import-button").classList = "disabled-input file-input";
+                                                                                } else {
+                                                                                    return;
+                                                                                }
+                                                                            }}>
+                                                                            Import
+                                                                        </button>
+                                                                    </div>
+                                                                </>
+                                                            ) : null}
+                                                            {/*<h2>Export</h2>*/}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </BrowserView>
-                                            <MobileView>
-                                                <h2>Import/export</h2>
-                                                <p>
-                                                    Importing and exporting are not supported on mobile yet, please visite this page from a computer to import your
-                                                    calendar.
-                                                </p>
-                                            </MobileView>
-                                        </>
-                                    ) : (
-                                        <></>
-                                    )}
-                                </section>
+                                                </BrowserView>
+                                                <MobileView>
+                                                    <h2>Import/export</h2>
+                                                    <p>
+                                                        Importing and exporting are not supported on mobile yet, please visite this page from a computer to import your
+                                                        calendar.
+                                                    </p>
+                                                </MobileView>
+                                            </>
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </section>
+                                </div>
                             </div>
-                        </div>
-                    </>
-                ) : null}
+                        </>
+                    ) : null}
+                </div>
             </header>
         </div>
     );
 };
-
-/*<div
-                                    className="profil-pic-element"
-                                    style={{ color: "var(--error-color)" }}
-                                    onClick={() => {
-                                        setisDrop(false);
-                                        api.get("/logout").then((res) => {
-                                            if (res.status === 200) {
-                                                window.location.href = "/";
-                                            }
-                                        });
-                                    }}>
-                                     Logout
-                                </div>*/

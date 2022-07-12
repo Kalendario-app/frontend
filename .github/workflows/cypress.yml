@@ -19,3 +19,6 @@ jobs:
                   CYPRESS_code: ${{ secrets.TEST_PASS }}
                   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_KEY }}
                   CYPRESS_key: ${{ secrets.TEST_KEY }}
+                  CYPRESS_api_url: ${{ secrets.TEST_API_URL}}
+                  CYPRESS_email_alt: ${{ secrets.TEST_EMAIL_ALT}}
+                  CYPRESS_pass_alt: ${{ secrets.TEST_PASS_ALT}}

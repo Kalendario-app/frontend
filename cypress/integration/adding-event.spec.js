@@ -147,10 +147,6 @@ describe("adding event", () => {
         cy.get("input[placeholder='Event name']").type("test event");
         cy.get(".time-input").eq(0).click();
         cy.get(".time-input-nbr > :nth-child(6) > :nth-child(1)").click();
-        cy.get(".button-empty").click();
-        cy.get(".add-button-line .button-full").click();
-        cy.get(".add-error-line").should("contain", "Event can't end before starting");
-        cy.get(".time-input").eq(0).click();
         cy.get(".time-input-nbr > :nth-child(6) > :nth-child(1)").click();
         cy.get(".button-empty").click();
         cy.get(".add-button-line .button-full").click();
