@@ -578,6 +578,7 @@ export const AddPopup = (props) => {
                                         ))}
                                     </div>
                                 ) : null}
+                                <p className="add-error-line">To add people, first add them in the social tabs (in the top right corner)</p>
                             </div>
                         </div>
                         <div
