@@ -273,7 +273,7 @@ export const EditPopup = (props) => {
             let data = {
                 "event_name": cypher.encrypt(name) + nameList,
                 "start_date": new Date(start).getTime() / 1000 + 2 * TZoffset + keyGen(name),
-                "end_date": new Date(tempCustEnd).getTime() / 1000 + TZoffset + keyGen(name),
+                "end_date": new Date(tempCustEnd).getTime() / 1000 + 2 * TZoffset + keyGen(name),
                 "color": color,
                 "key": props.event["key"],
                 "full": true,
